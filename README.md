@@ -9,7 +9,7 @@ You have to be attentive for a big amount of enimies & monsters, one more odd & 
 some mobs are as powerfull as they can completely ruin large areas, be carefull with them!
 
 # the other
-The most mobs is worinng in teams, you can also change to theirs team.
+The most mobs is workinng in teams, you can also change to theirs team.
 There are also spawning some (generated) buildings, like big underground-lab, forts and massive pyramids
 ...and weather & a lot of misc stuff
 
