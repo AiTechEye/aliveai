@@ -1,0 +1,4 @@
+default
+aliveai
+aliveai_massdestruction?
+aliveai_nitroglycerine?
