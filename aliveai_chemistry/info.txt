@@ -1,0 +1,37 @@
+chemistry for aliveai
+mix chemistry effects
+
+
+
+rick click or drop on "Chemistry mixer" to add ingredients
+a "Tube" must be added first
+punch to get the tube
+
+radio: 		include objects in radius
+ex: 		explotion, +radio = explode on every object
+dmg: 		damage
+tox		toxic
+down 		pull down
+tel 		teleport away
+slime 		put on slime
+eletric 		eletric shocks
+mindman 		mind_manipulation
+nitro 		freeze
+hypo 		sleep
+relive		relive or kill
+acid		acid/toxic
+
+default:coal_lump = ex +1
+default:iron_lump = dmg +2
+default:copper_lump = radio +3
+default:papyrus = tox +1
+liveai_threats:killerplant = down +2
+aliveai_threats:quantumcore = tel +5
+aliveai_threats:slime = slime +1
+default:mese_crystal = eletric +9
+default:mese_crystal_fragment = eletric +1
+aliveai_threats:mind_manipulator = mindman +1
+default:ice = nitro +1
+aliveai:hypnotics = hypo +1
+aliveai:relive = relive +1
+dye:green = acid +1
