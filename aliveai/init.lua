@@ -1,5 +1,5 @@
 aliveai={
-	version=20.1,
+	version=20.2,
 	use_playerapi=true,		--new player api and collision style
 	spawning=true,			--spawning by self
 	character_model="character.b3d",	--character model
