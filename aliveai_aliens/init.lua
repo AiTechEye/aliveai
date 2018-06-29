@@ -244,6 +244,36 @@ aliveai.create_bot({
 		aliveai_aliens.set_color(self)
 	end,
 })
+
+
+aliveai.create_bot({
+		name="alien9",
+		texture="aliveai_alien9.png",
+		hp=50,
+		light=0,
+		stealing=1,
+		talking=0,
+		annoyed_by_staring=0,
+		type="monster",
+		dmg=4,
+		building=0,
+		attacking=1,
+		name_color="",
+		team="alien",
+		attack_players=1,
+		start_with_items={["aliveai_aliens:alien_shrinker"]=1,["aliveai_aliens:alien_food"]=25},
+		spawn_on={"group:sand","group:spreading_dirt_type","default:gravel","default:stone"},
+	spawn=function(self)
+		aliveai_aliens.gen_color(self)
+	end,
+	on_load=function(self)
+		aliveai_aliens.set_color(self)
+	end,
+})
+
+
+
+
 aliveai.create_bot({
 		name="alien7",
 		texture="aliveai_alien7.png",
