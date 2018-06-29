@@ -858,8 +858,8 @@ minetest.register_entity("aliveai_massdestruction:blackhole",{
 			if aliveai.visiable(pos,opos) and not (en and en.blackhole and en.power>=self.power) then
 				if aliveai.distance(pos,opos)<1+(self.power*0.01) then
 					if ob:is_player() then
-						aliveai.punchdmg(ob,9999)
-						ob:set_pos({x=0,y=-100,z=0})
+						aliveai.respawn_player(ob)
+
 					else
 						if en and en.name=="__builtin:item" and en.itemstring=="aliveai_massdestruction:blackholecore" then
 							self.kill=1
@@ -918,7 +918,10 @@ minetest.register_entity("aliveai_massdestruction:blackhole",{
 						self.power=0
 					elseif np then
 						if not aliveai_nitroglycerine.spawn_dust(np) then
-							minetest.add_item(np, minetest.get_node(np).name):get_luaentity().age=890
+							local nn=minetest.get_node(np).name
+							if nn then
+								minetest.add_item(np, nn):get_luaentity().age=890
+							end
 						end
 						minetest.remove_node(np)
 					end
