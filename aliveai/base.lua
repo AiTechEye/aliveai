@@ -1,3 +1,50 @@
+minetest.after(0, function(player)
+	aliveai.respawn_player_point=aliveai.strpos(minetest.setting_get("static_spawnpoint"),1)
+
+	if not aliveai.respawn_player_point then
+		minetest.register_on_leaveplayer(function(player)
+			if not aliveai.replayerpos then return end
+			aliveai.replayerpos[player:get_player_name()]=nil
+		end)
+		minetest.register_on_respawnplayer(function(player)
+			if not aliveai.replayerpos then aliveai.replayerpos={} end
+			minetest.after(0, function(player)
+			aliveai.replayerpos[player:get_player_name()]=player:get_pos()
+			end, player)
+		end)
+		minetest.register_on_joinplayer(function(player)
+			if not aliveai.replayerpos then aliveai.replayerpos={} end
+			aliveai.replayerpos[player:get_player_name()]=player:get_pos()
+		end)
+	end
+
+end, player)
+
+aliveai.respawn_player=function(ob)
+	if ob:is_player() then
+		local n=ob:get_player_name()
+		if beds and beds.spawn and beds.spawn[n] then
+			ob:set_pos(beds.spawn[n])
+			ob:set_hp(20)
+		elseif aliveai.respawn_player_point then
+			ob:set_pos(aliveai.respawn_player_point)
+			ob:set_hp(20)
+		elseif aliveai.replayerpos and aliveai.replayerpos[n] then
+			ob:set_pos(aliveai.replayerpos[n])
+			ob:set_hp(20)
+		else
+			ob:set_pos({x=0,y=-100,z=0})
+			ob:set_hp(0)
+		end
+	elseif ob:get_luaentity() then
+		ob:remove()
+	end
+end
+
+
+
+
+
 aliveai.protected=function(pos,name)
 	if not (pos and pos.x) then return true end
 	name=name or ""
@@ -1265,7 +1312,7 @@ aliveai.falling=function(self)
 			for i=1,4,1 do
 				for i2=1,self.avoidy*-1,-1 do
 					local nnode=minetest.registered_nodes[minetest.get_node({x=pos.x+f[i].x,y=pos.y+i2,z=pos.z+f[i].z}).name]
-
+					if not nnode then return end
 					if nnode.damage_per_second>0 then
 						break
 					end
