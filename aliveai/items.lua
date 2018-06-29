@@ -415,7 +415,9 @@ aliveai.digdrop=function(pos)
 		return nil
 	end
 -- have drop
-	if node.drop then
+	if not node then
+		return nil
+	elseif node.drop then
 		local n=1
 		local name=node.name
 -- string drop
