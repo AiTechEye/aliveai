@@ -1,3 +1,133 @@
+minetest.register_craftitem("aliveai_aliens:shrinker_battery", {
+	description = "Shrinker battery",
+	groups={aliveai_alien_weapon_battery=1},
+	inventory_image = "aliveai_aliens_battery1.png",
+})
+minetest.register_craftitem("aliveai_aliens:alien_battery", {
+	description = "Alien battery",
+	groups={aliveai_alien_weapon_battery=1},
+	inventory_image = "aliveai_aliens_battery2.png",
+})
+minetest.register_craftitem("aliveai_aliens:nrifle_pack", {
+	description = "Nitrorifle pack",
+	groups={aliveai_alien_weapon_battery=1},
+	inventory_image = "aliveai_aliens_battery3.png",
+})
+minetest.register_craftitem("aliveai_aliens:homing_rifle_pack", {
+	description = "Homing rifle pack",
+	groups={aliveai_alien_weapon_battery=1},
+	inventory_image = "aliveai_aliens_battery4.png",
+})
+minetest.register_craftitem("aliveai_aliens:vexcazer_battery", {
+	description = "vexcazer battery",
+	groups={aliveai_alien_weapon_battery=1},
+	inventory_image = "aliveai_aliens_battery5.png",
+})
+
+minetest.register_craft_predict(function(itemstack, player, old_craft_grid, craft_inv)
+	if minetest.get_item_group(itemstack:get_name(),"aliveai_alien_weapon_battery")==1 then
+		for i, it in pairs(old_craft_grid) do
+			if it:get_wear()>0 then
+				return ""
+			end
+		end
+	end
+	return itemstack
+end)
+
+minetest.register_craft({
+	output = "aliveai_aliens:shrinker_battery",
+	recipe = {{"aliveai_aliens:alien_shrinker"}}
+})
+minetest.register_craft({
+	output = "aliveai_aliens:alien_battery 10",
+	recipe = {{"aliveai_aliens:alien_enginelazer"}}
+})
+minetest.register_craft({
+	output = "aliveai_aliens:alien_battery",
+	recipe = {{"aliveai_aliens:alien_rifle"}}
+})
+minetest.register_craft({
+	output = "aliveai_aliens:nrifle_pack",
+	recipe = {{"aliveai_aliens:alien_nrifle"}}
+})
+
+minetest.register_craft({
+	output = "aliveai_aliens:homing_rifle_pack",
+	recipe = {{"aliveai_aliens:alien_homing_rifle"}}
+})
+minetest.register_craft({
+	output = "aliveai_aliens:vexcazer_battery",
+	recipe = {{"aliveai_aliens:vexcazer"}}
+})
+
+aliveai_aliens.weapon_use_reload=function(itemstack,amo,user,count,count_to_take)
+
+	local w=65535/count
+	if itemstack:get_wear()+w>=65535 and user:is_player() then
+		local inv=user:get_inventory()
+		for i=1,32,1 do
+			local it=inv:get_stack("main", i)
+			if it:get_name()==amo and it:get_count()>=count_to_take then
+				itemstack:set_wear(0)
+				it:take_item(count_to_take)
+				inv:remove_item("main", amo .." " .. count_to_take)
+				return itemstack
+			end
+		end
+		itemstack:add_wear(w)
+		return itemstack
+	else
+		itemstack:add_wear(w)
+		return itemstack
+	end	
+end
+
+aliveai_aliens.newbullet=function(pos,dir,d,speed,user,texture,func)
+	if not func or type(func)=="number" then
+		local dmg=func or 2
+		func=function(user,ob)
+			ob:punch(user,1,{full_punch_interval=1,damage_groups={fleshy=dmg}})
+		end
+	elseif type(func)~="function" then
+		return
+	end
+	texture=texture or ""
+	aliveai_aliens.func=func
+	aliveai_aliens.user=user
+	local e=minetest.add_entity({x=aliveai.nan(pos.x+(dir.x)*speed),y=aliveai.nan(pos.y+(dir.y)*speed),z=aliveai.nan(pos.z+(dir.z)*speed)}, "aliveai_aliens:bullet")
+	e:setvelocity(d)
+	if texture~="" then
+		e:set_properties({nametag="",textures={texture}})
+
+	end
+	aliveai_aliens.func=nil
+	aliveai_aliens.user=nil
+end
+
+minetest.register_tool("aliveai_aliens:alien_shrinker", {
+	description = "Alien shrinker",
+	range = 1,
+	inventory_image = "aliveai_alien_shrinker.png",
+	groups = {not_in_creative_inventory=1,aliveai_alien_weapon=1},
+	on_use = function(itemstack, user, pointed_thing)
+		local dir=user:get_look_dir()
+		local pos=user:get_pos()
+		pos.y=pos.y+1.5
+		local d={x=dir.x*15,y=dir.y*15,z=dir.z*15}
+		minetest.sound_play("aliveai_aliens_lazer", {pos=pos, gain=1.0, max_hear_distance=10})
+		aliveai_aliens.newbullet(pos,dir,d,1,user,"aliveai_alien_shrinkerbullet.png",function(user,ob)
+			if ob:get_attach() then return end
+			local pos=ob:get_pos()
+			aliveai_aliens.shrinking=ob
+			local e=minetest.add_entity({x=pos.x,y=pos.y,z=pos.z}, "aliveai_aliens:shrinkbox")
+			aliveai_aliens.shrinking=nil
+		end)
+		itemstack=aliveai_aliens.weapon_use_reload(itemstack,"aliveai_aliens:shrinker_battery",user,10,1)
+		return itemstack
+	end,
+})
+
 minetest.register_craftitem("aliveai_aliens:alien_food", {
 	description = "Alien food",
 	inventory_image = "default_iron_lump.png^[colorize:#00883344",
@@ -11,12 +141,12 @@ minetest.register_tool("aliveai_aliens:alien_enginelazer", {
 	range = 1,
 	inventory_image = "aliveai_alien_enginelazer.png",
 	wield_scale={x=2,y=1,z=2},
-	groups = {not_in_creative_inventory=1},
+	groups = {not_in_creative_inventory=1,aliveai_alien_weapon=1},
 	on_use = function(itemstack, user, pointed_thing)
 		local name=user:get_player_name()
 		if aliveai_aliens.ael[name] then return itemstack end
 		aliveai_aliens.ael[name]=1
-		for i=0,50,1 do
+		for i=0,60,1 do
 		minetest.after(i*0.05, function(user,i,name)
 
 			local dir=user:get_look_dir()
@@ -28,19 +158,14 @@ minetest.register_tool("aliveai_aliens:alien_enginelazer", {
 			pos.z=pos.z+(math.random(-2,2)*0.1)
 
 			local d={x=dir.x*math.random(13,17),y=dir.y*math.random(13,17),z=dir.z*math.random(13,17)}
-			aliveai_aliens.user=user
-			aliveai_aliens.type=1
 			minetest.sound_play("aliveai_aliens_lazer", {pos=pos, gain=1.0, max_hear_distance=10})
-			minetest.add_entity({x=aliveai.nan(pos.x+(dir.x)*1),y=aliveai.nan(pos.y+(dir.y)*1),z=aliveai.nan(pos.z+(dir.z)*1)}, "aliveai_aliens:bullet"):setvelocity(d)
-			aliveai_aliens.user=nil
-			aliveai_aliens.type=nil
-
-			if i>=50 then
+			aliveai_aliens.newbullet(pos,dir,d,1,user)
+			if i>=60 then
 				aliveai_aliens.ael[name]=nil
 			end
 		end,user,i,name)
 		end
-		itemstack:add_wear(65535/10)
+		itemstack=aliveai_aliens.weapon_use_reload(itemstack,"aliveai_aliens:alien_battery",user,10,10)
 		return itemstack
 	end,
 })
@@ -88,19 +213,22 @@ minetest.register_tool("aliveai_aliens:alien_nrifle", {
 	description = "Alien nitrorifle",
 	range = 1,
 	inventory_image = "aliveai_alien_nrifle.png",
-	groups = {not_in_creative_inventory=1},
+	groups = {not_in_creative_inventory=1,aliveai_alien_weapon=1},
 	on_use = function(itemstack, user, pointed_thing)
 		local dir=user:get_look_dir()
 		local pos=user:get_pos()
 		pos.y=pos.y+1.5
 		local d={x=dir.x*15,y=dir.y*15,z=dir.z*15}
-		aliveai_aliens.user=user
-		aliveai_aliens.type=2
 		minetest.sound_play("aliveai_aliens_lazer", {pos=pos, gain=1.0, max_hear_distance=10})
-		minetest.add_entity({x=aliveai.nan(pos.x+(dir.x)*1),y=aliveai.nan(pos.y+(dir.y)*1),z=aliveai.nan(pos.z+(dir.z)*1)}, "aliveai_aliens:bullet"):setvelocity(d)
-		aliveai_aliens.user=nil
-		aliveai_aliens.type=nil
-		itemstack:add_wear(65535/50)
+		aliveai_aliens.newbullet(pos,dir,d,1,user,"bubble.png^[colorize:#51ffe2ff",function(user,ob)
+			if aliveai_nitroglycerine and aliveai.gethp(ob)<=5 then
+				if ob:get_luaentity() then ob:get_luaentity().destroy=1 end
+				aliveai_nitroglycerine.freeze(ob)
+			else
+				aliveai.punchdmg(ob,5)
+			end
+		end)
+		itemstack=aliveai_aliens.weapon_use_reload(itemstack,"aliveai_aliens:nrifle_pack",user,10,1)
 		return itemstack
 	end,
 })
@@ -109,21 +237,17 @@ minetest.register_tool("aliveai_aliens:alien_rifle", {
 	description = "Alien rifle",
 	range = 1,
 	inventory_image = "aliveai_alien_rifle1.png",
-	groups = {not_in_creative_inventory=1},
+	groups = {not_in_creative_inventory=1,aliveai_alien_weapon=1},
 	on_use = function(itemstack, user, pointed_thing)
 		local dir=user:get_look_dir()
 		local pos=user:get_pos()
 		pos.y=pos.y+1.5
 		local d={x=dir.x*15,y=dir.y*15,z=dir.z*15}
-		aliveai_aliens.user=user
-		aliveai_aliens.type=1
 		minetest.sound_play("aliveai_aliens_lazer", {pos=pos, gain=1.0, max_hear_distance=10})
-		minetest.add_entity({x=aliveai.nan(pos.x+(dir.x)*3),y=aliveai.nan(pos.y+(dir.y)*3),z=aliveai.nan(pos.z+(dir.z)*3)}, "aliveai_aliens:bullet"):setvelocity(d)
-		minetest.add_entity({x=aliveai.nan(pos.x+(dir.x)*2),y=aliveai.nan(pos.y+(dir.y)*2),z=aliveai.nan(pos.z+(dir.z)*2)}, "aliveai_aliens:bullet"):setvelocity(d)
-		minetest.add_entity({x=aliveai.nan(pos.x+(dir.x)*1),y=aliveai.nan(pos.y+(dir.y)*1),z=aliveai.nan(pos.z+(dir.z)*1)}, "aliveai_aliens:bullet"):setvelocity(d)
-		aliveai_aliens.user=nil
-		aliveai_aliens.type=nil
-		itemstack:add_wear(65535/100)
+		aliveai_aliens.newbullet(pos,dir,d,3,user)
+		aliveai_aliens.newbullet(pos,dir,d,2,user)
+		aliveai_aliens.newbullet(pos,dir,d,1,user)
+		itemstack=aliveai_aliens.weapon_use_reload(itemstack,"aliveai_aliens:alien_battery",user,20,1)
 		return itemstack
 	end,
 })
@@ -132,7 +256,7 @@ minetest.register_tool("aliveai_aliens:alien_homing_rifle", {
 	description = "Alien homing rifle",
 	range = 1,
 	inventory_image = "aliveai_alien_rifle2.png",
-	groups = {not_in_creative_inventory=1},
+	groups = {not_in_creative_inventory=1,aliveai_alien_weapon=1},
 	on_use = function(itemstack, user, pointed_thing)
 		local dir=user:get_look_dir()
 		local pos=user:get_pos()
@@ -151,7 +275,7 @@ minetest.register_tool("aliveai_aliens:alien_homing_rifle", {
 					aliveai_aliens.target=ob
 					aliveai_aliens.user=user
 					minetest.add_entity({x=aliveai.nan(pos.x+(dir.x)*3),y=aliveai.nan(pos.y+(dir.y)*3),z=aliveai.nan(pos.z+(dir.z)*3)}, "aliveai_aliens:bullet2")
-					itemstack:add_wear(65535/50)
+					itemstack=aliveai_aliens.weapon_use_reload(itemstack,"aliveai_aliens:homing_rifle_pack",user,20,1)
 				end
 			end
 		end
@@ -163,7 +287,7 @@ minetest.register_tool("aliveai_aliens:vexcazer", {
 	description = "Vexcazer",
 	range = 1,
 	inventory_image = "aliveai_alien_vexcazer.png",
-	groups = {not_in_creative_inventory=1},
+	groups = {not_in_creative_inventory=1,aliveai_alien_weapon=1},
 	on_use = function(itemstack, user, pointed_thing)
 		local dir=user:get_look_dir()
 		local pos=user:get_pos()
@@ -194,7 +318,7 @@ minetest.register_tool("aliveai_aliens:vexcazer", {
 				ob:punch(user,1,{full_punch_interval=1,damage_groups={fleshy=5}})
 			end
 		end
-		itemstack:add_wear(65535/50)
+		itemstack=aliveai_aliens.weapon_use_reload(itemstack,"aliveai_aliens:vexcazer_battery",user,20,1)
 		return itemstack
 	end,
 })
@@ -214,14 +338,10 @@ minetest.register_entity("aliveai_aliens:bullet",{
 			aliveai.kill(self)
 			return
 		end
-		self.typ=aliveai_aliens.type
 		self.user=aliveai_aliens.user
+		self.func=aliveai_aliens.func
 		if self.user:get_luaentity() then
 			self.user=self.user:get_luaentity()
-		end
-		if self.typ==2 then
-			self.dmg=5
-			self.object:set_properties({nametag="",textures={"bubble.png^[colorize:#51ffe2ff"}})
 		end
 	end,
 	on_step = function(self, dtime)
@@ -231,12 +351,7 @@ minetest.register_entity("aliveai_aliens:bullet",{
 		for i, ob in pairs(minetest.get_objects_inside_radius(p, 1.5)) do
 			if not (ob:get_luaentity() and ob:get_luaentity().type==nil) then
 				if not self.user then self.user=self.object end
-				if self.typ==2 and aliveai_nitroglycerine and aliveai.gethp(ob)<=5 then
-					if ob:get_luaentity() then ob:get_luaentity().destroy=1 end
-					aliveai_nitroglycerine.freeze(ob)
-				else
-					ob:punch(self.user,1,{full_punch_interval=1,damage_groups={fleshy=self.dmg}})
-				end
+				self.func(self.user,ob)
 				aliveai.kill(self)
 				return self
 			end
@@ -310,6 +425,70 @@ minetest.register_entity("aliveai_aliens:bullet2",{
 	end,
 })
 
+minetest.register_entity("aliveai_aliens:shrinkbox",{
+	hp_max = 1000,
+	physical = true,
+	visual = "cube",
+	visual_size = {x=1, y=1},
+	textures = {"aliveai_air.png","aliveai_air.png","aliveai_air.png","aliveai_air.png","aliveai_air.png","aliveai_air.png"},
+	timer = 0,
+	size=1,
+	c={},
+	pointable=false,
+	on_activate=function(self, staticdata)
+		if not aliveai_aliens.shrinking then
+			aliveai.kill(self)
+			return
+		end
+		self.shrinking=aliveai_aliens.shrinking
+
+		self.c=self.shrinking:get_properties().collisionbox
+		for i=1,6,1 do
+			self.c[i]=self.c[i] or 0.5
+		end
+
+		local acc=self.shrinking:getacceleration() or {x=0,y=0,z=0}
+		local v=self.shrinking:getvelocity() or {x=0,y=0,z=0}
+		local y=self.shrinking:getyaw() or 0
+
+
+		self.object:set_properties({collisionbox=self.c})
+		self.shrinking:set_attach(self.object, "", {x=0,y=0,z=0}, {x=0,y=2,z=0})
+		self.object:setyaw(y)
+
+
+		self.object:setvelocity(v)
+		self.object:setacceleration(acc)
+	end,
+	on_step = function(self, dtime)
+		self.timer=self.timer+dtime
+		if self.timer<0.1 then return self end
+		self.size=self.size-0.02
+		self.object:set_properties({
+			visual_size = {x=self.size, y=self.size},
+			collisionbox = {self.c[1]*self.size,self.c[2]*self.size,self.c[3]*self.size,self.c[4]*self.size,self.c[5]*self.size,self.c[6]*self.size}
+		})
+		if self.size<=0 then
+			if not self.shrinking then
+				aliveai.kill(self)
+				return
+			end
+			if self.shrinking:get_attach() then
+				self.shrinking:set_detach()
+			end
+			if self.shrinking:get_luaentity() then
+				self.shrinking:remove()
+			elseif self.shrinking:is_player() then
+				aliveai.punchdmg(self.shrinking,20)
+				if aliveai.gethp(self.shrinking)<=0 then
+					aliveai.respawn_player(self.shrinking)
+				end
+			end
+			aliveai.kill(self)
+		end
+		return self
+	end,
+})
 
 minetest.register_node("aliveai_aliens:lazer_node", {
 	description = "Lazer",
@@ -381,7 +560,7 @@ minetest.register_abm({
 		minetest.set_node(pos, {name = "air"})
 
 		if n=="aliveai_aliens:alien_spawner" then
-			for i=1,7,1 do
+			for i=1,9,1 do
 				minetest.add_entity(pos, "aliveai_aliens:alien" .. i)
 			end
 			return
