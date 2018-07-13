@@ -150,6 +150,26 @@ aliveai.create_bot=function(def)
 		end
 	end
 
+	if def.animation and (def.visual==nil or def.visual=="mesh") then
+		for i, v in pairs(def.animation) do
+			if i=="attack" or i=="fight" then i="mine" end
+			def.animation[i].x=def.animation[i].x or 0
+			def.animation[i].y=def.animation[i].y or 0
+			def.animation[i].speed=def.animation[i].speed or 0
+			def.animation[i].loop=def.animation[i].loop or 0
+		end
+	elseif not def.animation and def.visual==nil then
+	def.animation={}
+	def.animation["stand"]={x=0, y=79,speed=30,loop=0}
+	def.animation["lay"]={x=162,y=166,speed=30,loop=0}
+	def.animation["walk"]={x=168, y=187, speed=30,loop=0}
+	def.animation["mine"]={x=189, y=198, speed=30,loop=0}
+	def.animation["walk_mine"]={x=200, y=219, speed=30,loop=0}
+	def.animation["sit"]={x=81, y=160, speed=30,loop=0}
+
+
+	end
+
 	aliveai.registered_bots[def.name]={
 		name=def.name,
 		mod_name=def.mod_name,
@@ -183,7 +203,7 @@ minetest.register_entity(def.mod_name ..":" .. def.name,{
 	collisionbox = def.collisionbox or {-0.35,-1.0,-0.35,0.35,0.8,0.35}, -- new box {-0.35,0,-0.35,0.35,1.8,0.35}
 	visual = def.visual or "mesh",
 	visual_size = def.visual_size or {x=1,y=1},
-	mesh = aliveai.character_model,
+	mesh = def.mesh or aliveai.character_model,
 	textures = def.texture,
 	colors = {},
 	spritediv = {x=1, y=1},
@@ -497,6 +517,8 @@ on_step=aliveai.bot,
 	lightdamage=def.hurts_by_light or 1,
 	annoyed_by_staring= def.annoyed_by_staring or 1,
 	drowning= def.drowning or 1,
+--animation
+	animation=def.animation or {},
 --functions
 	on_spoken_to= def.on_spoken_to or aliveai.on_spoken_to,
 	on_fighting= def.on_fighting or aliveai.do_nothing,
