@@ -41,10 +41,6 @@ aliveai.respawn_player=function(ob)
 	end
 end
 
-
-
-
-
 aliveai.protected=function(pos,name)
 	if not (pos and pos.x) then return true end
 	name=name or ""
@@ -57,6 +53,7 @@ aliveai.protected=function(pos,name)
 	local m=minetest.get_meta(pos):get_string("aliveai_protected")
 	return m~=""  and m~=name
 end
+
 aliveai.protect=function(pos,a)
 	a.name=a.name or "?"
 	a.range=a.range or 15
@@ -67,6 +64,7 @@ aliveai.protect=function(pos,a)
 
 
 end
+
 aliveai.unprotect=function(pos,a)
 	a.name=a.name or ""
 	a.range=a.range or 15
@@ -75,7 +73,6 @@ aliveai.unprotect=function(pos,a)
 		m:set_string("aliveai_protected","")
 	end
 end
-
 
 aliveai.nan=function(n)
 	if not tonumber(n) or n==math.huge or n==-math.huge or n~=n then
@@ -105,7 +102,6 @@ aliveai.param2_to_xzyaw=function(a)
 		return {x=0,y=0,z=-1}, 3.14
 	end
 end
-
 
 aliveai.xz_to_param2yaw=function(x,z)
 	if x and x==-1 then
@@ -1679,16 +1675,10 @@ end
 
 aliveai.anim=function(self,type)
 	if self.visual~="mesh" then return end
-	local curr=self.anim
-	if curr==type or curr==nil then return self end
-	if	type=="stand" then self.object:set_animation({ x=  0, y= 79, },30,0)
-	elseif	type=="lay" then  self.object:set_animation({ x=162, y=166, },30,0)
-	elseif	type=="walk" then  self.object:set_animation({ x=168, y=187, },30,0)
-	elseif	type=="mine"  then  self.object:set_animation({ x=189, y=198, },30,0)
-	elseif	type=="walk_mine" then  self.object:set_animation({ x=200, y=219, },30,0)
-	elseif	type=="sit" then  self.object:set_animation({x= 81, y=160, },30,0)
-	else return self
-	end
+	if type==self.anim or self.anim==nil then return self end
+	local a=self.animation[type]
+	if not a then return self end
+	self.object:set_animation({ x=a.x, y=a.y, },a.speed,a.loop)
 	self.anim=type
 	return self
 end
