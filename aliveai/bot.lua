@@ -176,6 +176,7 @@ aliveai.create_bot=function(def)
 		bot=def.mod_name ..":" .. def.name,
 		type=def.type or "npc",
 		item=def.mod_name ..":" .. def.name .. "_spawner",
+		textures=def.texture,
 		dead="",
 		spawn_y=def.spawn_y,
 		team=def.team or aliveai.default_team
