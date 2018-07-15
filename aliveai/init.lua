@@ -1,8 +1,8 @@
 aliveai={
-	version=20.3,
+	version=21,
 	use_playerapi=true,		--new player api and collision style
 	spawning=true,			--spawning by self
-	character_model="character.b3d",	--character model
+	character_model="aliveai_character.b3d",	--character model
 	set_bones=true,			
 	bones=minetest.get_modpath("bones"),
 	creative=minetest.setting_get("creative_mode"),
