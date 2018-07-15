@@ -1,7 +1,7 @@
 minetest.after(0, function()
 	aliveai.respawn_player_point=aliveai.strpos(minetest.setting_get("static_spawnpoint"),1)
-
-	if not aliveai.respawn_player_point then
+	if not aliveai.respawn_player_point or aliveai.respawn_player_point=="" then
+		aliveai.respawn_player_point=nil
 		minetest.register_on_leaveplayer(function(player)
 			if not aliveai.replayerpos then return end
 			aliveai.replayerpos[player:get_player_name()]=nil
