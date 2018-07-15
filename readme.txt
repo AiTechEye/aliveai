@@ -1,4 +1,4 @@
-﻿By AiTechEye
+By AiTechEye
 Version: 21
 License: CC0
 
@@ -95,6 +95,8 @@ botname		""	(the bots name)
 name_color	ffffff	("" to hide name)
 hp		20
 drop_dead_body	1
+hugwalk		0	hug/dead walking
+mindamage	0	mine damage (damage must be higher then the nunber to hurt)
 creative		0	creative
 superbuild	0	can build on distance
 crafting		1	(craft things, also on its own way)
