@@ -2858,7 +2858,7 @@ aliveai.create_bot({
 			aliveai.lookat(self,ta)
 			local e=minetest.add_item(aliveai.pointat(self,2),"default:snow")
 			local dir=aliveai.get_dir(self,ta)
-			e:setvelocity({x = dir.x*30, y = dir.y*30, z = dir.z*30})
+			e:setvelocity({x =aliveai.nan(dir.x*30), y = aliveai.nan(dir.y*30), z = aliveai.nan(dir.z*30)})
 			e:get_luaentity().age=(tonumber(minetest.setting_get("item_entity_ttl")) or 900)-2
 			table.insert(aliveai_threats.debris,{ob=e,n=self.botname})
 			return self
@@ -2916,6 +2916,145 @@ aliveai.create_bot({
 			minsize = 0.2,
 			maxsize = 2,
 			texture = "default_snow.png",
+			collisiondetection = true,
+		})
+	end
+})
+
+minetest.register_tool("aliveai_threats:stoneman_spawn", {
+	description = "Stoneman",
+	inventory_image = "aliveai_threats_stoneman.png",
+	on_use=function(itemstack, user, pointed_thing)
+		if user:get_luaentity() then user=user:get_luaentity() end
+		local type=pointed_thing.type
+		local pos
+		if type=="node" then
+			pos=pointed_thing.above
+			pos.y=pos.y+1
+		elseif type=="object" then
+			pos=pointed_thing.ref:get_pos()
+		else
+			pos=user:get_pos()
+			pos.y=pos.y+1
+		end
+		local e=minetest.add_entity(pos, "aliveai_threats:stoneman")
+		e:get_luaentity().team=aliveai.team(user)
+		local self=user:get_luaentity()
+		if self then
+			minetest.after(0.1, function(self)
+				if self and self.object then
+					aliveai.invadd(self,"aliveai_threats:stoneman_spawn",-1)
+					self.tools=""
+					self.savetool=1
+					self.tool_near=0
+				end
+			end,self)
+		end
+	end,
+	on_place=function(itemstack, user, pointed_thing)
+		if user:get_luaentity() then user=user:get_luaentity() end
+		local type=pointed_thing.type
+		local pos
+		if type=="node" then
+			pos=pointed_thing.above
+			pos.y=pos.y+1
+		elseif type=="object" then
+			pos=pointed_thing.ref:get_pos()
+		else
+			pos=user:get_pos()
+			pos.y=pos.y+1
+		end
+		local e=minetest.add_entity(pos, "aliveai_threats:stoneman")
+		e:get_luaentity().team=aliveai.team(user)
+	end
+})
+
+minetest.register_craft({
+	output = "aliveai_threats:stoneman_spawn",
+	recipe = {
+		{"default:stone","default:stone","default:stone"},
+		{"","default:cobble",""},
+		{"default:stone","","default:stone"},
+	}
+})
+
+aliveai.create_bot({
+		attack_players=1,
+		name="stoneman",
+		team="stone",
+		texture="default_stone.png",
+		talking=0,
+		light=0,
+		building=0,
+		type="monster",
+		hp=30,
+		arm=2,
+		hugwalk=1,
+		name_color="",
+	--	collisionbox={-0.5,-0.45,-0.5,0.5,2.0,0.5},
+	--	visual="cube",
+	--	drop_dead_body=0,
+		escape=0,
+		start_with_items={["default:stone"]=1},
+		spawn_on={"default:stone"},
+		annoyed_by_staring=0,
+		attack_chance=1,
+	--	basey=-1,
+		smartfight=0,
+	--	spawn_chance=100,
+	spawn=function(self)
+		self.animation.stand.speed=0
+		aliveai.stand(self)
+		minetest.after(0, function(self)
+			self.storge1=self.team
+			self.name_color="aaaaaa"
+			self.object:set_properties({nametag=self.botname,nametag_color="#" .. self.name_color})
+		end,self)
+	end,	
+	on_load=function(self)
+		self.animation.stand.speed=0
+		aliveai.stand(self)
+		self.team=self.storge1 or "stone"
+		if self.team~="stone" then
+			self.name_color="aaaaaa"
+			self.object:set_properties({nametag=self.botname,nametag_color="#" .. self.name_color})
+
+		end
+	end,
+	death=function(self,puncher,pos)
+		minetest.add_particlespawner({
+			amount = 30,
+			time =0.05,
+			minpos = pos,
+			maxpos = pos,
+			minvel = {x=-5, y=0, z=-5},
+			maxvel = {x=5, y=5, z=5},
+			minacc = {x=0, y=-8, z=0},
+			maxacc = {x=0, y=-10, z=0},
+			minexptime = 2,
+			maxexptime = 1,
+			minsize = 2,
+			maxsize = 4,
+			texture = "default_stone.png",
+			collisiondetection = true,
+		})
+		minetest.sound_play("default_stone_footstep", {pos=pos, gain = 1.0, max_hear_distance = 5,})
+	end,
+	on_punched=function(self,puncher)
+		minetest.add_particlespawner({
+			amount = 5,
+			time =0.05,
+			minpos = pos,
+			maxpos = pos,
+			minvel = {x=-5, y=0, z=-5},
+			maxvel = {x=5, y=5, z=5},
+			minacc = {x=0, y=-8, z=0},
+			maxacc = {x=0, y=-10, z=0},
+			minexptime = 2,
+			maxexptime = 1,
+			minsize = 0.2,
+			maxsize = 2,
+			texture = "default_stone.png",
 			collisiondetection = true,
 		})
 	end
