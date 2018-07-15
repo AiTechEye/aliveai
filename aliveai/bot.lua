@@ -222,7 +222,21 @@ on_punch=function(self, puncher, time_from_last_punch, tool_capabilities, dir)
 			aliveai.max(self,true)
 			return self
 		end
-		if dir~=nil then
+		local mindmg=tool_capabilities.damage_groups.fleshy>=self.mindamage
+		local dmg=0
+		
+		if tool_capabilities and tool_capabilities.damage_groups and tool_capabilities.damage_groups.fleshy then
+			if not self.hp then self.hp=0 end
+			if mindmg==true then
+				self.hp=self.hp-tool_capabilities.damage_groups.fleshy
+				self.object:set_hp(self.hp)
+				dmg=tool_capabilities.damage_groups.fleshy
+				self.mood=self.mood-2
+			end
+		end
+
+
+		if dir~=nil and mindmg==true then
 			local v={x = dir.x*3,y = self.object:getvelocity().y,z = dir.z*3}
 			self.object:setvelocity(v)
 			local r=math.random(1,99)
@@ -234,17 +248,11 @@ on_punch=function(self, puncher, time_from_last_punch, tool_capabilities, dir)
 					end
 			end, self,v,r)
 		end
-		local dmg=0
 
-		if tool_capabilities and tool_capabilities.damage_groups and tool_capabilities.damage_groups.fleshy then
-			if not self.hp then self.hp=0 end
-			self.hp=self.hp-tool_capabilities.damage_groups.fleshy
-			self.object:set_hp(self.hp)
-			dmg=tool_capabilities.damage_groups.fleshy
-			self.mood=self.mood-2
+		if mindmg==true then
+			aliveai.showhp(self)
 		end
 -- death
-		aliveai.showhp(self)
 
 		if self.dying then
 			if self.hp<=0 then
@@ -269,7 +277,6 @@ on_punch=function(self, puncher, time_from_last_punch, tool_capabilities, dir)
 
 		self.punched(self,puncher,dmg)
 
-		aliveai.showhp(self)
 		if aliveai.armor and self.armor then aliveai.armor(self,{dmg=true}) end
 
 		if self.path then
@@ -518,6 +525,7 @@ on_step=aliveai.bot,
 	lightdamage=def.hurts_by_light or 1,
 	annoyed_by_staring= def.annoyed_by_staring or 1,
 	drowning= def.drowning or 1,
+	mindamage=def.mindamage or 0,
 --animation
 	animation=def.animation or {
 		stand={x=1,y=39,speed=30},
