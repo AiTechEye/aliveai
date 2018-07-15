@@ -1,5 +1,5 @@
 ﻿By AiTechEye
-Version: 20.3
+Version: 21
 License: CC0
 
 Alive AI
