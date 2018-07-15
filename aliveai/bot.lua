@@ -158,7 +158,7 @@ aliveai.create_bot=function(def)
 			def.animation[i].speed=def.animation[i].speed or 0
 			def.animation[i].loop=def.animation[i].loop or 0
 		end
-	elseif not def.animation and def.visual==nil then
+	elseif 1==2 and not (def.animation and def.visual) then
 	def.animation={}
 	def.animation["stand"]={x=0, y=79,speed=30,loop=0}
 	def.animation["lay"]={x=162,y=166,speed=30,loop=0}
@@ -513,12 +513,20 @@ on_step=aliveai.bot,
 	steal_chance= def.steal_chance or 0,
 	start_with_items= def.start_with_items or "",
 	light= def.light or 1,
+	hugwalk= def.hugwalk or 0,
 	lowestlight= def.lowest_light or 10,
 	lightdamage=def.hurts_by_light or 1,
 	annoyed_by_staring= def.annoyed_by_staring or 1,
 	drowning= def.drowning or 1,
 --animation
-	animation=def.animation or {},
+	animation=def.animation or {
+		stand={x=1,y=39,speed=30},
+		walk={x=41,y=61,speed=30},
+		mine={x=65,y=75,speed=30},
+		hugwalk={x=80,y=99,speed=30},
+		lay={x=113,y=123,speed=0},
+		sit={x=101,y=111,speed=0},
+	},
 --functions
 	on_spoken_to= def.on_spoken_to or aliveai.on_spoken_to,
 	on_fighting= def.on_fighting or aliveai.do_nothing,
