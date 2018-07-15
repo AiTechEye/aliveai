@@ -1,10 +1,7 @@
 --print(debug.getinfo(2).name)				-- get name from calling function
 
 local get_model={
-	{"player_api","character.b3d"},
-	{"player_api","character.x"},
-	{"default","character.b3d"},
-	{"default","character.x"},
+	{"aliveai",aliveai.character_model},
 	{"3d_armor","3d_armor_character.b3d",function() aliveai.use3d_armor_model=true end},	
 }
 for i, v in ipairs(get_model) do
