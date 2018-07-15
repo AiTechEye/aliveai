@@ -1,4 +1,7 @@
 
+#Mod for minetest
+#code/media License: CC0
+
 # Advanced survuver AI mobs
 
 # NPC
