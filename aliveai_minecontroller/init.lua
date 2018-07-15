@@ -86,12 +86,12 @@ minetest.register_tool("aliveai_minecontroller:controller", {
 				e.texture[2]=armor.textures[username].armor
 				e.texture[3]=armor.textures[username].weilditem
 			end
-			local m=minetest.add_entity({x=pos.x,y=pos.y,z=pos.z}, "aliveai_minecontroller:standing_player")
+			local m=minetest.add_entity({x=pos.x,y=pos.y+1,z=pos.z}, "aliveai_minecontroller:standing_player")
 			m:setyaw(user:get_look_yaw()-math.pi/2)
 			user:set_nametag_attributes({color={a=0,r=255,g=255,b=255}})
 			user:set_attach(e.ob, "",{x = 0, y = 0, z = 0}, {x = 0, y = 0, z = 0})
 			user:set_look_horizontal(e.ob:getyaw())
-			user:set_eye_offset({x = 0, y = 0, z = 5}, {x = 0, y = 0, z = 0})
+			user:set_eye_offset({x = 0, y = -10, z = 5}, {x = 0, y = 0, z = 0})
 			user:set_properties({visual_size = {x=0, y=0},visual="mesh"})
 		elseif pointed_thing.type=="object" then
 			local e=aliveai_minecontroller.users[username]
@@ -383,6 +383,10 @@ aliveai_minecontroller.exit=function(e)
 	e.user:set_detach()
 	if e.ob and e.ob:get_luaentity() then
 		e.ob:get_luaentity().controlled=nil
+		if aliveai.is_bot(e.ob) then
+			aliveai.showhp(e.ob:get_luaentity())
+		end
+
 	end
 	local user=e.user
 	local poss={x=e.pos.x,y=e.pos.y+1,z=e.pos.z}
@@ -399,7 +403,7 @@ minetest.register_entity("aliveai_minecontroller:standing_player",{
 	hp_max = 20,
 	physical = true,
 	weight = 5,
-	collisionbox = {-0.35,0,-0.35,0.35,1.8,0.35},
+	collisionbox = {-0.35,-1,-0.35,0.35,0.8,0.35},
 	visual =  "mesh",
 	visual_size = {x=1,y=1},
 	mesh = aliveai.character_model ,
@@ -440,7 +444,7 @@ minetest.register_entity("aliveai_minecontroller:standing_player",{
 			self.object:setvelocity({x=0,y=-3,z =0})
 		end
 
-		self.object:set_animation({ x=  0, y= 79, },30,0)
+		self.object:set_animation({ x=1, y=39, },30,0)
 		self.object:set_properties({
 			mesh=aliveai.character_model,
 			textures=e.texture,
