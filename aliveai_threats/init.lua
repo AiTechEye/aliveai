@@ -636,9 +636,6 @@ aliveai.create_bot({
 end
 
 
-
-
-
 end
 
 aliveai.create_bot({
@@ -648,7 +645,6 @@ aliveai.create_bot({
 		texture="aliveai_threats_terminator.png",
 		attacking=1,
 		talking=0,
-		--light=0,
 		building=0,
 		escape=0,
 		start_with_items={["default:steel_ingot"]=4,["default:steelblock"]=1},
@@ -2649,7 +2645,7 @@ minetest.register_node("aliveai_threats:statue", {
 		}
 	},
 	on_construct = function(pos)
-		minetest.add_entity({x=pos.x,y=pos.y-0.5,z=pos.z}, "aliveai_threats:statue")
+		minetest.add_entity({x=pos.x,y=pos.y+0.5,z=pos.z}, "aliveai_threats:statue")
 		minetest.get_node_timer(pos):start(5)
 	end,
 	on_destruct = function(pos)
@@ -2745,6 +2741,7 @@ minetest.register_entity("aliveai_threats:statue",{
 	pointable=false,
 	visual = "mesh",
 	mesh=aliveai.character_model,
+	collisionbox={0,0,0,0,0,0},
 	textures ={"default_stone.png"},
 	on_activate=function(self, staticdata)
 		if not minetest.get_node(self.object:get_pos()).name=="aliveai_threats:statue" then
@@ -2950,6 +2947,8 @@ minetest.register_tool("aliveai_threats:stoneman_spawn", {
 				end
 			end,self)
 		end
+		itemstack:add_wear(65536)
+		return itemstack
 	end,
 	on_place=function(itemstack, user, pointed_thing)
 		if user:get_luaentity() then user=user:get_luaentity() end
@@ -2966,6 +2965,8 @@ minetest.register_tool("aliveai_threats:stoneman_spawn", {
 		end
 		local e=minetest.add_entity(pos, "aliveai_threats:stoneman")
 		e:get_luaentity().team=aliveai.team(user)
+		itemstack:add_wear(65536)
+		return itemstack
 	end
 })
 
@@ -2989,32 +2990,30 @@ aliveai.create_bot({
 		type="monster",
 		hp=30,
 		arm=2,
+		dmg=3,
 		hugwalk=1,
 		name_color="",
-	--	collisionbox={-0.5,-0.45,-0.5,0.5,2.0,0.5},
-	--	visual="cube",
-	--	drop_dead_body=0,
 		escape=0,
 		start_with_items={["default:stone"]=1},
 		spawn_on={"default:stone"},
 		annoyed_by_staring=0,
 		attack_chance=1,
-	--	basey=-1,
 		smartfight=0,
-	--	spawn_chance=100,
+		spawn_chance=200,
+		mindamage=2,
 	spawn=function(self)
 		self.animation.stand.speed=0
 		aliveai.stand(self)
 		minetest.after(0, function(self)
-			self.storge1=self.team
-			self.name_color="aaaaaa"
-			self.object:set_properties({nametag=self.botname,nametag_color="#" .. self.name_color})
+			if self.team~="stone" then
+				self.name_color="aaaaaa"
+				self.object:set_properties({nametag=self.botname,nametag_color="#" .. self.name_color})
+			end
 		end,self)
 	end,	
 	on_load=function(self)
 		self.animation.stand.speed=0
 		aliveai.stand(self)
-		self.team=self.storge1 or "stone"
 		if self.team~="stone" then
 			self.name_color="aaaaaa"
 			self.object:set_properties({nametag=self.botname,nametag_color="#" .. self.name_color})
@@ -3033,29 +3032,10 @@ aliveai.create_bot({
 			maxacc = {x=0, y=-10, z=0},
 			minexptime = 2,
 			maxexptime = 1,
-			minsize = 2,
-			maxsize = 4,
-			texture = "default_stone.png",
-			collisiondetection = true,
-		})
-		minetest.sound_play("default_stone_footstep", {pos=pos, gain = 1.0, max_hear_distance = 5,})
-	end,
-	on_punched=function(self,puncher)
-		minetest.add_particlespawner({
-			amount = 5,
-			time =0.05,
-			minpos = pos,
-			maxpos = pos,
-			minvel = {x=-5, y=0, z=-5},
-			maxvel = {x=5, y=5, z=5},
-			minacc = {x=0, y=-8, z=0},
-			maxacc = {x=0, y=-10, z=0},
-			minexptime = 2,
-			maxexptime = 1,
 			minsize = 0.2,
 			maxsize = 2,
 			texture = "default_stone.png",
 			collisiondetection = true,
 		})
-	end
+	end,
 })
