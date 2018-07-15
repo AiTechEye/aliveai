@@ -1,8 +1,6 @@
+# Advanced survuver AI mobs Mod for minetest
 
-#Mod for minetest
-#code/media License: CC0
-
-# Advanced survuver AI mobs
+# code/media License: CC0
 
 # NPC
 Npc mobs that does stuff like looks for stuff it needs, mining, crafting, talking, building houses in randomly with furnitures, using tools, and do things it needs to do, and so much more
