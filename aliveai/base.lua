@@ -1,4 +1,4 @@
-minetest.after(0, function(player)
+minetest.after(0, function()
 	aliveai.respawn_player_point=aliveai.strpos(minetest.setting_get("static_spawnpoint"),1)
 
 	if not aliveai.respawn_player_point then
@@ -18,7 +18,7 @@ minetest.after(0, function(player)
 		end)
 	end
 
-end, player)
+end)
 
 aliveai.respawn_player=function(ob)
 	if ob:is_player() then
@@ -1620,7 +1620,11 @@ aliveai.walk=function(self,sp)
 		x = x*s,
 		y = y,
 		z = z*s})
-	aliveai.anim(self,"walk")
+	if self.hugwalk==0 then
+		aliveai.anim(self,"walk")
+	else
+		aliveai.anim(self,"hugwalk")
+	end
 	return self
 end
 
