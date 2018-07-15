@@ -2999,7 +2999,7 @@ aliveai.create_bot({
 		annoyed_by_staring=0,
 		attack_chance=1,
 		smartfight=0,
-		spawn_chance=200,
+		spawn_chance=100,
 		mindamage=2,
 	spawn=function(self)
 		self.animation.stand.speed=0
@@ -3039,3 +3039,84 @@ aliveai.create_bot({
 		})
 	end,
 })
+
+if minetest.get_modpath("aliveai_folk") then
+aliveai.create_bot({
+		attack_players=1,
+		name="toxic_npc",
+		team="toxic_npc",
+		texture="aliveai_folk23a.png",
+		talking=0,
+		light=0,
+		building=0,
+		type="monster",
+		hp=40,
+		arm=2,
+		dmg=3,
+		hugwalk=1,
+		name_color="",
+		escape=0,
+		--start_with_items={["default:stone"]=1},
+		spawn_on={"default:stone","bones:bones"},
+		annoyed_by_staring=0,
+		attack_chance=1,
+		smartfight=0,
+		spawn_chance=100,
+		mindamage=3,
+	spawn=function(self)
+		local t={}
+		for _, v in pairs(aliveai.registered_bots) do
+			if v.mod_name=="aliveai_folk" and string.find(v.name,"folk") then
+				table.insert(t,v.textures[1])
+			end
+		end
+		self.storge1=t[math.random(1,#t)] or "aliveai_threats_stubborn_monster.png"
+		self.object:set_properties({textures={self.storge1}})
+	end,	
+	on_load=function(self)
+		self.object:set_properties({textures={self.storge1 or "aliveai_threats_stubborn_monster.png"}})
+		if self.storge3 and self.storge4 then
+			self.object:set_properties({visual_size=self.storge3,collisionbox=self.storge4})
+		end
+	end,
+	on_detect_enemy=function(self,target)
+		if self.storge2~="by_another" then
+			for i=1,math.random(5,10),1 do
+				local pos=aliveai.random_pos(self,10,20)
+				if not pos then
+					pos=aliveai.random_pos(self,10,20)
+					if not pos then return self end
+				end
+				local en=minetest.add_entity(pos, "aliveai_threats:toxic_npc"):get_luaentity()
+				en.temper=3
+				en.fight=target
+				en.storge2="by_another"
+			end
+			self.storge2="by_another"
+		end
+	end,
+	on_punching=function(self,fight)
+		if aliveai.is_bot(fight) and fight:get_properties().visual=="mesh" and fight:get_properties().mesh==aliveai.character_model then
+			local pos=fight:get_pos()
+			local t=fight:get_properties().textures[1]
+			local e=minetest.add_entity(pos, "aliveai_threats:toxic_npc")
+			local en=e:get_luaentity()
+			e:setyaw(self.object:getyaw())
+			en.inv=fight:get_luaentity().inv
+			en.storge1=t
+			en.storge2="by_another"
+			en.dmg=fight:get_luaentity().dmg
+			en.floating=fight:get_luaentity().floating
+			en.storge3=fight:get_properties().visual_size
+			en.storge4=fight:get_properties().collisionbox
+			e:set_properties({
+				textures={t},
+				visual_size=en.storge3,
+				collisionbox=en.storge4,
+			})
+			fight:remove()
+			self.fight=nil
+		end
+	end,
+})
+end
