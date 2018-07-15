@@ -832,6 +832,9 @@ minetest.register_entity("aliveai_massdestruction:blackhole",{
 	visual = "sprite",
 	textures ={"aliveai_massdestruction_blackhole.png"},
 	visual_size={x=2,y=2},
+	on_activate=function(self, staticdata)
+		self.inv={["aliveai_massdestruction:blackholecore"]=1}
+	end,
 	on_punch=function(self, puncher, time_from_last_punch, tool_capabilities, dir)
 		if #self.inv==0 then
 			self.kill=1
@@ -931,7 +934,6 @@ minetest.register_entity("aliveai_massdestruction:blackhole",{
 		end
 		self.timer2=os.clock()-self.timer1
 	end,
-	inv={["aliveai_massdestruction:blackholecore"]=1},
 	aliveai=1,
 	blackhole=1,
 	power=100,
