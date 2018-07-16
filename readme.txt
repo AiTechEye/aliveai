@@ -178,12 +178,16 @@ task2			self
 task3			self
 task4			self
 task5			self
-================== storge variables, can contain a string, int and inventory
-self.storge1
-self.storge2
-self.storge3
-self.storge4
-self.storge5
+================== storge variables
+can be a string, int, inventory, position and table with keys (not index)
+all variables that starts with "storge" will be saved:
+
+self.storge="text"
+self.storge1=323
+self.storgeinventory={["default:dirt"]=1, air=4}
+self.storgelol={["123"]="text1", t="text2"}
+self.storge_homepos={x=1, y=43, z=-32.62}
+
 ====================================================================================
 Usefull functions
 
