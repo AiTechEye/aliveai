@@ -19,7 +19,7 @@ aliveai={
 	max_new_bots=10,
 --========================not options==============================
 	bones=minetest.get_modpath("bones"),
-	creative=minetest.setting_get("creative_mode"),
+	creative=minetest.settings:get("creative_mode"),
 	bots_delay=0,
 	bots_delay2=0,
 	max_path_s=0,
