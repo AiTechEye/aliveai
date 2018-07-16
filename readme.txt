@@ -152,9 +152,12 @@ on_step=function(self,dtime)
 	return self
 end
 
+(target = self.fight)
+
 on_fighting		self,target
 on_escaping		self,target
 on_punching		self,target
+on_punch_hit		self,target
 on_detect_enemy		self,target
 on_detecting_enemy	self,target
 death			self,puncher,pos
