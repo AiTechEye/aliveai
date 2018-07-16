@@ -1,4 +1,4 @@
-aliveai_storm={time=tonumber(minetest.setting_get("item_entity_ttl")),hails=0,max_hails=20}
+aliveai_storm={time=tonumber(minetest.settings:get("item_entity_ttl")),hails=0,max_hails=20}
 
 aliveai.create_bot({
 		drop_dead_body=0,
