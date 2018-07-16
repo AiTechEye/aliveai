@@ -1,32 +1,34 @@
 aliveai={
 	version=21,
-	use_playerapi=true,		--new player api and collision style
-	spawning=true,			--spawning by self
+--========================options==============================
+	spawning=true,				--spawning by self
 	character_model="aliveai_character.b3d",	--character model
 	set_bones=true,			
-	bones=minetest.get_modpath("bones"),
-	creative=minetest.setting_get("creative_mode"),
 	default_team="Sam",
 	gravity=10,
 	check_spawn_space=true,
 	enable_build=true,
-	status=false,			--show bot status
-	tools=0,				--hide bot tools
-	max_path_delay_time=1,		--max delay each second, if a path using more will all other be stopped until next secund
+	status=false,				--show bot status
+	tools=0,					--hide bot tools
+	max_path_delay_time=1,			--max delay each second, if a path using more will all other be stopped until next secund
 	get_everything_to_build_chance=50,
-	get_random_stuff_chance=50,	-- get random stuff on spawn
-	max_delay=100,			-- max run / bot delay
+	get_random_stuff_chance=50,		-- get random stuff on spawn
+	team_fight=true,
+	max_delay=100,				-- max run / bot delay
+	lifetimer=60,				--remove unbehavior none nps's
+	max_new_bots=10,
+--========================not options==============================
+	bones=minetest.get_modpath("bones"),
+	creative=minetest.setting_get("creative_mode"),
 	bots_delay=0,
 	bots_delay2=0,
 	max_path_s=0,
-	max_new_bots=10,
-	team_fight=true,
 	last_spoken_to="",
-	lifetimer=60,			--remove unbehavior none nps's
-	msg={},				--messages to bots
-	registered_bots={},		--registered_bots
-	active={},			--active bots
-	active_num=0,			 --active bots count
+
+	msg={},					--messages to bots
+	registered_bots={},			--registered_bots
+	active={},				--active bots
+	active_num=0,				--active bots count
 	smartshop=minetest.get_modpath("smartshop")~=nil,
 	mesecons=minetest.get_modpath("mesecons")~=nil,
 	loaddata={},			--functions
@@ -34,6 +36,7 @@ aliveai={
 
 	team_player={},
 	farming={},
+--========================options==============================
 				--staplefood, add eatable stuff to the list, then can all other bots check if them have something like that to eat when they gets hurted
 	staplefood=		{["default:apple"]=2,["farming:bread"]=5,["mobs:meat"]=8,["mobs:meat_raw"]=3,["mobs:chicken_raw"]=2,["mobs:chicken_cooked"]=6,["mobs:chicken_egg_fried"]=2,["mobs:chicken_raw"]=2,["aliveai_aliens:alien_food"]=8},
 	furnishings=		{"default:torch","default:chest","default:furnace","default:chest_locked","default:sign_wall_wood","default:sign_wall_steel","vessels:steel_bottle","vessels:drinking_glass","vessels:glass_bottle","aliveai:bed","aliveai:bed_blue","aliveai:chair"},
