@@ -123,31 +123,29 @@ aliveai.create_bot=function(def)
 
 	def.texture=def.texture or "character.png"
 
-	if def.type and not (def.dropbones and def.dropbones==1) then
+	if def.type and def.dropbones~=1 then
 		def.dropbones=0
 	end
 
 	local itemtexture=def.texture
 	if type(def.texture)=="table" and type(def.texture[1])=="string" then itemtexture=def.texture[1] end
-	if aliveai.use3d_armor_model and not def.visual and not def.texture[2] then
-		def.texture={def.texture,"aliveai_air.png","aliveai_air.png",def.texture,}
+
+	if aliveai.armor_3d and not def.visual and not def.texture[2] then
+		if def.type and def.type~="npc" then
+			def.usearmor=0
+		else
+			def.texture={def.texture,"aliveai_air.png","aliveai_air.png",def.texture,}
+			def.mesh=aliveai.armor_3d
+			def.animation={}
+			def.animation["stand"]={x=0, y=79,speed=30,loop=0}
+			def.animation["lay"]={x=162,y=166,speed=30,loop=0}
+			def.animation["walk"]={x=168, y=187, speed=30,loop=0}
+			def.animation["mine"]={x=189, y=198, speed=30,loop=0}
+			def.animation["walk_mine"]={x=200, y=219, speed=30,loop=0}
+			def.animation["sit"]={x=81, y=160, speed=30,loop=0}
+		end
 	elseif type(def.texture)~="table" then
 		def.texture={def.texture}
-	end
-
-	if aliveai.automatic_collisionbox==true and aliveai.use_playerapi and not (aliveai.use3d_armor_model or def.visual) and aliveai.minetest_version[2]>=0.5 then
-		if def.collisionbox then
-			local c=def.collisionbox
-			if c[2]<0 then c[2]=c[2]*-1 end
-			def.collisionbox={c[1],0,c[3],c[4],c[5]+c[2],c[6]}
-		else
-			def.collisionbox={-0.35,-0.01,-0.35,0.35,1.8,0.35}
-		end
-		if def.basey then
-			def.basey=def.basey+0.5
-		else
-			def.basey=-0.3
-		end
 	end
 
 	if def.animation and (def.visual==nil or def.visual=="mesh") then
@@ -158,16 +156,6 @@ aliveai.create_bot=function(def)
 			def.animation[i].speed=def.animation[i].speed or 0
 			def.animation[i].loop=def.animation[i].loop or 0
 		end
-	elseif 1==2 and not (def.animation and def.visual) then
-	def.animation={}
-	def.animation["stand"]={x=0, y=79,speed=30,loop=0}
-	def.animation["lay"]={x=162,y=166,speed=30,loop=0}
-	def.animation["walk"]={x=168, y=187, speed=30,loop=0}
-	def.animation["mine"]={x=189, y=198, speed=30,loop=0}
-	def.animation["walk_mine"]={x=200, y=219, speed=30,loop=0}
-	def.animation["sit"]={x=81, y=160, speed=30,loop=0}
-
-
 	end
 
 	aliveai.registered_bots[def.name]={
@@ -672,8 +660,3 @@ minetest.register_craftitem("aliveai:teampawner", {
 			return itemstack
 		end,
 	})
-
-
-
-
-
