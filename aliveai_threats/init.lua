@@ -9,44 +9,6 @@ dofile(minetest.get_modpath("aliveai_threats") .. "/tree.lua")
 dofile(minetest.get_modpath("aliveai_threats") .. "/fort.lua")
 dofile(minetest.get_modpath("aliveai_threats") .. "/candy.lua")
 
-aliveai.savedata.clone=function(self)
-	if self.clone then
-		return {clone=1}
-	end
-	if self.natural_monster then
-		return {t1=self.t1,t2=self.t2,t3=self.t3,natural_monster=1,consists=self.consists}
-	end
-
-	if self.killed and self.body then
-		return {body=self.body,killed=self.killed,hp_max=self.hp_max}
-	end
-
-
-end
-
-aliveai.loaddata.clone=function(self,r)
-	if r.clone then
-		self.clone=r.clone
-	end
-	if r.natural_monster then
-		self.t1=r.t1
-		self.t2=r.t2
-		self.t3=r.t3
-		self.natural_monster=1
-		self.consists=r.consists
-	end
-	if r.killed and r.body then
-		self.body=r.body
-		self.killed=1
-		self.hp_max=r.hp_max
-	end
-	return self
-end
-
-
-
-
-
 aliveai_threats.tox=function(ob)
 
 	if not ob or not ob:get_pos() or aliveai.gethp(ob,1)<1 or aliveai.team(ob)=="nuke" then
@@ -1101,7 +1063,7 @@ aliveai.create_bot({
 		distance=10,
 		spawn_y=2,
 	on_load=function(self)
-		if self.clone then
+		if self.storge_clone then
 			self.object:remove()
 		end
 	end,
@@ -1127,7 +1089,7 @@ aliveai.create_bot({
 					if minetest.registered_nodes[no1].walkable==false and minetest.registered_nodes[no2].walkable
 					and aliveai.visiable(pos,p1) then
 						local e=minetest.add_entity(p1,"aliveai_threats:cockroach")
-						e:get_luaentity().clone=1
+						e:get_luaentity().storge_clone=1
 						e:get_luaentity().fight=self.fight
 						e:get_luaentity().temper=3
 						e:setyaw(math.random(0,6.28))
@@ -1140,7 +1102,7 @@ aliveai.create_bot({
 					end
 				end
 			end
-		elseif self.clone and not self.fight then
+		elseif self.storge_clone and not self.fight then
 			aliveai.kill(self)
 		end
 	end,
@@ -1418,37 +1380,37 @@ aliveai.create_bot({
 		local t=n.tiles
 		if not t[1] then self.object:remove() return self end
 		local tx={}
-		self.t1=t[1]
-		self.t2=t[1]
-		self.t3=t[1]
-		self.natural_monster=1
-		self.consists=drop
-		self.team=self.consists
-		if t[2] then self.t2=t[2] self.t3=t[2] end
-		if t[3] and t[3].name then self.t3=t[3].name
-		elseif t[3] then self.t3=t[3]
+		self.storge_t1=t[1]
+		self.storge_t2=t[1]
+		self.storge_t3=t[1]
+		self.storge_natural_monster=1
+		self.storge_consists=drop
+		self.team=self.storge_consists
+		if t[2] then self.storge_t2=t[2] self.storge_t3=t[2] end
+		if t[3] and t[3].name then self.storge_t3=t[3].name
+		elseif t[3] then self.storge_t3=t[3]
 		end
-		if type(self.t3)=="table" then return end
-		tx[1]=self.t1
-		tx[2]=self.t2
-		tx[3]=self.t3
-		tx[4]=self.t3
-		tx[5]=self.t3 .."^aliveai_threats_natural_monster.png"
-		tx[6]=self.t3
+		if type(self.storge_t3)=="table" then return end
+		tx[1]=self.storge_t1
+		tx[2]=self.storge_t2
+		tx[3]=self.storge_t3
+		tx[4]=self.storge_t3
+		tx[5]=self.storge_t3 .."^aliveai_threats_natural_monster.png"
+		tx[6]=self.storge_t3
 		self.object:set_properties({textures=tx})
 		self.cctime=0
 	end,	
 	on_load=function(self)
-		if self.natural_monster then
+		if self.storge_natural_monster then
 			local tx={}
-			tx[1]=self.t1
-			tx[2]=self.t2
-			tx[3]=self.t3
-			tx[4]=self.t3
-			tx[5]=self.t3 .."^aliveai_threats_natural_monster.png"
-			tx[6]=self.t3
+			tx[1]=self.storge_t1
+			tx[2]=self.storge_t2
+			tx[3]=self.storge_t3
+			tx[4]=self.storge_t3
+			tx[5]=self.storge_t3 .."^aliveai_threats_natural_monster.png"
+			tx[6]=self.storge_t3
 			self.object:set_properties({textures=tx})
-			self.team=self.consists
+			self.team=self.storge_consists
 			self.cctime=0
 		else
 			self.object:remove()
@@ -1465,7 +1427,7 @@ aliveai.create_bot({
 			aliveai.stand(self)
 			aliveai.lookat(self,ta)
 
-			local e=minetest.add_item({x=pos.x,y=pos.y,z=pos.z},self.consists)
+			local e=minetest.add_item({x=pos.x,y=pos.y,z=pos.z},self.storge_consists)
 			local dir=aliveai.get_dir(self,ta)
 			local vc = {x = dir.x*30, y = dir.y*30, z = dir.z*30}
 			e:setvelocity(vc)
@@ -1478,7 +1440,7 @@ aliveai.create_bot({
 		end
 	end,
 	death=function(self,puncher,pos)
-		aliveai.invadd(self,self.consists,math.random(1, 4),false)
+		aliveai.invadd(self,self.storge_consists,math.random(1, 4),false)
 	end,
 	on_punched=function(self,puncher)
 		local pos=self.object:get_pos()
@@ -1496,25 +1458,26 @@ aliveai.create_bot({
 			maxexptime = 1,
 			minsize = 0.2,
 			maxsize = 4,
-			texture = self.t1,
+			texture = self.storge_t1,
 			collisiondetection = true,
 		})
 	end
 })
 
 aliveai.create_bot({
-		type="npc",
+		type="monster",
 		name="stubborn_monster",
 		texture="aliveai_threats_stubborn_monster.png",
 		hp=20,
 		drop_dead_body=0,
 		usearmor=0,
 	on_load=function(self)
-		if not self.body or self.killed then self.spawn(self) return self end
+		self.storge_hp_max=self.storge_hp_max or 20
+		if not self.storge_body or self.storge_killed then self.spawn(self) return self end
 		local s={}
 		local c=""
 		local t=""
-		for i,v in ipairs(self.body) do
+		for i,v in ipairs(self.storge_body) do
 			s["s"..v]=v
 			if i>1 then c="^" end
 			t=t .. c.. "aliveai_threats_stubborn_monster" .. v ..".png"
@@ -1527,13 +1490,14 @@ aliveai.create_bot({
 		self.spawn(self)
 	end,
 	spawn=function(self)
-		if not self.body then
-			self.body={1,2,3}
+		if not self.storge_body then
+			self.storge_body={1,2,3}
 		end
+		self.storge_hp_max=self.storge_hp_max or 20
 		self.hp2=self.object:get_hp()
 		self.deadtimer=10
 		self.hurted=0
-		if self.killed then
+		if self.storge_killed then
 			self.attack_players=1
 			self.attacking=1
 			self.team="stubborn"
@@ -1581,13 +1545,13 @@ aliveai.create_bot({
 			aliveai.anim(self,"lay")
 			self.lay=true
 		end
-		if r<3 or not self.killed then
+		if r<3 or not self.storge_killed then
 			r=math.random(1,3)
-			table.remove(self.body,r)
+			table.remove(self.storge_body,r)
 			local t=""
 			local c=""
 			local c2=0
-			for i,v in ipairs(self.body) do
+			for i,v in ipairs(self.storge_body) do
 				if i>1 then c="^" end
 				t=t .. c.. "aliveai_threats_stubborn_monster" .. v ..".png"
 				c2=i
@@ -1596,24 +1560,24 @@ aliveai.create_bot({
 				mesh = aliveai.character_model,
 				textures = {t,"aliveai_threats_i.png","aliveai_threats_i.png"},
 			})
-			if r==1 or c2==1 or self.hurted>self.hp_max then
+			if r==1 or c2==1 or self.hurted>self.storge_hp_max then
 				if self.basey==-0.5 then self.object:set_properties({mesh = aliveai.character_model}) local pos=self.object:get_pos() self.object:set_pos({x=pos.x,y=pos.y+1,z=pos.z}) end
 				aliveai.anim(self,"lay")
-				self.object:set_hp(self.hp_max)
-				self.hp=self.hp_max
+				self.object:set_hp(self.storge_hp_max)
+				self.hp=self.storge_hp_max
 				self.dead1=true
 				return self
 			end
 			if r==3 then self.nhead=true end
-			if not self.killed then
-				self.killed=1
+			if not self.storge_killed then
+				self.storge_killed=1
 				self.spawn(self)
 			end
 		end
 		if not self.dead1 then
-			self.hp_max=self.hp_max-2
-			self.object:set_hp(self.hp_max)
-			self.hp=self.hp_max
+			self.storge_hp_max=self.storge_hp_max-2
+			self.object:set_hp(self.storge_hp_max)
+			self.hp=self.storge_hp_max
 		end
 	end
 })
