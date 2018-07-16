@@ -1,9 +1,4 @@
--- add / change settings in here
-
-
---aliveai.character_model="character.b3d"	-- character model, will be automatically choose model depends on what mod is used.
-
-aliveai.automatic_collisionbox=true
+-- add / change settings in here too
 
 aliveai.team_fight=true			--attacking members from other teams
 
