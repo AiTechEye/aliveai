@@ -971,6 +971,7 @@ aliveai.fight=function(self)
 						else
 							aliveai.anim(self,"mine")
 							aliveai.punch(self,self.fight,self.dmg)
+							self.on_punch_hit(self,self.fight)
 						end
 						local hp=aliveai.gethp(self.fight)
 						if hp<=0 then
