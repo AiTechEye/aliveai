@@ -333,11 +333,11 @@ on_activate=function(self, staticdata)
 			if r.home then self.home=r.home end
 			if r.resources then self.resources=r.resources end
 
-			if r.storge1 then self.storge1=r.storge1 end
-			if r.storge2 then self.storge2=r.storge2 end
-			if r.storge3 then self.storge3=r.storge3 end
-			if r.storge4 then self.storge4=r.storge4 end
-			if r.storge5 then self.storge5=r.storge5 end
+			for i, v in pairs(r) do
+				if string.find(i,"storge")==1 then
+					self[i]=v
+				end
+			end
 
 			if r.hp then self.object:set_hp(r.hp) end
 
@@ -430,11 +430,11 @@ get_staticdata = function(self)
 		if self.start_with_items then r.start_with_items="" end
 		if self.dying then r.dying=self.dying end
 
-		if self.storge1 then r.storge1=self.storge1 end
-		if self.storge2 then r.storge2=self.storge2 end
-		if self.storge3 then r.storge3=self.storge3 end
-		if self.storge4 then r.storge4=self.storge4 end
-		if self.storge5 then r.storge5=self.storge5 end
+		for i, v in pairs(self) do
+			if string.find(i,"storge")==1 then
+				r[i]=v
+			end
+		end
 
 		for i, s in pairs(aliveai.savedata) do
 			local rr=s(self,r)
