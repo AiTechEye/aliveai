@@ -1032,6 +1032,7 @@ minetest.register_tool("aliveai_threats:mind_manipulator", {
 					ob:get_luaentity().building=0
 					ob:get_luaentity().fighting=1
 					ob:get_luaentity().attack_chance=2
+					ob:get_luaentity().temper=3
 --support for other mobs
 					ob:get_luaentity().attack_type="dogfight"
 					ob:get_luaentity().reach=2
@@ -1065,6 +1066,8 @@ minetest.register_tool("aliveai_threats:mind_manipulator", {
 						})
 					end
 				end
+			itemstack:add_wear(65536/10)
+			return itemstack
 			end
 		end
 })
@@ -3062,7 +3065,7 @@ aliveai.create_bot({
 		attack_chance=1,
 		smartfight=0,
 		spawn_chance=100,
-		mindamage=3,
+		mindamage=2,
 	spawn=function(self)
 		local t={}
 		for _, v in pairs(aliveai.registered_bots) do
@@ -3103,6 +3106,7 @@ aliveai.create_bot({
 			local en=e:get_luaentity()
 			e:setyaw(self.object:getyaw())
 			en.inv=fight:get_luaentity().inv
+			en.namecolor="ff0000"
 			en.storge1=t
 			en.storge2="by_another"
 			en.dmg=fight:get_luaentity().dmg
@@ -3115,6 +3119,16 @@ aliveai.create_bot({
 				collisionbox=en.storge4,
 			})
 			fight:remove()
+			self.fight=nil
+
+		elseif aliveai.is_bot(fight) then
+			local en=fight:get_luaentity()
+			en.fight=nil
+			en.storge2="by_another"
+			en.team=self.team
+			en.namecolor="ff0000"
+			aliveai.showhp(en)
+			en.on_punching=self.on_punching
 			self.fight=nil
 		end
 	end,
