@@ -1635,10 +1635,21 @@ aliveai.create_bot({
 		dmg=2,
 		hp=10,
 		name_color="",
-	on_step=function(self,dtime)
-		if self.setslime and aliveai.gethp(self.fight)<=0 then
-			minetest.add_entity(self.setslime, "aliveai_threats:slime")
-			self.setslime=nil
+	on_punch_hit=function(self,target)
+		if self.setslime and aliveai.gethp(target)<1 then
+			local e=minetest.add_entity(self.setslime, "aliveai_threats:slime")
+			if self.fight and self.fight:get_luaentity() then
+				e:set_properties({
+					visual_size=target:get_properties().visual_size,
+					collisionbox=target:get_properties().collisionbox
+				})
+				if aliveai.is_bot(self.fight) then
+					aliveai.anim(self.fight:get_luaentity(),"lay")
+				end
+				self.setslime=nil
+				self.fight:remove()
+				self.fight=nil
+			end
 		end
 	end,
 	on_punching=function(self,target)
@@ -3060,7 +3071,7 @@ aliveai.create_bot({
 		name_color="",
 		escape=0,
 		--start_with_items={["default:stone"]=1},
-		spawn_on={"default:stone","bones:bones"},
+		spawn_on={"default:stone","bones:bones","default:silver_sandstone_brick","default:sandstone_brick"},
 		annoyed_by_staring=0,
 		attack_chance=1,
 		smartfight=0,
@@ -3098,7 +3109,7 @@ aliveai.create_bot({
 			self.storge2="by_another"
 		end
 	end,
-	on_punching=function(self,fight)
+	on_punch_hit=function(self,fight)
 		if aliveai.is_bot(fight) and fight:get_properties().visual=="mesh" and fight:get_properties().mesh==aliveai.character_model then
 			local pos=fight:get_pos()
 			local t=fight:get_properties().textures[1]
@@ -3128,7 +3139,7 @@ aliveai.create_bot({
 			en.team=self.team
 			en.namecolor="ff0000"
 			aliveai.showhp(en)
-			en.on_punching=self.on_punching
+			en.on_punch_hit=self.on_punch_hit
 			self.fight=nil
 		end
 	end,
