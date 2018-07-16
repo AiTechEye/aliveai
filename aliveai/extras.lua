@@ -1,21 +1,19 @@
 --print(debug.getinfo(2).name)				-- get name from calling function
 
-local get_model={
-	{"aliveai",aliveai.character_model},
-	{"3d_armor","3d_armor_character.b3d",function() aliveai.use3d_armor_model=true end},	
-}
-for i, v in ipairs(get_model) do
-	if minetest.get_modpath(v[1]) and io.open(minetest.get_modpath(v[1]) .. "/models/" .. v[2] ,"r") then
-		aliveai.character_model=v[2]
-		print("[aliveai] model ".. v[1] .. "/" .. v[2] .." found")
-		if v[3] then v[3]() end
-		get_model=nil
-		break
-	end
-end
-if get_model then
-	print("[aliveai] error: no model found")
-end
+
+--local get_model={	--keep this if we need something similar later
+--	{"3d_armor","3d_armor_character.b3d",function() aliveai.use3d_armor_model=true end},
+--	{"aliveai",aliveai.character_model},	
+--}
+--for i, v in ipairs(get_model) do
+--	if minetest.get_modpath(v[1]) and io.open(minetest.get_modpath(v[1]) .. "/models/" .. v[2] ,"r") then
+--		aliveai.character_model=v[2]
+--		print("[aliveai] model ".. v[1] .. "/" .. v[2] .." found")
+--		if v[3] then v[3]() end
+--		get_model=nil
+--		break
+--	end
+--end
 
 
 if aliveai.bones then
@@ -117,9 +115,11 @@ if minetest.get_modpath("wieldview") then
 end
 
 if minetest.get_modpath("3d_armor") then
+	aliveai.armor_3d="3d_armor_character.b3d"
+
 	aliveai.tools_handler["3d_armor"]={try_to_craft=true,use=false,tools={}}
 	for i, v in pairs(minetest.registered_tools) do
-		if v.groups and v.groups.armor_use and v.groups.armor_use>0 then --if minetest.get_item_group(i, "armor_use")~=0 then
+		if v.groups and v.groups.armor_use and v.groups.armor_use>0 then
 			table.insert(aliveai.tools_handler["3d_armor"].tools,i)
 		end
 	end
@@ -256,7 +256,6 @@ if minetest.get_modpath("3d_armor") then
 		end
 	end
 end
-
 
 if minetest.get_modpath("bows") then
 	aliveai.tools_handler.bows={--mod name
