@@ -18,6 +18,8 @@ aliveai={
 	lifetimer=60,				--remove unbehavior none nps's
 	max_new_bots=10,
 --========================not options==============================
+	delaytime=os.clock(),
+
 	bones=minetest.get_modpath("bones"),
 	creative=minetest.settings:get("creative_mode"),
 	bots_delay=0,
@@ -77,15 +79,27 @@ end)
 aliveai.max_path_timer=0
 aliveai.max_path_delay=0
 
+
+aliveai.ticks_pers=os.clock()
+aliveai.game_paused=true
+
 minetest.register_globalstep(function(dtime)
+	if os.clock()-aliveai.ticks_pers>1 then
+		aliveai.game_paused=true
+	else
+		aliveai.game_paused=false
+	end
+	aliveai.ticks_pers=os.clock()-aliveai.ticks_pers
 	aliveai.max_path_timer=aliveai.max_path_timer+dtime
 	if aliveai.max_path_timer>1 then
+		aliveai.ticks_pers=0
 		aliveai.max_path_s=0
 		aliveai.max_path_timer=0
 		aliveai.max_path_delay=0
 		aliveai.bots_delay2=aliveai.bots_delay
 		aliveai.bots_delay=0
 	end
+	aliveai.ticks_pers=os.clock()
 end)
 
 dofile(minetest.get_modpath("aliveai") .. "/base.lua")
@@ -99,5 +113,10 @@ dofile(minetest.get_modpath("aliveai") .. "/extras.lua")
 dofile(minetest.get_modpath("aliveai") .. "/handlers.lua")
 
 dofile(minetest.get_modpath("aliveai") .. "/settings.lua")
+
+aliveai.delaytime=(os.clock()-aliveai.delaytime)
+
+print(aliveai.delaytime)
+
 
 print("[aliveai] api Loaded")
