@@ -1,34 +1,16 @@
-aliveai.botdelay=function(self,a)	-- still a testing function, apply cooldown for each bot instead of all at same time
-	if 1 then return end
-
-
-	local new=os.clock()-self.delaytimer
-
-	if not a then
-		self.delaytimer=os.clock()
-		return
-	elseif new>0.05 then
-		self.delaytimer2=self.delaytimer2+1
-
-		self.object:set_properties({nametag=self.delaytimer2 .." "  .. new})
-		if self.delaytimer2>100 then
-			self.delaytimer=os.clock()
-			self.delaytimer2=100
-			return true
-		end
-	elseif new<0.05 then
-		self.delaytimer2=self.delaytimer2-1
-		if self.delaytimer2<0 then
-			self.delaytimer2=0
-			return
-		end
+aliveai.main=function(self, dtime)
+	if aliveai.bots_delay2>aliveai.max_delay then
+		if self.old==0 or (self.old==1 and aliveai.bots_delay2>aliveai.max_delay*1.2) then aliveai.max(self) end
+		return self
 	end
+
+
+	if aliveai.botdelay(self,1) then return self end
+	aliveai.bot(self, dtime)
+	aliveai.botdelay(self)
 end
 
-
 aliveai.bot=function(self, dtime)
-	if aliveai.botdelay(self,1) then return self end
-	aliveai.botdelay(self)
 	aliveai.bots_delay=aliveai.bots_delay+dtime
 	self.timer=self.timer+dtime
 	self.timerfalling=self.timerfalling+dtime
@@ -36,27 +18,20 @@ aliveai.bot=function(self, dtime)
 	if self.turnlook and aliveai.turnlook(self,dtime) then return self end
 	if self.timer<=self.time then return self end
 	self.timer=0
-	if aliveai.bots_delay2>aliveai.max_delay then
-		if self.old==0 or (self.old==1 and aliveai.bots_delay2>aliveai.max_delay*1.2) then aliveai.max(self) end
-		return self
-	end
+
 
 --betweens
 
 	if aliveai.dying(self) then return self end
 	if not aliveai.dmgbynode(self) then return self end
 	if self.step(self,dtime) or self.controlled==1 then return self end
-if aliveai.botdelay(self,1) then return self end
 	if aliveai.sleep(self) then return self end
 	aliveai.jumping(self)-- if need to jump
 	if aliveai.fight(self) then return self end
-if aliveai.botdelay(self,1) then return self end
 	if aliveai.fly(self) then return self end
 	if aliveai.come(self) then return self end
 	if aliveai.folowing(self) then return self end
-if aliveai.botdelay(self,1) then return self end
 	aliveai.searchobjects(self)
-if aliveai.botdelay(self,1) then return self end
 	if aliveai.need_helper(self) then return self end	-- give stuff
 	if aliveai.light(self) then return self end
 	if aliveai.node_handler(self) then return self end
@@ -70,9 +45,7 @@ if aliveai.botdelay(self,1) then return self end
 
 	if aliveai.lookaround(self) then return self end
 
-
 --betweens helpers
-	aliveai.botdelay(self)
 	if self.isrnd and self.pickupgoto then return self end
 --events
 	if self.mine then
@@ -104,7 +77,6 @@ if aliveai.botdelay(self,1) then return self end
 	if self.task=="" then
 		aliveai.rndwalk(self)
 	end
-	aliveai.botdelay(self)
 	return self
 end
 
@@ -372,6 +344,8 @@ on_activate=function(self, staticdata)
 			self.start_with_items=""
 		end
 
+		self.delay_average={time=0}
+
 		if self.old~=1 then
 			aliveai.max(self)
 			self.spawn(self)
@@ -447,7 +421,7 @@ get_staticdata = function(self)
 
 		return aliveai.convertdata(r)
 	end,
-on_step=aliveai.bot,
+on_step=aliveai.main,
 	botname=def.botname or "",
 	namecolor= def.name_color or "ffffff",
 	timerfalling= 0,
