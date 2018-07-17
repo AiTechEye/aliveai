@@ -1782,9 +1782,9 @@ end
 
 aliveai.max=function(self,update)
 	local c=0
-	for i in pairs(aliveai.active) do
+	for i,v in pairs(aliveai.active) do
 		c=c+1
-		if not aliveai.active[i] or not aliveai.active[i]:get_luaentity() or not aliveai.active[i]:get_hp() or aliveai.active[i]:get_hp()<=0 then
+		if aliveai.gethp(v,1)==0 then
 			table.remove(aliveai.active,c)
 			c=c-1
 		end
@@ -1793,17 +1793,80 @@ aliveai.max=function(self,update)
 	if c==0 then aliveai.active_num=0 end
 	local new=aliveai.newbot
 	aliveai.newbot=nil
-	if new and c+1>aliveai.max_new_bots then
+	if new and aliveai.active_num+1>aliveai.max_new_bots then
 		self.object:remove()
 		return self
 	end
 	if update then
 		return self
-	elseif (self.old==0 and (aliveai.bots_delay2>aliveai.max_delay)) or (self.old==1 and aliveai.bots_delay2>aliveai.max_delay*1.2) then
-		print("aliveai: removed","delay: " .. aliveai.bots_delay2,"active bots: " ..aliveai.active_num)
+	elseif aliveai.bots_delay2>aliveai.max_delay and (self.old==0 or self.delay_average.time>1) then
+		if self.old==0 then
+			print("aliveai: removed","new","active bots: " ..aliveai.active_num)
+		else
+			print("aliveai: removed","delay: " ..self.delay_average.time,"active bots: " ..aliveai.active_num)
+		end
 		aliveai.bots_delay2= aliveai.bots_delay2*0.99
 		self.object:remove()
 		return self
 	end
-	table.insert(aliveai.active,self.object)
+	if not aliveai.active[self.botname] then
+		aliveai.active[self.botname]=self.object
+	end
+end
+
+aliveai.botdelay=function(self,a)
+	if self.delaytimeout then
+		if os.clock()>self.delaytimeout then
+			self.delaytimeout=nil
+			a=1
+		else
+			self.object:set_properties({nametag=(self.delaytimeout - os.clock()),nametag_color="#ff0000ff"})
+			return self
+		end
+	elseif not self.delay_average then
+		self.delay_average={time=0}
+	end
+
+	local new=os.clock()-self.delaytimer
+
+	if aliveai.game_paused then
+		self.delay_average={time=0}
+		self.delaytimer=os.clock()
+		return
+	elseif not a then
+		self.delaytimer=os.clock()
+		return
+	else
+
+		if not self.delay_steps_to then self.delay_steps_to=0 end
+		self.delay_steps_to=self.delay_steps_to+1
+		if self.delay_steps_to<10 then return end
+		self.delay_steps_to=0
+
+		local p=math.floor(new/aliveai.delaytime)/10
+
+		if #self.delay_average>10 then
+			table.remove(self.delay_average,1)
+			local d=self.delay_average
+			self.delay_average.time=aliveai.nan((d[1]+d[2]+d[3]+d[4]+d[5]+d[6]+d[7]+d[8]+d[9]+d[10])/10)
+			
+		else
+			table.insert(self.delay_average,p)
+		end
+
+		if self.delay_average.time>1 then
+			self.delaytimeout=os.clock()+(p-1)
+			if self.type~="npc" or (self.type=="npc" and self.delay_average.time>1.5) then
+				aliveai.max(self)
+			end
+			c="ff0000ff"
+			if aliveai.status then
+				aliveai.showstatus(self,(self.delay_average.time*100) .."% delay",1)
+			end
+		elseif aliveai.status and self.delay_average.time>0.5 then
+			aliveai.showstatus(self,(self.delay_average.time*100) .."% delay",4)
+		end
+
+		self.delaytimer=os.clock()
+	end
 end
