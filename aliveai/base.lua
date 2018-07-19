@@ -1629,7 +1629,7 @@ aliveai.walk=function(self,sp)
 end
 
 aliveai.stand=function(self)
-	if not self.move then aliveai.kill(self) return end
+	if not self.move or not self.object then aliveai.kill(self) return end
 	self.move.x=0
 	self.move.z=0
 	self.object:setvelocity({
@@ -1820,7 +1820,6 @@ aliveai.botdelay=function(self,a)
 			self.delaytimeout=nil
 			a=1
 		else
-			self.object:set_properties({nametag=(self.delaytimeout - os.clock()),nametag_color="#ff0000ff"})
 			return self
 		end
 	elseif not self.delay_average then
@@ -1859,11 +1858,10 @@ aliveai.botdelay=function(self,a)
 			if self.type~="npc" or (self.type=="npc" and self.delay_average.time>1.5) then
 				aliveai.max(self)
 			end
-			c="ff0000ff"
-			if aliveai.status then
+			if aliveai.status==true then
 				aliveai.showstatus(self,(self.delay_average.time*100) .."% delay",1)
 			end
-		elseif aliveai.status and self.delay_average.time>0.5 then
+		elseif aliveai.status==true and self.delay_average.time>0.5 then
 			aliveai.showstatus(self,(self.delay_average.time*100) .."% delay",4)
 		end
 
