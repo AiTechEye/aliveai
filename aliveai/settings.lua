@@ -19,7 +19,7 @@ aliveai.lifetimer=60				-- remove unbehavior none nps
 
 aliveai.default_team="Sam"
 
-aliveai.staplefood=				{["default:apple"]=2,["farming:bread"]=5,["mobs:meat"]=8,["mobs:meat_raw"]=3,["mobs:chicken_raw"]=2,["mobs:chicken_cooked"]=6,["mobs:chicken_egg_fried"]=2,["mobs:chicken_raw"]=2,["mobs:pork_raw"]=4,["mobs:pork_cooked"]=8,["aliveai_aliens:alien_food"]=8}
+aliveai.staplefood=				{["default:apple"]=2,["farming:bread"]=5,["mobs:meat"]=8,["mobs:meat_raw"]=3,["mobs:chicken_raw"]=2,["mobs:chicken_cooked"]=6,["mobs:chicken_egg_fried"]=2,["mobs:chicken_raw"]=2,["aliveai_aliens:alien_food"]=8,["aliveai_candy:gingerbread_piece1"]=1,["aliveai_candy:gingerbread_piece2"]=1,["aliveai_candy:lollipop_piece"]=5,["aliveai_candy:candycane_piece"]=5}
 furnishings=				{"default:torch","default:chest","default:furnace","default:chest_locked","default:sign_wall_wood","default:sign_wall_steel","vessels:steel_bottle","vessels:drinking_glass","vessels:glass_bottle","aliveai:bed","aliveai:bed_blue","aliveai:chair"}
 aliveai.windows=				{"default:glass","default:glass"}
 aliveai.ladders=				{"default:ladder_wood","default:ladder_steel"}
