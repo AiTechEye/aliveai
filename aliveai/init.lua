@@ -40,9 +40,7 @@ aliveai={
 	farming={},
 --========================options==============================
 	 -- new food databas, checks what players eats, then save it
-	food=			{["default:apple"]=2,["farming:bread"]=5,["mobs:meat"]=8,["mobs:meat_raw"]=3,["mobs:chicken_raw"]=2,["mobs:chicken_cooked"]=6,["mobs:chicken_egg_fried"]=2,["mobs:chicken_raw"]=2,["aliveai_aliens:alien_food"]=8},
-				--staplefood, add eatable stuff to the list, then can all other bots check if them have something like that to eat when they gets hurted
-	staplefood=		{["default:apple"]=2,["farming:bread"]=5,["mobs:meat"]=8,["mobs:meat_raw"]=3,["mobs:chicken_raw"]=2,["mobs:chicken_cooked"]=6,["mobs:chicken_egg_fried"]=2,["mobs:chicken_raw"]=2,["aliveai_aliens:alien_food"]=8},
+	food=			{["default:apple"]=2,["farming:bread"]=5,["mobs:meat"]=8,["mobs:meat_raw"]=3,["mobs:chicken_raw"]=2,["mobs:chicken_cooked"]=6,["mobs:chicken_egg_fried"]=2,["mobs:chicken_raw"]=2},
 	furnishings=		{"default:torch","default:chest","default:furnace","default:chest_locked","default:sign_wall_wood","default:sign_wall_steel","vessels:steel_bottle","vessels:drinking_glass","vessels:glass_bottle","aliveai:bed","aliveai:bed_blue","aliveai:chair"},
 	basics=			{"default:desert_stone","default:sandstonebrick","default:sandstone","default:snowblock","default:ice","default:sand","default:desert_sand","default:silver_sand","default:stone","default:leaves","default:wood","default:acacia_tree","default:jungletree","default:pine_tree","default:aspen_tree"},
 	wood=			{["default:tree"]="default:wood",["default:acacia_tree"]="default:acacia_wood",["default:jungletree"]="default:junglewood",["default:pine_tree"]="default:pine_wood",["default:aspen_tree"]="default:aspen_wood"},
