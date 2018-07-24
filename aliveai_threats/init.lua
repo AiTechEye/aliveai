@@ -3058,7 +3058,7 @@ aliveai.create_bot({
 	end,
 	on_detect_enemy=function(self,target)
 		if self.save__2~="by_another" then
-			for i=1,math.random(5,10),1 do
+			for i=1,math.random(1,5),1 do
 				local pos=aliveai.random_pos(self,10,20)
 				if not pos then
 					pos=aliveai.random_pos(self,10,20)
