@@ -1,4 +1,26 @@
+minetest.register_on_item_eat=function(hp_change, replace_with_item, itemstack, user, pointed_thing)
+	local a=itemstack:get_name()
+	if not aliveai.food[a] and hp_change>0 and minetest.get_item_group(a,"aliveai_eatable")==0 then
+		aliveai.food[a]=hp_change
+		aliveai.save("food",aliveai.food)
+		minetest.override_item(a, {groups={aliveai_eatable=hp_change}})
+	end
+	
+end
+
 minetest.after(0, function()
+	local f=aliveai.load("food")
+	if f then
+		aliveai.food=f
+		for i, v in pairs(aliveai.food) do
+			if minetest.registered_nodes[i] then
+				minetest.override_item(i, {groups={aliveai_eatable=v}})
+			end
+		end
+	else
+		aliveai.save("food",aliveai.food)
+	end
+
 	aliveai.respawn_player_point=aliveai.strpos(minetest.settings:get("static_spawnpoint"),1)
 	if not aliveai.respawn_player_point or aliveai.respawn_player_point=="" then
 		aliveai.respawn_player_point=nil
@@ -61,8 +83,6 @@ aliveai.protect=function(pos,a)
 		local m=minetest.get_meta(p)
 		m:set_string("aliveai_protected",a.name)
 	end
-
-
 end
 
 aliveai.unprotect=function(pos,a)
