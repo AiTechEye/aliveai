@@ -338,11 +338,11 @@ local name=i
 
 				if string.find(name,"storge")==1 then
 				print(name)
-name=string.gsub(name,"storge", "save")
+name=string.gsub(name,"storge", "save__")
 print(name)
 end
 
-				if string.find(name,"save")==1 then
+				if string.find(name,"save__")==1 then
 					self[name]=v
 				end
 			end
