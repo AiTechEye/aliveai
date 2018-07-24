@@ -1,5 +1,5 @@
 By AiTechEye
-Version: 21
+Version: 22
 License: CC0
 
 Alive AI
@@ -50,38 +50,6 @@ then you can customize bots from your mod scripts without needing to modify the 
 show hidden tools and status by set status=true,tools=0 in the init.lua
 or toogle status on/of by /aliveai status=true/false
 
-====================================================================================
-Save/load
-Do not save strings that contents the characters:   ,*?
-
-to save or load settings do you have to add functions that will be used when bots are load or unload
-inside: aliveai.loaddata and aliveai.savedata
-
-you can return
-Variables with numbers/strings
-and Tables with with numbers/strings
-but not a variable or table that contents a table
-
-aliveai.savedata.name=function(self)
-	if self.notes then
-		return {
-			skin=self.skin,
-			num=self.num,
-			notes={note1=1,note2="text"}
-		}
-	end
-end
-
-return loaded data from r
-
-aliveai.loaddata.name=function(self,r)
-	if r.notes then
-		if r.skin then self.skin=r.skin
-		self.num=r.num or 0
-		self.notes=r.notes or {}
-	end
-	return self
-end
 ====================================================================================
 Standard and adjustable values in aliveai.create_bot()
 The settings are using "1 or 0" instead of "true or false"
@@ -178,15 +146,17 @@ task2			self
 task3			self
 task4			self
 task5			self
-================== storge variables
+================== storage variables
 can be a string, int, inventory, position and table with keys (not index)
-all variables that starts with "storge" will be saved:
+Do not save strings that contents the characters:   ,*?
 
-self.storge="text"
-self.storge1=323
-self.storgeinventory={["default:dirt"]=1, air=4}
-self.storgelol={["123"]="text1", t="text2"}
-self.storge_homepos={x=1, y=43, z=-32.62}
+all variables that starts with "save__" will be saved:
+
+self.save__="text"
+self.save__1=323
+self.save__inventory={["default:dirt"]=1, air=4}
+self.save__lol={["123"]="text1", t="text2"}
+self.save___homepos={x=1, y=43, z=-32.62}
 
 ====================================================================================
 Usefull functions
