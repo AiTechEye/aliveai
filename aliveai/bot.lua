@@ -142,9 +142,34 @@ aliveai.create_bot=function(def)
 		team=def.team or aliveai.default_team
 	}
 
-minetest.register_craftitem(def.mod_name ..":" .. def.name .."_spawner", {
-	description = def.name .." spawner",
-	inventory_image = itemtexture or "character.png",
+if not def.visual or def.visual=="mesh" then
+	if def.texture~=nil and type(def.texture)=="string" then def.texture={def.texture} end
+	minetest.register_node(def.mod_name ..":" .. def.name .."_spawner", {
+		description = def.name .." spawner",
+		wield_image=itemtexture or "character.png",
+		tiles=def.texture,
+		drawtype="mesh",
+		mesh=def.mesh or aliveai.character_model,
+		paramtype="light",
+		visual_scale=0.1,
+		on_place = function(itemstack, user, pointed_thing)
+			if pointed_thing.type=="node" then
+				local pos=aliveai.roundpos(pointed_thing.above)
+				pos.y=pos.y+0.5 + def.spawn_y
+				minetest.add_entity(pos, def.mod_name ..":" .. def.name):setyaw(math.random(0,6.28))
+				itemstack:take_item()
+				
+			end
+			return itemstack
+		end,
+		on_construct=function(pos)
+			minetest.remove_node(pos)
+		end,
+	})
+else
+	minetest.register_craftitem(def.mod_name ..":" .. def.name .."_spawner", {
+		description = def.name .." spawner",
+		inventory_image = itemtexture or "character.png",
 		on_place = function(itemstack, user, pointed_thing)
 			if pointed_thing.type=="node" then
 				local pos=aliveai.roundpos(pointed_thing.above)
@@ -155,8 +180,11 @@ minetest.register_craftitem(def.mod_name ..":" .. def.name .."_spawner", {
 			return itemstack
 		end,
 	})
-	def.drop_dead_body=def.drop_dead_body or 1
-	if def.texture~=nil and type(def.texture)=="string" then def.texture={def.texture} end
+end
+
+def.drop_dead_body=def.drop_dead_body or 1
+if def.texture~=nil and type(def.texture)=="string" then def.texture={def.texture} end
+
 minetest.register_entity(def.mod_name ..":" .. def.name,{
 	hp_max = def.hp or 20,
 	physical = true,
@@ -244,7 +272,7 @@ on_punch=function(self, puncher, time_from_last_punch, tool_capabilities, dir)
 			aliveai.exitpath(self)
 		end
 		minetest.after(2, function(self)
-			aliveai.eat(self,"")
+			aliveai.eat(self)
 		end,self)
 		if not aliveai.same_bot(self,puncher) then
 			local known=aliveai.getknown(self,puncher)
@@ -306,8 +334,16 @@ on_activate=function(self, staticdata)
 			if r.resources then self.resources=r.resources end
 
 			for i, v in pairs(r) do
-				if string.find(i,"storge")==1 then
-					self[i]=v
+local name=i
+
+				if string.find(name,"storge")==1 then
+				print(name)
+name=string.gsub(name,"storge", "save")
+print(name)
+end
+
+				if string.find(name,"save")==1 then
+					self[name]=v
 				end
 			end
 
@@ -405,7 +441,7 @@ get_staticdata = function(self)
 		if self.dying then r.dying=self.dying end
 
 		for i, v in pairs(self) do
-			if string.find(i,"storge")==1 then
+			if string.find(i,"storge")==1 or string.find(i,"save")==1 then
 				r[i]=v
 			end
 		end
