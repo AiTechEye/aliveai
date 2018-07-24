@@ -1,5 +1,5 @@
 aliveai={
-	version=21.5,
+	version=22,
 --========================options==============================
 	spawning=true,				--spawning by self
 	character_model="aliveai_character.b3d",	--character model
