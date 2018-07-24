@@ -337,9 +337,7 @@ on_activate=function(self, staticdata)
 local name=i
 
 				if string.find(name,"storge")==1 then
-				print(name)
 name=string.gsub(name,"storge", "save__")
-print(name)
 end
 
 				if string.find(name,"save__")==1 then
