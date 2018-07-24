@@ -173,7 +173,7 @@ aliveai.invadd=function(self,add,num,nfeedback)
 	if self.inv[add]<=0 then
 		self.inv[add]=nil
 	else
-		aliveai.eat(self,add)
+		aliveai.eat(self)
 	end
 -- needs
 	if self.need and self.need[add] then
@@ -473,72 +473,36 @@ aliveai.digdrop=function(pos)
 	end
 end
 
-aliveai.eat=function(self,name)
-	if not (self and self.object and self.object:get_hp()>0)
-	or self.object:get_hp()>=self.hp_max then
+aliveai.eat=function(self)
+	local hp=aliveai.gethp(self.object)
+	if hp<=0 or hp>=self.hp_max then
 		return nil
 	end
-
-	local gchange=0
-	local gname=""
-
--- check if it have staple food to eat
-	if name=="" then
-		for i, v in pairs(aliveai.staplefood) do
-			if self.inv[i] then
-				gname=i
-				gchange=v
-				break
-			end
-		end
--- check if gotten item is staple food to eat
-	else
-		if aliveai.staplefood[name] then
-			gchange=aliveai.staplefood[name]
-			gname=name
-		end
-	end
-
-	if gchange==0 and debug and debug.getupvalue then
-		local eatable={
-			minetest.registered_items[name],
-			minetest.registered_nodes[name],
-			minetest.registered_craftitems[name],
-			minetest.registered_tools[name]
-		}
-		for _, ob in pairs(eatable) do
-			if ob~=nil and ob.on_use~=nil then
-				local name2,change=debug.getupvalue(ob.on_use, 1)
-				if name2~=nil and name2=="hp_change" then
-					gname=name2
-					gchange=change
-					aliveai.staplefood[name]=change
+	local ohp=hp
+	for i, h in pairs(self.inv) do
+		local eat=minetest.get_item_group(i,"aliveai_eatable")
+		if eat>0 then
+			for i2=1,h,1 do
+				hp=hp+eat
+				if hp>=self.hp_max then
+					self.inv[i]=h-i2
+					if self.inv[i]<=0 then self.inv[i]=nil end
+					self.object:set_hp(self.hp_max)
+					self.hp=self.hp_max
+					aliveai.showhp(self,true)
+					aliveai.showstatus(self,"ate, hp now " .. self.hp)
+					return
 				end
 			end
+			self.inv[i]=nil
 		end
 	end
--- have or not found something to eat 
-	if gchange==0 or self.inv[gname]==nil then return nil end
-
-	local hp=self.object:get_hp()
-	local n=gchange
-	local change=0
-	local num=0
-	for i=1,self.inv[gname],1 do
-		change=change+n
-		num=num-1
-		if hp+change>=self.hp_max then break end
+	if ohp~=hp then
+		self.object:set_hp(hp)
+		self.hp=hp
+		aliveai.showhp(self,true)
+		aliveai.showstatus(self,"ate, hp now " .. self.hp)
 	end
-	if hp+change>self.hp_max then
-		self.object:set_hp(self.hp_max)
-		self.hp=self.hp_max
-	else
-		self.object:set_hp(hp+change)
-		self.hp=hp+change
-	end
-	aliveai.invadd(self,gname,num)
-	aliveai.showhp(self,true)
-	aliveai.showstatus(self,"ate " .. gname ..", hp up " .. change ..", was " ..hp .. ", hp now " .. self.hp)
 	return self
 end
 
