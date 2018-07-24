@@ -131,7 +131,7 @@ minetest.register_tool("aliveai_aliens:alien_shrinker", {
 minetest.register_craftitem("aliveai_aliens:alien_food", {
 	description = "Alien food",
 	inventory_image = "default_iron_lump.png^[colorize:#00883344",
-	groups = {not_in_creative_inventory=1},
+	groups = {not_in_creative_inventory=1,aliveai_eatable=8},
 	on_use =minetest.item_eat(8)
 })
 
