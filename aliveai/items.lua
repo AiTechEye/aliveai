@@ -115,7 +115,7 @@ aliveai.give_to_bot=function(self,clicker)
 	self.mood=self.mood+1
 	local inv=clicker:get_inventory()
 	local i=clicker:get_wield_index()
-	if self.hp<self.hp_max and aliveai.staplefood[stack:get_name()] then
+	if self.hp<self.hp_max and minetest.get_item_group(stack:get_name(),"aliveai_eatable")>0 then
 		aliveai.known(self,clicker,"member")
 		self.mood=self.mood+2
 		aliveai.sayrnd(self,"thanks",clicker:get_player_name())
