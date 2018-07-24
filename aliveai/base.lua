@@ -1649,7 +1649,7 @@ aliveai.walk=function(self,sp)
 end
 
 aliveai.stand=function(self)
-	if not self.move or not self.object then aliveai.kill(self) return end
+	if not self.move or not self.object or not self.object:getvelocity() then aliveai.kill(self) return end
 	self.move.x=0
 	self.move.z=0
 	self.object:setvelocity({
