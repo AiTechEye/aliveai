@@ -2,24 +2,11 @@ aliveai_aliens={ael={},atra={}}
 
 dofile(minetest.get_modpath("aliveai_aliens") .. "/items.lua")
 
-aliveai.savedata.aliens=function(self)
-	if self.aliens then
-		return {acolor=self.acolor}
-	end
-end
-
-aliveai.loaddata.aliens=function(self,r)
-	if r.acolor then
-		self.acolor=r.acolor
-	end
-	return self
-end
-
 aliveai_aliens.set_color=function(self)
-	if not self.acolor then return end
+	if not self.save__acolor then return end
 	local tx=self.object:get_properties().textures[1]
 	self.object:set_properties({
-		textures = {tx .. "^[colorize:#" .. self.acolor},
+		textures = {tx .. "^[colorize:#" .. self.save__acolor},
 	})
 end
 
@@ -31,7 +18,7 @@ aliveai_aliens.gen_color=function(self)
         		n=math.random(1,16)
        		c=c .. string.sub(t,n,n)
 	end
-	self.acolor=c .. "55"
+	self.save__acolor=c .. "55"
 	aliveai_aliens.set_color(self)
 
 	local p=self.object:get_pos()
