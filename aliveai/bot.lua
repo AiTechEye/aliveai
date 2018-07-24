@@ -441,7 +441,7 @@ get_staticdata = function(self)
 		if self.dying then r.dying=self.dying end
 
 		for i, v in pairs(self) do
-			if string.find(i,"storge")==1 or string.find(i,"save")==1 then
+			if string.find(i,"storge")==1 or string.find(i,"save__")==1 then
 				r[i]=v
 			end
 		end
