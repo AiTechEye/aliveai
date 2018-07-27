@@ -922,8 +922,10 @@ minetest.register_entity("aliveai_massdestruction:blackhole",{
 					elseif np then
 						if not aliveai_nitroglycerine.spawn_dust(np) then
 							local nn=minetest.get_node(np).name
-							if nn then
-								minetest.add_item(np, nn):get_luaentity().age=890
+							if nn and np then
+								local e=minetest.add_item(np, nn)
+								if not e then return end
+								e:get_luaentity().age=890
 							end
 						end
 						minetest.remove_node(np)
