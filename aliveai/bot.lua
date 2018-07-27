@@ -211,6 +211,7 @@ on_punch=function(self, puncher, time_from_last_punch, tool_capabilities, dir)
 			aliveai.max(self,true)
 			return self
 		end
+		tool_capabilities.damage_groups.fleshy=tool_capabilities.damage_groups.fleshy or 1
 		local mindmg=tool_capabilities.damage_groups.fleshy>=self.mindamage
 		local dmg=0
 		
