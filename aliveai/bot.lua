@@ -24,7 +24,7 @@ aliveai.bot=function(self, dtime)
 
 	if aliveai.dying(self) then return self end
 	if not aliveai.dmgbynode(self) then return self end
-	if self.processed(self) or self.step(self,dtime) or self.controlled==1 then return self end
+	if self.step(self,dtime) or self.controlled==1 then return self end
 	if aliveai.sleep(self) then return self end
 	aliveai.jumping(self)-- if need to jump
 	if aliveai.fight(self) then return self end
@@ -92,12 +92,6 @@ aliveai.create_bot=function(def)
 	def.spawn_y=def.spawn_y or 1
 	if aliveai.smartshop and def.on_step==nil then def.on_step=aliveai.use_smartshop end
 	if not def.click then def.click=aliveai.give_to_bot end
-
-	if aliveai_processing then
-		def.processing=aliveai_processing.processed
-	else
-		def.processing=aliveai.do_nothing
-	end
 
 	def.texture=def.texture or "character.png"
 
@@ -557,7 +551,6 @@ on_step=aliveai.main,
 	step= def.on_step or aliveai.do_nothing,
 	on_dig= def.on_dig or aliveai.do_nothing,
 	on_blow=def.on_blow or aliveai.do_nothing,
-	processed=def.processing,
 --tasks
 	task1= def.task1 or aliveai.task_build,
 	task2= def.task2 or aliveai.task_stay_at_home,
