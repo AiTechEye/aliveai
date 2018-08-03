@@ -1,6 +1,19 @@
-aliveai_mindcontroller={timer=0,users={},userss={}}
+aliveai_mindcontroller={timer=0,users={},userss={},rcusers={}}
 
 dofile(minetest.get_modpath("aliveai_mindcontroller") .. "/force.lua")
+
+minetest.register_alias("aliveai_minecontroller:pad", "aliveai_mindcontroller:pad")
+minetest.register_alias("aliveai_minecontroller:take", "aliveai_mindcontroller:take")
+minetest.register_alias("aliveai_minecontroller:controller", "aliveai_mindcontroller:controller")
+
+minetest.register_craft({
+	output = "aliveai_mindcontroller:usb",
+	recipe = {
+		{"default:steel_ingot","default:diamond","default:steel_ingot"},
+		{"default:steel_ingot","default:mese","default:steel_ingot"},
+		{"default:steel_ingot","default:obsidian","default:steel_ingot"},
+	}
+})
 
 minetest.register_craft({
 	output = "aliveai_mindcontroller:controller",
@@ -19,6 +32,52 @@ minetest.register_craft({
 		{"default:steel_ingot","default:obsidian_shard","default:steel_ingot"},
 	}
 })
+
+minetest.register_on_leaveplayer(function(player)
+	local u=player:get_player_name()
+	if aliveai_mindcontroller.rcusers[u] then
+		aliveai_mindcontroller.rcusers[u]=nil
+	end
+end)
+
+minetest.register_tool("aliveai_mindcontroller:usb", {
+	description = "USB",
+	range=10,
+	inventory_image = "aliveai_mindcontroller_usb.png",
+	on_use = function(itemstack, user, pointed_thing)
+		local u=user:get_player_name()
+		local hp=aliveai.gethp(aliveai_mindcontroller.rcusers[u])
+		if pointed_thing.type=="object" and pointed_thing.ref:get_luaentity() then
+			local ob=pointed_thing.ref
+			if aliveai.is_bot(ob) and (hp<1 or aliveai.same_bot(aliveai_mindcontroller.rcusers[u]:get_luaentity(),ob)) then
+				aliveai_mindcontroller.rcusers[u]=ob
+				return itemstack
+			elseif hp<1 then
+				aliveai_mindcontroller.rcusers[u]=nil
+				return itemstack
+			end
+			local self=aliveai_mindcontroller.rcusers[u]:get_luaentity()
+			self.fight=ob
+			self.temper=3
+		elseif pointed_thing.type=="nothing" and hp>0 then
+			local self=aliveai_mindcontroller.rcusers[u]:get_luaentity()
+			aliveai.lookat(self,pointed_thing.above)
+			aliveai.stand(self)
+		elseif pointed_thing.type=="node" and hp>0 then
+			local self=aliveai_mindcontroller.rcusers[u]:get_luaentity()
+			aliveai.lookat(self,pointed_thing.above)
+			aliveai.walk(self)
+		end
+		return itemstack
+	end,
+	on_place = function(itemstack, user, pointed_thing)
+		aliveai_mindcontroller.rcusers[user:get_player_name()]=nil
+		return itemstack
+	end,
+})
+
+
+
 
 minetest.register_tool("aliveai_mindcontroller:take", {
 	description = "Take tool",
