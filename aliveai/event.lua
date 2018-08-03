@@ -822,8 +822,9 @@ aliveai.fly=function(self)
 			local xl=xr*-1
 			local z=self.move.z
 			local x=self.move.x
-			if minetest.registered_nodes[minetest.get_node({x=pos1.x+xr+x,y=pos1.y,z=pos1.z+zr+z}).name].walkable==false 
-			and minetest.registered_nodes[minetest.get_node({x=pos1.x+xr+x,y=pos1.y+1,z=pos1.z+zr+z}).name].walkable==false
+
+			if aliveai.def({x=pos1.x+xr+x,y=pos1.y,z=pos1.z+zr+z},"walkable")==false 
+			and aliveai.def({x=pos1.x+xr+x,y=pos1.y+1,z=pos1.z+zr+z},"walkable")==false
 			and not aliveai.visiable({x=pos1.x+xr+x,y=pos1.y+1,z=pos1.z+zr+z},self.fly:get_pos()) then
 				local path=aliveai.creatpath(self,pos1,{x=pos1.x+math.floor(xr+x+0.5),y=pos1.y,z=pos1.z+math.floor(zr+z+0.5)})
 				if path then
@@ -832,8 +833,8 @@ aliveai.fly=function(self)
 					aliveai.showstatus(self,"hide",3)
 					return self
 				end
-			elseif minetest.registered_nodes[minetest.get_node({x=pos1.x+xl+x,y=pos1.y,z=pos1.z+zl+z}).name].walkable==false 
-			and minetest.registered_nodes[minetest.get_node({x=pos1.x+xl+x,y=pos1.y+1,z=pos1.z+zl+z}).name].walkable==false
+			elseif aliveai.def({x=pos1.x+xl+x,y=pos1.y,z=pos1.z+zl+z},"walkable")==false 
+			and aliveai.def({x=pos1.x+xl+x,y=pos1.y+1,z=pos1.z+zl+z},"walkable")==false
 			and not aliveai.visiable({x=pos1.x+xl+x,y=pos1.y+1,z=pos1.z+zl+z},self.fly:get_pos()) then
 				pos1=aliveai.roundpos(pos1)
 				local path=aliveai.creatpath(self,pos1,{x=pos1.x+math.floor(xl+x+0.5),y=pos1.y,z=pos1.z+math.floor(zl+z+0.5)})
@@ -847,8 +848,8 @@ aliveai.fly=function(self)
 		end
 		local mx=self.move.x/2
 		local mz=self.move.z/2
-		if minetest.registered_nodes[minetest.get_node({x=pos1.x+mx,y=pos1.y+1,z=pos1.z+mz}).name].walkable and
-		minetest.registered_nodes[minetest.get_node({x=pos1.x+mx,y=pos1.y+2,z=pos1.z+mz}).name].walkable then
+		if aliveai.def({x=pos1.x+mx,y=pos1.y+1,z=pos1.z+mz},"walkable") and
+		aliveai.def({x=pos1.x+mx,y=pos1.y+2,z=pos1.z+mz},"walkable") then
 			local x=pos1.x+mx
 			local z=pos1.z+mz
 			for i=0,self.distance,1 do
@@ -858,10 +859,10 @@ aliveai.fly=function(self)
 				local node3=minetest.get_node({x=pos1.x,y=pos1.y+i,z=pos1.z})
 				local node4=minetest.get_node({x=pos1.x,y=pos1.y+i+1,z=pos1.z})
 				if node1 and node2 and node3 and node4
-				and minetest.registered_nodes[node1.name].walkable==false
-				and minetest.registered_nodes[node2.name].walkable==false
-				and minetest.registered_nodes[node3.name].walkable==false
-				and minetest.registered_nodes[node4.name].walkable==false then
+				and aliveai.def(node1.name].walkable==false
+				and aliveai.def(node2.name].walkable==false
+				and aliveai.def(node3.name].walkable==false
+				and aliveai.def(node4.name].walkable==false then
 					local path=aliveai.creatpath(self,pos1,p1,self.distance)
 					if path then
 						aliveai.rndwalk(self,false)
@@ -998,7 +999,7 @@ aliveai.fight=function(self)
 							local yu1={x=fpos.x,y=fpos.y-2,z=fpos.z}
 							local ny1=minetest.get_node(yu1)
 							local ny2=minetest.get_node({x=fpos.x,y=fpos.y-3,z=fpos.z})
-							if ny1 and ny2 and minetest.registered_nodes[ny2.name].walkable==false and minetest.registered_nodes[ny1.name].walkable then
+							if ny1 and ny2 and aliveai.def(ny2.name,"walkable")==false and aliveai.def(ny1.name,"walkable") then
 								aliveai.dig(self,yu1) 
 							end
 						end
@@ -1479,8 +1480,7 @@ aliveai.path=function(self)
 				pos=aliveai.roundpos(pos)
 				pos.y=pos.y-1
 				local p3=self.path[self.pathn]
-				local node=minetest.get_node({x=p3.x,y=p3.y-1,z=p3.z})
-				if self.object:getvelocity().y==0 and node and minetest.registered_nodes[node.name].walkable==false then
+				if self.object:getvelocity().y==0 and aliveai.def({x=p3.x,y=p3.y-1,z=p3.z},"walkable")==false then
 					local stuff=self.path_bridge
 					if stuff=="" then
 						for i, v in pairs(self.inv) do

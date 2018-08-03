@@ -295,7 +295,7 @@ aliveai.random=function(a,b)
 end
 
 aliveai.is_bot=function(ob)
-	return (ob and ob:get_luaentity() and ob:get_luaentity().aliveai)
+	return (ob and ob:get_luaentity() and ob:get_luaentity().botname and ob:get_luaentity().aliveai)
 end
 
 aliveai.get_bot_name=function(ob)
