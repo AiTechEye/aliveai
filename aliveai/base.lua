@@ -1,3 +1,28 @@
+aliveai.newpos=function(pos,a)
+	if not pos then
+		return
+	elseif pos.object then
+		pos=pos.object:get_pos()
+	elseif pos:get_pos() then
+		pos=pos:get_pos()
+	end
+	if a and type(a)~="table" then
+		return pos
+	elseif a then
+		return {x=pos.x+(a.x or 0),y=pos.y+(a.y or 0),z=pos.z+(a.z or 0)}
+	end
+	return {
+	x=pos.x,
+	z=pos.z,
+	y=pos.y,
+	xx=function(p,n) return p.x+(n or 0) end,
+	yy=function(p,n) return p.y+(n or 0) end,
+	zz=function(p,n) return p.z+(n or 0) end,
+	}
+end
+
+
+
 minetest.register_on_item_eat=function(hp_change, replace_with_item, itemstack, user, pointed_thing)
 	local a=itemstack:get_name()
 	if not aliveai.food[a] and hp_change>0 and minetest.get_item_group(a,"aliveai_eatable")==0 then
