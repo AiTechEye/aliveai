@@ -461,9 +461,7 @@ aliveai.create_bot({
 		damage_by_blocks=0,
 		spawn_on={"default:lava_source","default:lava_flowing"},
 		spawn_in="default:lava_source",
-	on_load=function(self)
-		self.hp2=self.object:get_hp()
-	end,
+		mindamage=5,
 	on_step=function(self,dtime)
 		if (self.fight and math.random(1,3)==1) or math.random(1,10)==1 then
 			local pos=self.object:get_pos()
@@ -484,10 +482,6 @@ aliveai.create_bot({
 		end
 	end,
 	on_punched=function(self,puncher)
-		if self.hp2 and self.hp2-self.object:get_hp()<5 then
-			self.object:set_hp(self.hp2)
-			return self
-		end
 		local pos=self.object:get_pos()
 		minetest.add_particlespawner({
 			amount = 5,
@@ -538,9 +532,7 @@ aliveai.create_bot({
 		spawn_on={"fire:basic_flame"},
 		dmg=5,
 		escape=0,
-	on_load=function(self)
-		self.hp2=self.object:get_hp()
-	end,
+		mindamage=5,
 	on_step=function(self,dtime)
 		if (self.fight and math.random(1,3)==1) or math.random(1,10)==1 then
 			local pos=self.object:get_pos()
@@ -561,10 +553,6 @@ aliveai.create_bot({
 		end
 	end,
 	on_punched=function(self,puncher)
-		if self.hp2 and self.hp2-self.object:get_hp()<5 then
-			self.object:set_hp(self.hp2)
-			return self
-		end
 		local pos=self.object:get_pos()
 		minetest.add_particlespawner({
 			amount = 5,
@@ -662,17 +650,7 @@ aliveai.create_bot({
 			end
 		end
 	end,
-	on_load=function(self)
-		self.hp2=self.object:get_hp()
-	end,
-	spawn=function(self)
-		self.hp2=self.object:get_hp()
-	end,
 	on_punched=function(self,puncher)
-		if self.hp2 and self.hp2-self.object:get_hp()<5 then
-			self.object:set_hp(self.hp2)
-			return self
-		end
 		local pos=self.object:get_pos()
 			minetest.add_particlespawner({
 			amount = 5,
@@ -2093,6 +2071,7 @@ aliveai.create_bot({
 		spawn_on={"group:sand","group:spreading_dirt_type","default:gravel","group:stone"},
 		attack_chance=5,
 		floating=1,
+		mindamage=5,
 	on_punching=function(self,target)
 		if not self.att and self.object:getvelocity().y==0 then
 			self.att=target
@@ -2120,17 +2099,7 @@ aliveai.create_bot({
 
 		end
 	end,
-	on_load=function(self)
-		self.hp2=self.object:get_hp()
-	end,
-	spawn=function(self)
-		self.hp2=self.object:get_hp()
-	end,
 	on_punched=function(self,puncher)
-		if self.hp2 and self.hp2-self.object:get_hp()<5 then
-			self.object:set_hp(self.hp2)
-			return self
-		end
 		local pos=self.object:get_pos()
 			minetest.add_particlespawner({
 			amount = 5,
@@ -3108,3 +3077,21 @@ aliveai.create_bot({
 	end,
 })
 end
+
+
+minetest.register_node("aliveai_threats:steelnet", { -- plans for "spider_terminator"
+	description = "Steel net",
+	tiles = {"aliveai_threats_steelnet.png"},
+	paramtype = "light",
+	drawtype = "firelike",
+	sunlight_propagates=true,
+	walkable = false,
+	is_ground_content = false,
+	liquidtype = "source",
+	liquid_range = 0,
+	liquid_alternative_flowing = "aliveai_threats:steelnet",
+	liquid_alternative_source = "aliveai_threats:steelnet",
+	liquid_viscosity = 15,
+	groups = {cracky=1,level=1},
+	sounds=default.node_sound_metal_defaults(),
+})
