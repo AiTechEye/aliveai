@@ -854,15 +854,10 @@ aliveai.fly=function(self)
 			local z=pos1.z+mz
 			for i=0,self.distance,1 do
 				local p1={x=x,y=pos1.y+i,z=z}
-				local node1=minetest.get_node(p1)
-				local node2=minetest.get_node({x=x,y=pos1.y+i+1,z=z})
-				local node3=minetest.get_node({x=pos1.x,y=pos1.y+i,z=pos1.z})
-				local node4=minetest.get_node({x=pos1.x,y=pos1.y+i+1,z=pos1.z})
-				if node1 and node2 and node3 and node4
-				and aliveai.def(node1.name].walkable==false
-				and aliveai.def(node2.name].walkable==false
-				and aliveai.def(node3.name].walkable==false
-				and aliveai.def(node4.name].walkable==false then
+				if aliveai.def(p1,"walkable")==false
+				and aliveai.def({x=x,y=pos1.y+i+1,z=z},"walkable")==false
+				and aliveai.def({x=pos1.x,y=pos1.y+i,z=pos1.z},"walkable")==false
+				and aliveai.def({x=pos1.x,y=pos1.y+i+1,z=pos1.z},"walkable")==false then
 					local path=aliveai.creatpath(self,pos1,p1,self.distance)
 					if path then
 						aliveai.rndwalk(self,false)
