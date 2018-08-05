@@ -309,7 +309,7 @@ minetest.register_on_player_receive_fields(function(player, form, pressed)
 			c=c+1
 			if pressed["take" .. c] then
 				local inv=player:get_inventory()
-				if not inv:room_for_item("main", i) then minetest.chat_send_player(name, "Your inventory are full") return end
+				if not inv:room_for_item("main", i) then return end
 				inv:add_item("main", i .." " .. v)
 				aliveai.invadd(self,i,-v)
 				if minetest.registered_tools[i] and minetest.registered_tools[i].on_use and self.tools[v] then
