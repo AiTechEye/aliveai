@@ -83,7 +83,7 @@ aliveai_threats_eyes.shoot=function(self)
 	if not (self.fight and math.random(1,20)==1) then return end
 	local e=minetest.add_item(aliveai.pointat(self,1),"default:stick")
 	local dir=aliveai.get_dir(self,self.fight)
-	local vc = {x = dir.x*30, y = dir.y*30, z = dir.z*30}
+	local vc = {x = aliveai.nan(dir.x*30), y = aliveai.nan(dir.y*30), z = aliveai.nan(dir.z*30)}
 	if not (vc and vc.x and vc.y and vc.z) or vc.x==math.huge or vc.x~=vc.x then return end
 	e:setvelocity(vc)
 	e:get_luaentity().age=(tonumber(minetest.setting_get("item_entity_ttl")) or 900)-2
