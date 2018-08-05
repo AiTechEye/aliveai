@@ -63,10 +63,14 @@ minetest.register_tool("aliveai_mindcontroller:usb", {
 			local self=aliveai_mindcontroller.rcusers[u]:get_luaentity()
 			aliveai.lookat(self,pointed_thing.above)
 			aliveai.stand(self)
+			self.path=nil
+			self.fight=nil
 		elseif pointed_thing.type=="node" and hp>0 then
 			local self=aliveai_mindcontroller.rcusers[u]:get_luaentity()
 			aliveai.lookat(self,pointed_thing.above)
 			aliveai.walk(self)
+			self.path=nil
+			self.fight=nil
 		end
 		return itemstack
 	end,
