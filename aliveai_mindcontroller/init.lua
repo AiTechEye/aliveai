@@ -298,7 +298,7 @@ minetest.register_on_player_receive_fields(function(player, form, pressed)
 	end
 	if form=="aliveai_mindcontroller.take" then
 		local e=aliveai_mindcontroller.userss[player:get_player_name()]
-		if pressed.quit or not (e and e.ob) then
+		if pressed.quit or not (e and e.ob and e.ob:get_luaentity()) then
 			aliveai_mindcontroller.userss[player:get_player_name()]=nil
 			return
 		end
