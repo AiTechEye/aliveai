@@ -7,6 +7,7 @@ dofile(minetest.get_modpath("aliveai_threats") .. "/flowerattack.lua")
 dofile(minetest.get_modpath("aliveai_threats") .. "/crystal.lua")
 dofile(minetest.get_modpath("aliveai_threats") .. "/tree.lua")
 dofile(minetest.get_modpath("aliveai_threats") .. "/fort.lua")
+dofile(minetest.get_modpath("aliveai_threats") .. "/spider.lua")
 
 aliveai_threats.tox=function(ob)
 
@@ -604,6 +605,7 @@ aliveai.create_bot({
 		name_color="",
 		spawn_on={"group:sand","group:spreading_dirt_type","default:gravel","group:stone"},
 		attack_chance=5,
+		mindamage=5,
 	on_punching=function(self,target)
 		local pos=self.object:get_pos()
 		pos.y=pos.y-0.5
@@ -3077,21 +3079,3 @@ aliveai.create_bot({
 	end,
 })
 end
-
-
-minetest.register_node("aliveai_threats:steelnet", { -- plans for "spider_terminator"
-	description = "Steel net",
-	tiles = {"aliveai_threats_steelnet.png"},
-	paramtype = "light",
-	drawtype = "firelike",
-	sunlight_propagates=true,
-	walkable = false,
-	is_ground_content = false,
-	liquidtype = "source",
-	liquid_range = 0,
-	liquid_alternative_flowing = "aliveai_threats:steelnet",
-	liquid_alternative_source = "aliveai_threats:steelnet",
-	liquid_viscosity = 15,
-	groups = {cracky=1,level=1},
-	sounds=default.node_sound_metal_defaults(),
-})
