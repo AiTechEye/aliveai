@@ -1,5 +1,5 @@
 minetest.register_node("aliveai_threats:spiderspawner", {
-	drowtype="airlike"
+	drawtype="airlike"
 })
 
 aliveai.register_on_generated("aliveai_threats:spiderspawner",function(y)
