@@ -1,5 +1,5 @@
 aliveai={
-	version=23,
+	version=24,
 --========================options==============================
 	spawning=true,				--spawning by self
 	character_model="aliveai_character.b3d",	--character model
@@ -103,6 +103,7 @@ minetest.register_globalstep(function(dtime)
 end)
 
 dofile(minetest.get_modpath("aliveai") .. "/base.lua")
+dofile(minetest.get_modpath("aliveai") .. "/mapgen.lua")
 dofile(minetest.get_modpath("aliveai") .. "/event.lua")
 dofile(minetest.get_modpath("aliveai") .. "/other.lua")
 dofile(minetest.get_modpath("aliveai") .. "/items.lua")
