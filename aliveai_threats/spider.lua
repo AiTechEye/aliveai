@@ -1,3 +1,41 @@
+minetest.register_node("aliveai_threats:spiderspawner", {
+	drowtype="airlike"
+})
+
+aliveai.register_on_generated("aliveai_threats:spiderspawner",function(y)
+	minetest.after(0, function(y)
+		y.y=y.y-4
+		local p=aliveai.get_nodes(y,4,1,{})
+		if not p then return end
+		local m={"aliveai_threats:trapstone","aliveai_threats:trapdirt"}
+		local mm={"default:stone","default:dirt"}
+		for _, pos in ipairs(p) do
+				if pos.y>=y.y and minetest.find_node_near(pos, 1,{"air","group:snappy"}) then
+					if pos.y>=y.y+4 then
+						minetest.set_node(pos,{name=m[math.random(1,2)]})
+					else
+						minetest.set_node(pos,{name=mm[math.random(1,2)]})
+					end
+				else
+					minetest.set_node(pos,{name="aliveai_threats:steelnet"})
+				end
+		end
+		minetest.get_node_timer(y):start(5)
+	end,y)
+	return "default:dirt"
+end)
+
+minetest.register_ore({
+	ore_type       = "scatter",
+	ore            = "aliveai_threats:spiderspawner",
+	wherein        = "group:spreading_dirt_type",
+	clust_scarcity = 34 * 34 * 34,
+	clust_num_ores = 1,
+	clust_size     = 1,
+	y_min          = 0,
+	y_max          = 100,
+})
+
 minetest.register_node("aliveai_threats:steelnet", {
 	description = "Steel net",
 	tiles = {"aliveai_threats_steelnet.png"},
@@ -154,38 +192,6 @@ aliveai.create_bot({
 		elseif not n and self.floating==1 then
 			aliveai.floating(self)
 		end
-	end,
-	spawn=function(self)
-		local y=self.object:get_pos()
-		if minetest.get_node(y).name=="aliveai_threats:steelnet" then
-			return
-		end
-		y.y=y.y-7
-		for _, ob in ipairs(minetest.get_objects_inside_radius(y, 100)) do
-			local self2=ob:get_luaentity()
-			if aliveai.is_bot(ob) and self2.botname~=self.botname and self2.name=="aliveai_threats:spider_terminator" then
-				return
-			end
-		end
-		local p=aliveai.get_nodes(y,4,1,{})
-		if not p then return end
-		local m={"aliveai_threats:trapstone","aliveai_threats:trapdirt"}
-		local mm={"default:stone","default:dirt"}
-		for _, pos in ipairs(p) do
-			if not minetest.is_protected(pos,"") then
-				if pos.y>=y.y and minetest.find_node_near(pos, 1,{"air","group:snappy"}) then
-					if pos.y>=y.y+4 then
-						minetest.set_node(pos,{name=m[math.random(1,2)]})
-					else
-						minetest.set_node(pos,{name=mm[math.random(1,2)]})
-					end
-				else
-					minetest.set_node(pos,{name="aliveai_threats:steelnet"})
-				end
-			end
-		end
-		minetest.get_node_timer(y):start(5)
-		self.object:set_pos(y)
 	end,
 	on_punched=function(self,puncher)
 		local pos=self.object:get_pos()
