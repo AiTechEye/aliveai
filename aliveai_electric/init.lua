@@ -1,5 +1,26 @@
 aliveai_electric={player={}}
 
+aliveai_electric.pos_between=function(pos1,pos2,density)
+	if not ((pos1 and pos1.x and pos1.y and pos1.z) or (pos2 and pos2.x and pos2.y and pos2.z)) then return end
+	local d=aliveai.distance(pos1,pos2)
+	density=density or 1
+	local allpos={}
+	local v = {x = pos1.x - pos2.x, y = pos1.y - pos2.y-1, z = pos1.z - pos2.z}
+	local amount = (v.x ^ 2 + v.y ^ 2 + v.z ^ 2) ^ 0.5
+	local d=math.sqrt((pos1.x-pos2.x)*(pos1.x-pos2.x) + (pos1.y-pos2.y)*(pos1.y-pos2.y)+(pos1.z-pos2.z)*(pos1.z-pos2.z))
+	v.x = (v.x  / amount)*-1
+	v.y = (v.y  / amount)*-1
+	v.z = (v.z  / amount)*-1
+	for i=1,d,density do
+		local posn={x=pos1.x+(v.x*i),y=pos1.y+(v.y*i),z=pos1.z+(v.z*i)}
+		if not aliveai.def(posn,"buildable_to") then
+			return allpos
+		end
+		table.insert(allpos,posn)
+	end
+	return allpos
+end
+
 aliveai_electric.getobjects=function(pos1,pos2)
 	if not ((pos1 and pos1.x and pos1.y and pos1.z) or (pos2 and pos2.x and pos2.y and pos2.z)) then return end
 	local d=aliveai.distance(pos1,pos2)
