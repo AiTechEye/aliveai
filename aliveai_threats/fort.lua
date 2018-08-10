@@ -12,10 +12,16 @@ minetest.register_tool("aliveai_threats:fortspawner", {
 	end,
 })
 
+minetest.register_node("aliveai_threats:fort_spawner", {
+	tiles={"default_stone.png"},
+	groups = {not_in_creative_inventory=1},
+	is_ground_content = false
+})
+
 minetest.register_ore({
 	ore_type       = "scatter",
 	ore            = "aliveai_threats:fort_spawner",
-	wherein        = "default:dirt_with_grass",
+	wherein        = "group:spreading_dirt_type",
 	clust_scarcity = 20 * 20 * 20,
 	clust_num_ores = 1,
 	clust_size     = 1,
@@ -45,15 +51,14 @@ minetest.register_ore({
 	y_max          = 50,
 })
 
-minetest.register_abm({
-	nodenames = {"aliveai_threats:fort_spawner"},
-	interval = 10,
-	chance = 1,
-	action = function(pos, node, active_object_count, active_object_count_wider)
-		minetest.set_node(pos,{name="default:stone"})
-		aliveai_threats.fort.spawning(pos)
-	end
-})
+aliveai.register_on_generated("aliveai_threats:fort_spawner",function(pos)
+	minetest.after(0, function(pos)
+		if math.random(1,10)==1 then
+			aliveai_threats.fort.spawning(pos)
+		end
+	end,pos)
+	return "default:stone"
+end)
 
 aliveai_threats.fort.spawning=function(pos,nrnd)
 		if not nrnd and math.random(1,20)~=1 then return end
@@ -160,13 +165,6 @@ aliveai_threats.fort.spawning=function(pos,nrnd)
 		end
 		end
 end
-
-minetest.register_node("aliveai_threats:fort_spawner", {
-	tiles={"default_stone.png"},
-	groups = {not_in_creative_inventory=1},
-	is_ground_content = false
-})
-
 
 minetest.register_node("aliveai_threats:chainfence", {
 	description = "Chain fence",

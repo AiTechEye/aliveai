@@ -21,6 +21,13 @@ minetest.register_tool("aliveai_threats:labspawner", {
 	end
 })
 
+minetest.register_node("aliveai_threats:lab_spawner", {
+	description = "Lab spawner",
+	drawtype="airlike",
+	groups = {not_in_creative_inventory=1},
+	is_ground_content = false
+})
+
 minetest.register_ore({
 	ore_type       = "scatter",
 	ore            = "aliveai_threats:lab_spawner",
@@ -43,15 +50,14 @@ minetest.register_ore({
 	y_max          = 20,
 })
 
-minetest.register_abm({
-	nodenames = {"aliveai_threats:lab_spawner"},
-	interval = 1,
-	chance = 10,
-	action = function(pos, node, active_object_count, active_object_count_wider)
-		minetest.set_node(pos,{name="default:stone"})
-		aliveai_threats.lab.spawning(pos)
-	end
-})
+aliveai.register_on_generated("aliveai_threats:lab_spawner",function(pos)
+	minetest.after(0, function(pos)
+		if math.random(1,10)==1 then
+			aliveai_threats.lab.spawning(pos)
+		end
+	end,pos)
+	return "default:stone"
+end)
 
 aliveai_threats.lab.spawning=function(p,nrnd)
 		if not nrnd and math.random(1,100)~=1 then return end
@@ -504,13 +510,6 @@ minetest.register_node("aliveai_threats:labtable2", {
 		end
 		return false
 	end,
-})
-
-minetest.register_node("aliveai_threats:lab_spawner", {
-	description = "Lab spawner",
-	drawtype="airlike",
-	groups = {not_in_creative_inventory=1},
-	is_ground_content = false
 })
 
 minetest.register_node("aliveai_threats:deadlock", {
