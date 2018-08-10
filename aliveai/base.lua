@@ -15,9 +15,9 @@ aliveai.newpos=function(pos,a)
 	x=pos.x,
 	z=pos.z,
 	y=pos.y,
-	xx=function(p,n) return p.x+(n or 0) end,
-	yy=function(p,n) return p.y+(n or 0) end,
-	zz=function(p,n) return p.z+(n or 0) end,
+	xx=function(p,n) return {x=p.x+(n or 0),y=p.y,z=p.z} end,
+	yy=function(p,n) return {x=p.x,y=p.y+(n or 0),z=p.z} end,
+	zz=function(p,n) return {x=p.x,y=p.y,z=p.z+(n or 0)} end,
 	}
 end
 
@@ -161,9 +161,14 @@ aliveai.xz_to_param2yaw=function(x,z)
 end
 
 aliveai.def=function(pos,n)
-	if not (pos and pos.x and pos.y and pos.z and n) then return false end
-	return (minetest.registered_nodes[minetest.get_node(pos).name] and
-	minetest.registered_nodes[minetest.get_node(pos).name][n])
+	if not (pos and pos.x and pos.y and pos.z and n and minetest.registered_nodes[minetest.get_node(pos).name]) then return nil end
+	return minetest.registered_nodes[minetest.get_node(pos).name][n]
+end
+
+aliveai.defnode=function(name,n)
+	if minetest.registered_nodes[name] and minetest.registered_nodes[name][n] then
+		return minetest.registered_nodes[name][n]
+	end
 end
 
 aliveai.floating=function(self,f)
@@ -1159,28 +1164,22 @@ end
 
 aliveai.dmgbynode=function(self)
 	if self.damage_by_blocks~=1 then return self end
-	local pos=self.object:get_pos()
-	local node2=minetest.get_node(pos)
-	pos.y=pos.y-1
-	local node1=minetest.get_node(pos)
-
-	if node1 and minetest.registered_nodes[node1.name] and minetest.registered_nodes[node1.name].damage_per_second>0 then
-		if not aliveai.punchdmg(self.object,minetest.registered_nodes[node1.name].damage_per_second) then
-			return nil
-		end
+	local pos=aliveai.newpos(self)
+	local d1=aliveai.def(pos:yy(0),"damage_per_second")
+	local d2=aliveai.def(pos:yy(-1),"damage_per_second")
+	if d1 and d1>0 then
+		aliveai.punchdmg(self.object,d1)
 		if not (self.dying or self.dead or self.sleeping) then 
 			self.object:setyaw(math.random(0,6.28))
 			aliveai.walk(self,2)
-			aliveai.showstatus(self,"hurts by " .. node1.name,1)
+			aliveai.showstatus(self,"hurts by node",1)
 		end
-	elseif node2 and minetest.registered_nodes[node2.name] and minetest.registered_nodes[node2.name].damage_per_second>0 then
-		if not aliveai.punchdmg(self.object,minetest.registered_nodes[node2.name].damage_per_second) then
-			return nil
-		end
+	elseif d2 and d2>0 then
+		aliveai.punchdmg(self.object,d2)
 		if not (self.dying or self.dead or self.sleeping) then
 			self.object:setyaw(math.random(0,6.28))
-			aliveai.walk(self)
-			aliveai.showstatus(self,"hurts by " .. node2.name,1)
+			aliveai.walk(self,2)
+			aliveai.showstatus(self,"hurts by node",1)
 		end
 	end
 	return self
