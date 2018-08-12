@@ -28,6 +28,9 @@ aliveai_nitroglycerine.cons=function(a)
 		jobs={[a.pos.x .."." .. a.pos.y .."." .. a.pos.z]=a.pos},
 		replace=a.replace,
 		on_replace=a.on_replace,
+		on_runout=a.on_runout,
+		on_out_of_nodes=a.on_out_of_nodes,
+
 	}
 
 	if aliveai_nitroglycerine.counter(aliveai_nitroglycerine.con_user)<2 then
@@ -51,7 +54,7 @@ aliveai_nitroglycerine.con=function()
 			aliveai_nitroglycerine.con()
 			return
 		end
-
+		local nend
 		for xyz, pos in pairs(a.jobs) do
 			if os.clock()-a.time>5 then
 				aliveai_nitroglycerine.con_user[a.name]=nil
@@ -63,9 +66,15 @@ aliveai_nitroglycerine.con=function()
 				if n3==i3 or minetest.get_item_group(n3,i3)>0 then
 					if type(no)=="string" then
 						minetest.set_node(pos,{name=no})
-						a.on_replace(pos)
-					else
-						no(pos)
+						if a.on_replace(pos) then
+							aliveai_nitroglycerine.con_user[a.name]=nil
+							aliveai_nitroglycerine.con()
+							return
+						end
+					elseif no(pos) then
+						aliveai_nitroglycerine.con_user[a.name]=nil
+						aliveai_nitroglycerine.con()
+						return
 					end
 				end
 			end
@@ -75,7 +84,10 @@ aliveai_nitroglycerine.con=function()
 			end
 
 			aliveai_nitroglycerine.con_user[a.name].count=aliveai_nitroglycerine.con_user[a.name].count-1
-			if aliveai_nitroglycerine.con_user[a.name].count<1 then 
+			if aliveai_nitroglycerine.con_user[a.name].count<1 then
+				if nend and aliveai_nitroglycerine.con_user[a.name].on_runout then
+					aliveai_nitroglycerine.con_user[a.name].on_runout(nend)
+				end
 				aliveai_nitroglycerine.con_user[a.name]=nil
 				aliveai_nitroglycerine.con()
 				return
@@ -84,21 +96,30 @@ aliveai_nitroglycerine.con=function()
 			for y=-a.dis,a.dis,1 do
 			for z=-a.dis,a.dis,1 do
 				local n={x=pos.x+x,y=pos.y+y,z=pos.z+z}
+				nend=n
 
 				if not (minetest.is_protected(n,"") or aliveai_nitroglycerine.protected(n)) then
 					local n2=minetest.get_node(n).name
 					for i3, no in pairs(a.replace) do
 						if n2==i3 or minetest.get_item_group(n2,i3)>0 then
-							aliveai_nitroglycerine.con_user[a.name].jobs[n.x .. "." .. n.y .."." ..n.z]=n
+							local new=n.x .. "." .. n.y .."." ..n.z
+							if new~=xyz and not aliveai_nitroglycerine.con_user[a.name].jobs[new] then
+								aliveai_nitroglycerine.con_user[a.name].jobs[new]=n
+							end
 						end
 					end
 				end
 			end
 			end
 			end
+
 			aliveai_nitroglycerine.con_user[a.name].jobs[xyz]=nil
 		end
-		if aliveai_nitroglycerine.counter(aliveai_nitroglycerine.con_user[a.name].jobs)<1 then 
+
+		if aliveai_nitroglycerine.counter(aliveai_nitroglycerine.con_user[a.name].jobs)<1 then
+			if nend and aliveai_nitroglycerine.con_user[a.name].on_out_of_nodes then
+				aliveai_nitroglycerine.con_user[a.name].on_out_of_nodes(nend)
+			end
 			aliveai_nitroglycerine.con_user[a.name]=nil
 			aliveai_nitroglycerine.con()
 			return
