@@ -620,7 +620,7 @@ aliveai.spawnpickup=function(pos,name,n,self)
 	if n==nil or tonumber(n)==nil or n==0 then n=1 end
 	local ob=minetest.add_item(pos, name .." ".. n)
 	if self then ob:get_luaentity().dropped_by=self.botname end
-	ob:setvelocity({x = math.random(-1, 1),y=5,z = math.random(-1, 1)})
+	ob:set_velocity({x = math.random(-1, 1),y=5,z = math.random(-1, 1)})
 	minetest.after(3, function(ob)
 		if ob and ob:get_luaentity() then
 			local pos=ob:get_pos()
@@ -1027,3 +1027,4 @@ minetest.register_tool("aliveai:genbuildingtool", {
 			end
 		end
 })
+

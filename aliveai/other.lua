@@ -933,7 +933,7 @@ minetest.register_node("aliveai:chair",{
 	on_rightclick = function(pos, node, player, itemstack, pointed_thing)
 		local v=player:get_player_velocity()
 		if v.x~=0 or v.y~=0 or v.z~=0 then return end
-		player:setpos({x=pos.x,y=pos.y,z=pos.z})
+		player:set_pos({x=pos.x,y=pos.y,z=pos.z})
 		local name=player:get_player_name()
 		local nname=minetest.get_node(pos).name
 		if default.player_attached[name] then
@@ -1239,7 +1239,7 @@ minetest.register_node("aliveai:protector", {
 				local pos2=ob:get_pos()
 				local d=math.max(1,vector.distance(pos,pos2))
 				local r=(8/d)*2
-				ob:setvelocity({x=(pos2.x-pos.x)*r, y=(pos2.y-pos.y+0.1)*r, z=(pos2.z-pos.z)*r})
+				ob:set_velocity({x=(pos2.x-pos.x)*r, y=(pos2.y-pos.y+0.1)*r, z=(pos2.z-pos.z)*r})
 			end
 		end
 		return true

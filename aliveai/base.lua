@@ -176,17 +176,17 @@ aliveai.floating=function(self,f)
 		f=1
 	 end
 	if f==1 then
-		local v=self.object:getvelocity()
+		local v=self.object:get_velocity()
 		local y=0
 		if v.y<0 then y=v.y/10 end
 		self.floating=1
-		self.object:setacceleration({x=0,y=0,z =0})
-		self.object:setvelocity({x=v.x,y=y,z=v.z})
+		self.object:set_acceleration({x=0,y=0,z =0})
+		self.object:set_velocity({x=v.x,y=y,z=v.z})
 		self.path=nil
 	else
 		self.floating=0
-		self.object:setacceleration({x=0,y=-aliveai.gravity,z =0})
-		self.object:setvelocity({x=0,y=-5,z =0})
+		self.object:set_acceleration({x=0,y=-aliveai.gravity,z =0})
+		self.object:set_velocity({x=0,y=-5,z =0})
 	end
 	return self
 end
@@ -1191,14 +1191,14 @@ aliveai.falling=function(self)
 
 	if self.floating==1 then
 		local a=self.object:getacceleration()
-		local v=self.object:getvelocity()
+		local v=self.object:get_velocity()
 		if v.y~=0 and v.y<-0.02 or v.y>0.02 then
 			v.y=v.y*0.79
 		else
 			v.y=0
 		end
-		self.object:setacceleration({x=0,y=0,z=0})
-		self.object:setvelocity({x=v.x,y=v.y,z=v.z})
+		self.object:set_acceleration({x=0,y=0,z=0})
+		self.object:set_velocity({x=v.x,y=v.y,z=v.z})
 		return self
 	end
 
@@ -1206,7 +1206,7 @@ aliveai.falling=function(self)
 	if self.isrnd and self.path and self.in_liquid==nil then aliveai.path(self) return self end
 	if self.isrnd and self.done=="path" then self.timerfalling=0.2 self.done="" end
 
-	self.object:setacceleration({x=0,y=-aliveai.gravity,z =0})
+	self.object:set_acceleration({x=0,y=-aliveai.gravity,z =0})
 	local pos=self.object:get_pos()
 	local node2=minetest.get_node(pos)
 	pos.y=pos.y-1
@@ -1220,13 +1220,13 @@ aliveai.falling=function(self)
 		self.in_liquid=true
 		local s=1
 		if self.dying or self.dead or self.sleeping then s=-1 end
-		self.object:setacceleration({x =0, y =0.1*s, z =0})
-		if self.object:getvelocity().y<-0.1 then
-			local y=self.object:getvelocity().y
-			self.object:setvelocity({x = self.move.x, y =y/2, z =self.move.z})
+		self.object:set_acceleration({x =0, y =0.1*s, z =0})
+		if self.object:get_velocity().y<-0.1 then
+			local y=self.object:get_velocity().y
+			self.object:set_velocity({x = self.move.x, y =y/2, z =self.move.z})
 			return self
 		end
-		self.object:setvelocity({x = self.move.x, y =1*s - (test2.liquid_viscosity*0.1), z =self.move.z})
+		self.object:set_velocity({x = self.move.x, y =1*s - (test2.liquid_viscosity*0.1), z =self.move.z})
 		if test.drowning and not self.drown then
 			self.drown=true
 			self.air=0
@@ -1246,19 +1246,19 @@ aliveai.falling=function(self)
 		elseif self.air>=5 then
 			self.object:setyaw(math.random(0,6.28))
 			aliveai.walk(self)
-			self.object:setacceleration({x =0, y =-0.2, z =0})
-			self.object:setvelocity({x = self.move.x, y =-2, z =self.move.z})
+			self.object:set_acceleration({x =0, y =-0.2, z =0})
+			self.object:set_velocity({x = self.move.x, y =-2, z =self.move.z})
 			return self
 		end
 		if self.climb==pos.y then self.air=self.air+0.1 end
 		self.climb=pos.y
-		self.object:setacceleration({x =0, y =0.1, z =0})
-		if self.object:getvelocity().y<-0.1 then
-			local y=self.object:getvelocity().y
-			self.object:setvelocity({x = self.move.x, y =y/2, z =self.move.z})
+		self.object:set_acceleration({x =0, y =0.1, z =0})
+		if self.object:get_velocity().y<-0.1 then
+			local y=self.object:get_velocity().y
+			self.object:set_velocity({x = self.move.x, y =y/2, z =self.move.z})
 			return self
 		end
-		self.object:setvelocity({x = self.move.x, y =1, z =self.move.z})
+		self.object:set_velocity({x = self.move.x, y =1, z =self.move.z})
 		aliveai.stand(self)
 		return self
 -- no water or ledder
@@ -1268,12 +1268,12 @@ aliveai.falling=function(self)
 		self.air=nil
 		self.climb=nil
 		if n.liquid_viscosity>0 or n.climbable then
-			self.object:setacceleration({x=0,y=0,z =0})
-			self.object:setvelocity({x = self.move.x, y =0, z =self.move.z})
+			self.object:set_acceleration({x=0,y=0,z =0})
+			self.object:set_velocity({x = self.move.x, y =0, z =self.move.z})
 			return self
 		end
 		self.in_liquid=nil
-		self.object:setacceleration({x=0,y=-10,z =0})
+		self.object:set_acceleration({x=0,y=-10,z =0})
 	elseif test2.drowning>0 and self.drowning then
 		if not self.air then
 			self.drown=true
@@ -1288,12 +1288,12 @@ aliveai.falling=function(self)
 		self.air=nil
 		self.drown=nil
 -- falling
-	elseif self.object:getvelocity().y~=0 then
+	elseif self.object:get_velocity().y~=0 then
 		if not self.fallingfrom or self.fallingfrom<pos.y then self.fallingfrom=pos.y end
 	end
 --and hit the ground
 	if self.fallingfrom then
-		if self.object:getvelocity().y==0 then
+		if self.object:get_velocity().y==0 then
 			local from=math.floor(self.fallingfrom+0.5)
 			local hit=math.floor(pos.y+0.5)
 			self.isfalling=nil
@@ -1313,7 +1313,7 @@ aliveai.falling=function(self)
 				end
 			end
 		end
-	elseif not self.told_flying and self.object:get_attach() and self.object:getvelocity().y==0 then
+	elseif not self.told_flying and self.object:get_attach() and self.object:get_velocity().y==0 then
 		local n=minetest.registered_nodes[minetest.get_node({x=pos.x,y=pos.y-2,z=pos.z}).name]
 		if n and not (n.walkable or test.climbable or test2.liquid_viscosity>0 or n.liquid_viscosity>0) then
 			aliveai.sayrnd(self,"Hey, im flying!","",true)
@@ -1381,20 +1381,20 @@ aliveai.falling=function(self)
 			end
 			self.falllook.times=10
 			return self
-		elseif j[4]==false and self.object:getvelocity().y==0 then
-			self.object:setvelocity({x = self.move.x*2, y = 5.2, z =self.move.z*2})
+		elseif j[4]==false and self.object:get_velocity().y==0 then
+			self.object:set_velocity({x = self.move.x*2, y = 5.2, z =self.move.z*2})
 		end
 	end
 	return self
 end
 
 aliveai.jump=function(self,v)
-	if self.object:getvelocity().y==0 then
+	if self.object:get_velocity().y==0 then
 		v=v or {}
 		v.y=v.y or 5.2
 		v.x=v.x or self.move.x
 		v.z=v.z or self.move.z
-		self.object:setvelocity({x = self.move.x, y = v.y, z =self.move.z})
+		self.object:set_velocity({x = self.move.x, y = v.y, z =self.move.z})
 	end
 end
 
@@ -1404,7 +1404,7 @@ aliveai.jumping=function(self)
 	if minetest.get_node(pos)==nil then return end
 	local test=minetest.registered_nodes[minetest.get_node(pos).name]
 -- jump inside block
-	if self.object:getvelocity().y==0 and test.walkable and test.drawtype~="nodebox" then
+	if self.object:get_velocity().y==0 and test.walkable and test.drawtype~="nodebox" then
 		aliveai.jump(self)
 		aliveai.showstatus(self,"jump inside block")
 		if self.light==-1 then return self end
@@ -1422,7 +1422,7 @@ aliveai.jumping=function(self)
 		return self
 	end
 
-	if self.move.x+self.move.z~=0 and self.object:getvelocity().y==0 then
+	if self.move.x+self.move.z~=0 and self.object:get_velocity().y==0 then
 		local x=self.move.x
 		local z=self.move.z
 		local j={}
@@ -1436,7 +1436,7 @@ aliveai.jumping=function(self)
 			aliveai.jump(self)
 			minetest.after(0.5, function(self)
 				if self and self.object and self.object:get_luaentity() and self.object:get_luaentity().name then
-					self.object:setvelocity({x = self.move.x*2, y = self.object:getvelocity().y, z =self.move.z*2})
+					self.object:set_velocity({x = self.move.x*2, y = self.object:get_velocity().y, z =self.move.z*2})
 
 				end
 			end, self)
@@ -1447,7 +1447,7 @@ aliveai.jumping=function(self)
 			aliveai.jump(self,{y=7})
 			minetest.after(0.5, function(self)
 				if self and self.object and self.object:get_luaentity() and self.object:get_luaentity().name then
-					self.object:setvelocity({x = self.move.x*2, y = self.object:getvelocity().y, z =self.move.z*2})
+					self.object:set_velocity({x = self.move.x*2, y = self.object:get_velocity().y, z =self.move.z*2})
 				end
 			end, self)
 			aliveai.showstatus(self,"jump x2")
@@ -1648,7 +1648,7 @@ aliveai.walk=function(self,sp)
 	sp=sp or 1
 	local x =math.sin(yaw) * -1
 	local z =math.cos(yaw) * 1
-	local y=self.object:getvelocity().y
+	local y=self.object:get_velocity().y
 	local s=(self.move.speed+1)*sp
 	self.move.x=x*sp
 	self.move.z=z*sp
@@ -1660,7 +1660,7 @@ aliveai.walk=function(self,sp)
 		end
 		self.lookat=nil
 	end
-	self.object:setvelocity({
+	self.object:set_velocity({
 		x = x*s,
 		y = y,
 		z = z*s})
@@ -1673,12 +1673,12 @@ aliveai.walk=function(self,sp)
 end
 
 aliveai.stand=function(self)
-	if not self.move or not self.object or not self.object:getvelocity() then aliveai.kill(self) return end
+	if not self.move or not self.object or not self.object:get_velocity() then aliveai.kill(self) return end
 	self.move.x=0
 	self.move.z=0
-	self.object:setvelocity({
+	self.object:set_velocity({
 		x = 0,
-		y = self.object:getvelocity().y,
+		y = self.object:get_velocity().y,
 		z = 0})
 	aliveai.anim(self,"stand")
 	return self

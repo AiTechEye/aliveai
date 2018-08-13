@@ -227,14 +227,14 @@ on_punch=function(self, puncher, time_from_last_punch, tool_capabilities, dir)
 
 
 		if dir~=nil and mindmg==true then
-			local v={x = dir.x*3,y = self.object:getvelocity().y,z = dir.z*3}
-			self.object:setvelocity(v)
+			local v={x = dir.x*3,y = self.object:get_velocity().y,z = dir.z*3}
+			self.object:set_velocity(v)
 			local r=math.random(1,99)
 			self.sleeping=nil
 			self.onpunch_r=r
 			minetest.after(1, function(self,v,r)
-					if self and self.object and self.hp>0 and self.onpunch_r==r and aliveai.samepos(aliveai.roundpos(self.object:getvelocity()),aliveai.roundpos(v)) then
-						self.object:setvelocity({x = 0,y = self.object:getvelocity().y,z = 0})
+					if self and self.object and self.hp>0 and self.onpunch_r==r and aliveai.samepos(aliveai.roundpos(self.object:get_velocity()),aliveai.roundpos(v)) then
+						self.object:set_velocity({x = 0,y = self.object:get_velocity().y,z = 0})
 					end
 			end, self,v,r)
 		end

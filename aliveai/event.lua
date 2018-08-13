@@ -38,7 +38,7 @@ aliveai.sleep=function(self,set)
 		self.sleeping=1
 		aliveai.anim(self,"lay")
 		self.sleeptimer=60
-		self.object:setvelocity({x=0,y=-3,z =0})
+		self.object:set_velocity({x=0,y=-3,z =0})
 		aliveai.showstatus(self,"sleep")
 		return self
 	end
@@ -50,16 +50,16 @@ aliveai.sleep=function(self,set)
 		local n = minetest.get_node(pos)
 
 		if n.param2==1 then
-			self.object:setpos({x=pos2.x+0.5,y=pos2.y,z=pos2.z})
+			self.object:set_pos({x=pos2.x+0.5,y=pos2.y,z=pos2.z})
 			self.object:setyaw(math.pi*0.5)
 		elseif n.param2==3 then
-			self.object:setpos({x=pos2.x-0.5,y=pos2.y,z=pos2.z})
+			self.object:set_pos({x=pos2.x-0.5,y=pos2.y,z=pos2.z})
 			self.object:setyaw(math.pi+1.5)
 		elseif n.param2==0 then
-			self.object:setpos({x=pos2.x,y=pos2.y,z=pos2.z+0.5})
+			self.object:set_pos({x=pos2.x,y=pos2.y,z=pos2.z+0.5})
 			self.object:setyaw(math.pi*1)
 		else
-			self.object:setpos({x=pos2.x,y=pos2.y,z=pos2.z-0.5})
+			self.object:set_pos({x=pos2.x,y=pos2.y,z=pos2.z-0.5})
 			self.object:setyaw(math.pi*0)
 		end
 		return
@@ -79,7 +79,7 @@ aliveai.sleep=function(self,set)
 				end
 			end
 			self.sleeping=1
-			self.object:setpos(self.bedpath)
+			self.object:set_pos(self.bedpath)
 			self.bedpath=nil
 			aliveai.anim(self,"lay")
 			aliveai.sleep(self,1)
@@ -129,8 +129,8 @@ aliveai.dying=function(self,set)
 		aliveai.anim(self,"lay")
 		self.talking_restore=self.talking
 		self.talking=0
-		self.object:setacceleration({x=0,y=-10,z =0})
-		self.object:setvelocity({x=0,y=-3,z =0})
+		self.object:set_acceleration({x=0,y=-10,z =0})
+		self.object:set_velocity({x=0,y=-3,z =0})
 		aliveai.invdropall(self)
 		if self.hp<=self.hp_max*-1 then
 			aliveai.dying(self,2)
@@ -162,7 +162,7 @@ aliveai.dying=function(self,set)
 	end
 
 	if self.dying then
-		self.object:setvelocity({x=0,y=self.object:getvelocity().y,z=0})
+		self.object:set_velocity({x=0,y=self.object:get_velocity().y,z=0})
 		if self.hp<=self.hp_max*-1 then
 			aliveai.dying(self,2)
 			return self
@@ -900,7 +900,7 @@ aliveai.fight=function(self)
 		local see=aliveai.visiable(self,fpos)
 		local vy
 		if self.fight:get_luaentity() then
-			vy=self.fight:getvelocity().y
+			vy=self.fight:get_velocity().y
 		else
 			vy=self.fight:get_player_velocity().y
 		end
@@ -988,8 +988,8 @@ aliveai.fight=function(self)
 						aliveai.lookat(self,fpos)
 						self.object:setyaw(aliveai.random(yaw*0.5,yaw*1.5))
 						aliveai.walk(self,2)
-						if math.random(1,3)==1 and self.object:getvelocity().y==0 then
-							self.object:setvelocity({x = self.move.x*4, y = 5.2, z =self.move.z*4})
+						if math.random(1,3)==1 and self.object:get_velocity().y==0 then
+							self.object:set_velocity({x = self.move.x*4, y = 5.2, z =self.move.z*4})
 						elseif math.random(1,3)==1 then
 							local yu1={x=fpos.x,y=fpos.y-2,z=fpos.z}
 							local ny1=minetest.get_node(yu1)
@@ -1475,7 +1475,7 @@ aliveai.path=function(self)
 				pos=aliveai.roundpos(pos)
 				pos.y=pos.y-1
 				local p3=self.path[self.pathn]
-				if self.object:getvelocity().y==0 and aliveai.def({x=p3.x,y=p3.y-1,z=p3.z},"walkable")==false then
+				if self.object:get_velocity().y==0 and aliveai.def({x=p3.x,y=p3.y-1,z=p3.z},"walkable")==false then
 					local stuff=self.path_bridge
 					if stuff=="" then
 						for i, v in pairs(self.inv) do
@@ -1513,3 +1513,4 @@ aliveai.path=function(self)
 		return self
 	end
 end
+

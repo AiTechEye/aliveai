@@ -7,7 +7,7 @@ aliveai.sitchair=function(self,pos)
 	aliveai.sleep(self,2)
 	aliveai.anim(self,"sit")
 	self.sleeptimer=math.random(20,200)
-	self.object:setpos({x=pos.x+(p.x*-0.05),y=pos.y,z=pos.z+(p.z*-0.05)})
+	self.object:set_pos({x=pos.x+(p.x*-0.05),y=pos.y,z=pos.z+(p.z*-0.05)})
 	self.object:setyaw(y)
 	aliveai.showstatus(self,"sit")
 	return self
@@ -70,7 +70,7 @@ aliveai.drive_vehicle=function(self,pos,vehicle,p)
 		end,self,tr,v,user)
 		minetest.after(r+aliveai.random(1,5), function(self,r,v,user)
 			if self and self.object and self.object:get_luaentity() and v:get_luaentity() then
-				local p=aliveai.roundpos(v:getvelocity())
+				local p=aliveai.roundpos(v:get_velocity())
 				if i>9 or (p and p.x+p.z==0) then
 					en.on_rightclick(en, user)
 					self.object:set_detach()
@@ -78,7 +78,7 @@ aliveai.drive_vehicle=function(self,pos,vehicle,p)
 					self.controlled=nil
 					aliveai.invadd(self,vehicle,1)
 					v:remove()
-					self.object:setacceleration({x=0,y=-10,z =0})
+					self.object:set_acceleration({x=0,y=-10,z =0})
 				else
 					user.get_player_control=aliveai.re({sneak=false,up=true,down=false,left=false,right=false})
 				end
@@ -123,15 +123,15 @@ if minetest.get_modpath("carts") then
 			r=aliveai.random(i*2,i*5)
 			minetest.after(r, function(self,cart,en)
 				if self and self.object and self.object:get_luaentity() and cart:get_luaentity() then
-					local p=aliveai.roundpos(cart:getvelocity())
+					local p=aliveai.roundpos(cart:get_velocity())
 					if i>2 and ((p and p.x+p.z==0) or i==10)  then
 						self.object:set_detach()
 						aliveai.anim(self,"stand")
 						self.controlled=nil
 						aliveai.invadd(self,"carts:cart",1)
-						self.object:setacceleration({x=0,y=-10,z =0})
+						self.object:set_acceleration({x=0,y=-10,z =0})
 						local cpos=cart:get_pos()
-						self.object:setpos({x=cpos.x,y=cpos.y+2,z =cpos.z})
+						self.object:set_pos({x=cpos.x,y=cpos.y+2,z =cpos.z})
 						en.on_step=nil
 						if en.sound_handle then minetest.sound_stop(en.sound_handle) end
 						cart:remove()
@@ -203,7 +203,7 @@ if minetest.get_modpath("boats") then
 			end,self,tr,boat,user)
 			minetest.after(r+aliveai.random(1,5), function(self,r,boat,user)
 				if self and self.object and self.object:get_luaentity() and boat:get_luaentity() then
-					local p=aliveai.roundpos(boat:getvelocity())
+					local p=aliveai.roundpos(boat:get_velocity())
 					if i>9 or (p and p.x+p.z==0) then
 						en.on_rightclick(en, user)
 						self.object:set_detach()
@@ -211,7 +211,7 @@ if minetest.get_modpath("boats") then
 						self.controlled=nil
 						aliveai.invadd(self,"boats:boat",1)
 						boat:remove()
-						self.object:setacceleration({x=0,y=-10,z =0})
+						self.object:set_acceleration({x=0,y=-10,z =0})
 					else
 						user.get_player_control=aliveai.re({sneak=false,up=true,down=false,left=false,right=false})
 					end
@@ -287,3 +287,4 @@ aliveai.use_smartshop=function(self)
 	end
 end
 end
+

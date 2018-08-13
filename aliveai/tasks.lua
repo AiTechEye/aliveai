@@ -113,7 +113,7 @@ aliveai.task_stay_at_home=function(self)
 			local d=aliveai.distance(self,self.home)
 			if d>self.distance*3 then
 				aliveai.showstatus(self,"teleport home")
-				self.object:setpos(self.home)
+				self.object:set_pos(self.home)
 				return self
 			elseif d>self.distance*1.5 then
 				local pos=self.object:get_pos()
@@ -216,3 +216,4 @@ aliveai.task_build=function(self)
 			return self
 		end
 end
+
