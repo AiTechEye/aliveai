@@ -348,7 +348,7 @@ minetest.register_node("aliveai_ants:antbase", {
 	on_construct = function(pos)
 		local m=minetest.get_meta(pos)
 		m:set_int("count",1)
-		minetest.env:get_node_timer(pos):start(10)
+		minetest.get_node_timer(pos):start(10)
 	end,
 })
 
@@ -404,9 +404,10 @@ minetest.register_entity("aliveai_ants:antcarry",{
 		local pos=self.object:get_pos()
 		if not (c and c.x) then aliveai.punch(self,self.object,20) return end
 		local v={x=(c.x-pos.x)*4,y=(c.y-pos.y+0.5)*4, z=(c.z-pos.z)*4}
-		self.object:setvelocity(v)
+		self.object:set_velocity(v)
 		return self
 	end,
 	time=0,
 	type=""
 })
+
