@@ -340,7 +340,7 @@ minetest.register_tool("aliveai_chemistry:tube", {
 				local d={x=dir.x*30,y=dir.y*30,z=dir.z*30}
 				local e=minetest.add_entity({x=aliveai.nan(pos.x+(dir.x)*1),y=aliveai.nan(pos.y+(dir.y)*1),z=aliveai.nan(pos.z+(dir.z)*1)}, "aliveai_chemistry:item1")
 				e:get_luaentity().chemistry=chemistry
-				e:setvelocity(d)
+				e:set_velocity(d)
 				itemstack:take_item()
 			end
 			return itemstack
@@ -386,7 +386,7 @@ minetest.register_entity("aliveai_chemistry:item1",{
 			for c, p in pairs(r) do
 				self.chemistry[c]=p
 			end
-			self.object:setvelocity({x=0, y=-5, z=0})
+			self.object:set_velocity({x=0, y=-5, z=0})
 		else
 			minetest.after(0.01, function(self)
 				if not self.chemistry then
@@ -394,7 +394,7 @@ minetest.register_entity("aliveai_chemistry:item1",{
 				end
 			end,self)
 		end
-		self.object:setacceleration({x=0, y=-10, z=0})
+		self.object:set_acceleration({x=0, y=-10, z=0})
 		self.chemistry_id=math.random(1,99)
 		return self
 	end,
