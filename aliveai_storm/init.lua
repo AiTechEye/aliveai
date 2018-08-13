@@ -136,7 +136,7 @@ minetest.register_entity("aliveai_storm:power",{
 		self.timer=0
 		if not self.ob:get_luaentity() or self.kill then
 			self.target:set_detach()
-			self.target:setacceleration({x=0,y=-10,z=0})
+			self.target:set_acceleration({x=0,y=-10,z=0})
 			if self.target:get_luaentity() and
 			self.target:get_luaentity().age then
 				self.target:get_luaentity().age=aliveai_storm.time
@@ -148,14 +148,14 @@ minetest.register_entity("aliveai_storm:power",{
 			self.d=1
 		end
 		if not self.pus and self.d<2 then
-			local v=self.object:getvelocity()
-			self.object:setvelocity({x=v.x,y=100,z=v.z})
-			self.object:setacceleration({x=0,y=-10,z=0})
+			local v=self.object:get_velocity()
+			self.object:set_velocity({x=v.x,y=100,z=v.z})
+			self.object:set_acceleration({x=0,y=-10,z=0})
 			self.pus=1
 			self.object:set_properties({physical = true})
 			return self
 		elseif self.pus then
-			if aliveai.distance(self,self.ob)>100 or self.object:getvelocity().y==0 then
+			if aliveai.distance(self,self.ob)>100 or self.object:get_velocity().y==0 then
 				self.kill=1
 				aliveai.punch(self,self.target,10)
 				return self
@@ -178,11 +178,11 @@ minetest.register_entity("aliveai_storm:power",{
 				a=self.a * self.s
   				x=pos.x+self.d*math.cos(a)
 				z =pos.z+self.d*math.sin(a)
-				self.object:moveto({x=x,y=spos.y+y,z=z})
+				self.object:move_to({x=x,y=spos.y+y,z=z})
 				return self
 			end
 		end
-		self.object:moveto({x=x,y=spos.y+y,z=z})
+		self.object:move_to({x=x,y=spos.y+y,z=z})
 		return self
 	end,
 })
@@ -267,18 +267,18 @@ minetest.register_entity("aliveai_storm:hail",{
 				collisionbox = {-0.5,-0.5,-0.5,0.5,0.5,0.5},
 				makes_footstep_sound = true,
 			})
-			self.object:setvelocity({x=math.random(-1,1),y=-3,z=math.random(-1,1)})
+			self.object:set_velocity({x=math.random(-1,1),y=-3,z=math.random(-1,1)})
 		else
-			self.object:setvelocity({x=math.random(-5,5),y=-30,z=math.random(-5,5)})
+			self.object:set_velocity({x=math.random(-5,5),y=-30,z=math.random(-5,5)})
 		end
-		self.object:setacceleration({x=0,y=-10,z=0})
+		self.object:set_acceleration({x=0,y=-10,z=0})
 	end,
 	on_step = function(self, dtime)
 		self.timer=self.timer+dtime
 		if self.timer<0.15 then return true end
 		self.timer2=self.timer2-self.timer
 		self.timer=0
-		if self.object:getvelocity().y>=-0.9 or self.timer2<0 then
+		if self.object:get_velocity().y>=-0.9 or self.timer2<0 then
 			local pos=self.object:get_pos()
 			pos.y=pos.y-1.5
 			for _, ob in ipairs(minetest.get_objects_inside_radius(pos, 2)) do
@@ -301,3 +301,4 @@ minetest.register_entity("aliveai_storm:hail",{
 		end
 	end,
 })
+
