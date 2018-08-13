@@ -129,7 +129,7 @@ aliveai.create_bot({
 			end
 			self.inv[self.juggle_with]=self.inv[self.juggle_with]-1
 			local e=minetest.add_item(aliveai.pointat(self,0.5), self.juggle_with)
-			e:setvelocity({x=x,y=y,z=z})
+			e:set_velocity({x=x,y=y,z=z})
 			return self
 		end
 })
@@ -238,6 +238,7 @@ aliveai.create_bot({
 			self.object:set_properties({nametag=self.botname,nametag_color="#" .. self.namecolor})
 		end,
 })
+
 
 
 
