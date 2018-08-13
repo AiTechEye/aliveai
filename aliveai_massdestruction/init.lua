@@ -38,7 +38,7 @@ minetest.register_craftitem("aliveai_massdestruction:walking_bomb", {
 		local dir = user:get_look_dir()
 		local pos=user:get_pos()
 		local pos2={x=pos.x+(dir.x*2),y=pos.y+1.5+(dir.y*2),z=pos.z+dir.z*2}
-		minetest.add_entity(pos2, "aliveai_massdestruction:bomb2"):setvelocity({x=dir.x*10,y=dir.y*10,z=dir.z*10})
+		minetest.add_entity(pos2, "aliveai_massdestruction:bomb2"):set_velocity({x=dir.x*10,y=dir.y*10,z=dir.z*10})
 		itemstack:take_item()
 		return itemstack
 	end,
@@ -185,7 +185,7 @@ aliveai.create_bot({
 	on_blow=function(self)
 		if self.notblow then return end
 		aliveai.kill(self)
-		self.death(self,self.object,self.object:getpos())
+		self.death(self,self.object,self.object:get_pos())
 	end,
 	death=function(self)
 		if not self.ex then
@@ -271,14 +271,14 @@ minetest.register_entity("aliveai_massdestruction:bomb",{
 	automatic_rotate = false,
 	on_activate=function(self, staticdata)
 		self.time2=math.random(1,20)
-		self.object:setacceleration({x =0, y =-10, z =0})
-		self.object:setvelocity({x=math.random(-15,15),y=math.random(10,15),z=math.random(-15,15)})
+		self.object:set_acceleration({x =0, y =-10, z =0})
+		self.object:set_velocity({x=math.random(-15,15),y=math.random(10,15),z=math.random(-15,15)})
 		return self
 	end,
 	on_step=function(self, dtime)
 		self.time=self.time+dtime
 		self.time2=self.time2-dtime
-		local v=self.object:getvelocity()
+		local v=self.object:get_velocity()
 		if self.time2>1 and v.y==0 and self.last_y<0 then
 			self.time2=0
 			self.expl=math.random(1,10)
@@ -348,7 +348,7 @@ minetest.register_entity("aliveai_massdestruction:bomb2",{
 		})
 		self.exp=1
 		aliveai_nitroglycerine.explode(pos,{radius=2,set="air",place={"air","air"}})
-		self.object:setvelocity({x=math.random(-5,5),y=math.random(5,10),z=math.random(-5,5)})
+		self.object:set_velocity({x=math.random(-5,5),y=math.random(5,10),z=math.random(-5,5)})
 		self.object:remove()
 	end,
 	on_punch=function(self, puncher, time_from_last_punch, tool_capabilities, dir)
@@ -357,8 +357,8 @@ minetest.register_entity("aliveai_massdestruction:bomb2",{
 			self.hp=self.hp-tool_capabilities.damage_groups.fleshy
 			self.object:set_hp(self.hp)
 			if dir~=nil then
-				local v={x = dir.x*5,y = self.object:getvelocity().y,z = dir.z*5}
-				self.object:setvelocity(v)
+				local v={x = dir.x*5,y = self.object:get_velocity().y,z = dir.z*5}
+				self.object:set_velocity(v)
 			end
 		end
 		if self.hp<1 and not self.exp then
@@ -367,24 +367,24 @@ minetest.register_entity("aliveai_massdestruction:bomb2",{
 
 	end,
 	on_activate=function(self, staticdata)
-		self.object:setacceleration({x =0, y =-10, z =0})
+		self.object:set_acceleration({x =0, y =-10, z =0})
 		self.hp=self.object:get_hp()
 		return self
 	end,
 	on_step=function(self, dtime)
 		self.time=self.time+dtime
-		if self.object:getvelocity().y==0 then
+		if self.object:get_velocity().y==0 then
 			if self.fight then
 				local pos=self.object:get_pos()
 				local pos2=self.fight:get_pos()
 				if aliveai.visiable(pos,pos2) then
-					self.object:setvelocity({x=(pos.x-pos2.x)*-1,y=math.random(5,10),z=(pos.z-pos2.z)*-1})
+					self.object:set_velocity({x=(pos.x-pos2.x)*-1,y=math.random(5,10),z=(pos.z-pos2.z)*-1})
 				end
 			else
-				self.object:setvelocity({x=math.random(-5,5),y=math.random(5,10),z=math.random(-5,5)})
+				self.object:set_velocity({x=math.random(-5,5),y=math.random(5,10),z=math.random(-5,5)})
 			end
-			local y=self.object:getvelocity().y
-			if y==0 or y==-0 then self.object:setvelocity({x=0,y=math.random(5,10),z=0}) end
+			local y=self.object:get_velocity().y
+			if y==0 or y==-0 then self.object:set_velocity({x=0,y=math.random(5,10),z=0}) end
 		end
 		if self.time<1 then return self end
 		self.time=0
@@ -777,7 +777,7 @@ aliveai.create_bot({
 				set="air",
 				place={"air"}
 			})
-			minetest.add_entity(self.object:getpos(), "aliveai_massdestruction:blackhole")
+			minetest.add_entity(self.object:get_pos(), "aliveai_massdestruction:blackhole")
 			aliveai.kill(self)
 		end
 	end,
@@ -804,7 +804,7 @@ minetest.register_node("aliveai_massdestruction:blackholecore", {
 		local dir=user:get_look_dir()
 		local e=minetest.add_item({x=pos.x+(dir.x*2),y=pos.y+2+(dir.y*2),z=pos.z+(dir.z*2)},"aliveai_massdestruction:blackholecore")
 		local vc = {x = dir.x*15, y = dir.y*15, z = dir.z*15}
-		e:setvelocity(vc)
+		e:set_velocity(vc)
 		e:get_luaentity().age=(tonumber(minetest.setting_get("item_entity_ttl")) or 900)-10
 		e:get_luaentity().on_punch=nil 
 		e:get_luaentity().hp_max=10
@@ -873,10 +873,10 @@ minetest.register_entity("aliveai_massdestruction:blackhole",{
 				else
 					if ob:is_player() and not ob:get_attach() then
 						aliveai_nitroglycerine.new_player=ob
-						minetest.add_entity({x=opos.x,y=opos.y+1,z=opos.z}, "aliveai_nitroglycerine:playerp"):setvelocity({x=(pos.x-opos.x)/0.1, y=((pos.y-opos.y)*1)/0.1, z=(pos.z-opos.z)/0.1})
+						minetest.add_entity({x=opos.x,y=opos.y+1,z=opos.z}, "aliveai_nitroglycerine:playerp"):set_velocity({x=(pos.x-opos.x)/0.1, y=((pos.y-opos.y)*1)/0.1, z=(pos.z-opos.z)/0.1})
 						aliveai_nitroglycerine.new_player=nil
 					else
-						ob:setvelocity({x=(pos.x-opos.x)/0.9, y=(pos.y-opos.y)/0.9, z=(pos.z-opos.z)/0.9})
+						ob:set_velocity({x=(pos.x-opos.x)/0.9, y=(pos.y-opos.y)/0.9, z=(pos.z-opos.z)/0.9})
 					end
 					
 				end
@@ -1151,3 +1151,4 @@ aliveai_massdestruction.iceblow=function(pos)
 		})
 	end
 end
+
