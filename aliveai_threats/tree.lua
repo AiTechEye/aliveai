@@ -1,6 +1,6 @@
 aliveai_threats.spawn_tree=function(self)
 	if not (self and self.object) then return false end
-	local pos=aliveai.roundpos(self.object:getpos())
+	local pos=aliveai.roundpos(self.object:get_pos())
 	if minetest.get_node(pos).name=="air" then return false end
 
 	self.tree_by_nodes={}
@@ -75,7 +75,7 @@ end
 
 aliveai_threats.load_tree=function(self)
 	if not (self and self.object) then return false end
-	local pos=aliveai.roundpos(self.object:getpos())
+	local pos=aliveai.roundpos(self.object:get_pos())
 	self.tree_by_nodes={}
 	local c=self.object:get_properties().collisionbox
 	c[5]=self.storge2
@@ -163,8 +163,8 @@ aliveai.create_bot({
 			for _, d in ipairs(self.tree_by_nodes) do
 				if d and d.ob then
 					d.ob:set_detach()
-					d.ob:setacceleration({x=0, y=-10, z=0})
-					d.ob:setvelocity({x=math.random(-2,2), y=math.random(0,1), z=math.random(-2,2)})
+					d.ob:set_acceleration({x=0, y=-10, z=0})
+					d.ob:set_velocity({x=math.random(-2,2), y=math.random(0,1), z=math.random(-2,2)})
 					d.ob:set_pos({x=pos.x+d.pos.x,y=pos.y+d.pos.y,z=pos.z+d.pos.z})
 					d.ob:set_properties({visual_size={x=0.65,y=0.65}})
 				end

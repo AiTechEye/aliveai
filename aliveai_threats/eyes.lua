@@ -85,7 +85,7 @@ aliveai_threats_eyes.shoot=function(self)
 	local dir=aliveai.get_dir(self,self.fight)
 	local vc = {x = aliveai.nan(dir.x*30), y = aliveai.nan(dir.y*30), z = aliveai.nan(dir.z*30)}
 	if not (vc and vc.x and vc.y and vc.z) or vc.x==math.huge or vc.x~=vc.x then return end
-	e:setvelocity(vc)
+	e:set_velocity(vc)
 	e:get_luaentity().age=(tonumber(minetest.setting_get("item_entity_ttl")) or 900)-2
 	table.insert(aliveai_threats.debris,{ob=e,n=self.botname})
 end
@@ -187,7 +187,7 @@ minetest.register_entity("aliveai_threats:eyes",{
 				self.type=""
 				self.fight=nil
 				self.lookat=nil
-				self.object:moveto(self.opos)
+				self.object:move_to(self.opos)
 				self.object:set_properties({textures = {"aliveai_threats_eyes.png"}})
 			end
 			return
@@ -211,7 +211,7 @@ minetest.register_entity("aliveai_threats:eyes",{
 		if y<-0.3 then y=-0.3 end
 		local spos=false
 		if self.lookat then spos=aliveai.samepos(self.lookat,obpos) end
-		self.object:moveto({x=self.opos.x+x,y=self.opos.y+y,z=self.opos.z+z})
+		self.object:move_to({x=self.opos.x+x,y=self.opos.y+y,z=self.opos.z+z})
 		self.lookat=obpos
 		self.timer=0.1
 
@@ -229,12 +229,12 @@ minetest.register_entity("aliveai_threats:eyes",{
 				self.type="monster"
 			end
 		elseif self.fight and self.time2>20 then
-			self.object:moveto(self.opos)
+			self.object:move_to(self.opos)
 			self.timer=2
 			self.time2=0
 			self.fight=nil
 			self.lookat=nil
-			self.object:moveto(self.opos)
+			self.object:move_to(self.opos)
 			self.object:set_properties({textures = {"aliveai_threats_eyes.png"}})
 			self.type=""
 		elseif not spos then
@@ -250,3 +250,4 @@ minetest.register_entity("aliveai_threats:eyes",{
 	aliveai_eyes=1,
 })
 aliveai.loaded("aliveai_threats:eyes")
+

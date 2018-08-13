@@ -126,8 +126,8 @@ minetest.register_entity("aliveai_threats:fallingtrap",{
 		self.re=self.object:get_pos()
 		self.tex=minetest.get_node(self.re).name
 		self.object:set_properties({textures=self.tex})
-		self.object:setacceleration({x=0,y=-20,z=0})
-		self.object:setvelocity({x=0, y=-1, z=0})
+		self.object:set_acceleration({x=0,y=-20,z=0})
+		self.object:set_velocity({x=0, y=-1, z=0})
 		return self
 	end,
 	get_staticdata = function(self)
@@ -215,7 +215,7 @@ aliveai.create_bot({
 	end,
 	on_blow=function(self)
 		aliveai.kill(self)
-		self.death(self,self.object,self.object:getpos())
+		self.death(self,self.object,self.object:get_pos())
 	end,
 	death=function(self,puncher,pos)
 			if aliveai_nitroglycerine and not self.ex then
@@ -228,3 +228,4 @@ aliveai.create_bot({
 			return self
 	end,
 })
+

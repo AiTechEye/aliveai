@@ -71,7 +71,7 @@ aliveai.create_bot({
 	end,
 	on_blow=function(self)
 		aliveai.kill(self)
-		self.death(self,self.object,self.object:getpos())
+		self.death(self,self.object,self.object:get_pos())
 	end,
 	death=function(self,puncher,pos)
 			if not self.ex then
@@ -273,7 +273,7 @@ aliveai.create_bot({
 	end,
 	on_blow=function(self)
 		aliveai.kill(self)
-		self.death(self,self.object,self.object:getpos())
+		self.death(self,self.object,self.object:get_pos())
 	end,
 	death=function(self,puncher,pos)
 			if not self.ex then
@@ -403,7 +403,7 @@ aliveai.create_bot({
 	end,
 	on_blow=function(self)
 		aliveai.kill(self)
-		self.death(self,self.object,self.object:getpos())
+		self.death(self,self.object,self.object:get_pos())
 	end,
 	death=function(self,puncher,pos)
 		if not self.ex then
@@ -619,7 +619,7 @@ aliveai.create_bot({
 				if en and en.object then
 					if en.type~="" then ob:punch(self.object,1,{full_punch_interval=1,damage_groups={fleshy=dmg}},nil) end
 					dmg=dmg*2
-					ob:setvelocity({x=(pos2.x-pos.x)*dmg, y=((pos2.y-pos.y)*dmg)+2, z=(pos2.z-pos.z)*dmg})
+					ob:set_velocity({x=(pos2.x-pos.x)*dmg, y=((pos2.y-pos.y)*dmg)+2, z=(pos2.z-pos.z)*dmg})
 				elseif ob:is_player() then
 					ob:punch(self.object,1,{full_punch_interval=1,damage_groups={fleshy=dmg}},nil)
 					local d=dmg/2
@@ -637,7 +637,7 @@ aliveai.create_bot({
 									if item then
 										local it=minetest.add_item(tmp, item)
 										it:get_luaentity().age=890
-										it:setvelocity({x = math.random(-1, 1),y=math.random(-1, 1),z = math.random(-1, 1)})
+										it:set_velocity({x = math.random(-1, 1),y=math.random(-1, 1),z = math.random(-1, 1)})
 									end
 								end
 							else
@@ -751,7 +751,7 @@ aliveai.create_bot({
 			aliveai.rndwalk(self,false)
 			aliveai.stand(self)
 			for i, v in pairs(self.movefromslp) do
-				self.object:moveto(v)
+				self.object:move_to(v)
 				table.remove(self.movefromslp,i)
 				return self
 			end
@@ -788,13 +788,13 @@ aliveai.create_bot({
 			local pos=aliveai.roundpos(self.object:get_pos())
 			if self.sleep.pos then
 				if self.sleep.pos.pos0 then
-					self.object:moveto(self.sleep.pos.pos0)
+					self.object:move_to(self.sleep.pos.pos0)
 					self.sleep.pos.pos0=nil
 				elseif self.sleep.pos.pos1 then
-					self.object:moveto(self.sleep.pos.pos1)
+					self.object:move_to(self.sleep.pos.pos1)
 					self.sleep.pos.pos1=nil
 				elseif self.sleep.pos.pos2 then
-					self.object:moveto(self.sleep.pos.pos2)
+					self.object:move_to(self.sleep.pos.pos2)
 					self.sleep.pos=nil
 				end
 				if not self.pull_down then return self end
@@ -807,13 +807,13 @@ aliveai.create_bot({
 						return
 					end
 					if self.pull_down.pos.pos0 then
-						self.pull_down.target:moveto(self.pull_down.pos.pos0)
+						self.pull_down.target:move_to(self.pull_down.pos.pos0)
 						self.pull_down.pos.pos0=nil
 					elseif self.pull_down.pos.pos1 then
-						self.pull_down.target:moveto(self.pull_down.pos.pos1)
+						self.pull_down.target:move_to(self.pull_down.pos.pos1)
 						self.pull_down.pos.pos1=nil
 					elseif self.pull_down.pos.pos2 then
-						self.pull_down.target:moveto(self.pull_down.pos.pos2)
+						self.pull_down.target:move_to(self.pull_down.pos.pos2)
 						self.pull_down.pos=nil
 					end
 					return self
@@ -1305,12 +1305,12 @@ aliveai.create_bot({
 
 minetest.register_globalstep(function(dtime)
 	for i, o in pairs(aliveai_threats.debris) do
-		if o.ob and o.ob:get_luaentity() and o.ob:get_hp()>0 and o.ob:getvelocity().y~=0 then
+		if o.ob and o.ob:get_luaentity() and o.ob:get_hp()>0 and o.ob:get_velocity().y~=0 then
 			for ii, ob in pairs(minetest.get_objects_inside_radius(o.ob:get_pos(), 1.5)) do
 				local en=ob:get_luaentity()
 				if not en or (en.name~="__builtin:item" and not (en.aliveai and en.botname==o.n) ) then
 					ob:punch(o.ob,1,{full_punch_interval=1,damage_groups={fleshy=1}})
-					o.ob:setvelocity({x=0, y=0, z=0})
+					o.ob:set_velocity({x=0, y=0, z=0})
 					if o.on_hit_object then
 						o.on_hit_object(o.ob:get_luaentity(),o.ob:get_pos(),ob)
 					end
@@ -1320,7 +1320,7 @@ minetest.register_globalstep(function(dtime)
 			end
 		else
 
-			if o and o.on_hit_ground and o.ob:getvelocity() and o.ob:getvelocity().y==0 then
+			if o and o.on_hit_ground and o.ob:get_velocity() and o.ob:get_velocity().y==0 then
 				o.on_hit_ground(o.ob:get_luaentity(),o.ob:get_pos())
 			end
 			table.remove(aliveai_threats.debris,i)
@@ -1409,7 +1409,7 @@ aliveai.create_bot({
 			local e=minetest.add_item({x=pos.x,y=pos.y,z=pos.z},self.save__consists)
 			local dir=aliveai.get_dir(self,ta)
 			local vc = {x = dir.x*30, y = dir.y*30, z = dir.z*30}
-			e:setvelocity(vc)
+			e:set_velocity(vc)
 
 			e:get_luaentity().age=(tonumber(minetest.setting_get("item_entity_ttl")) or 900)-2
 			table.insert(aliveai_threats.debris,{ob=e,n=self.botname})
@@ -1696,7 +1696,7 @@ minetest.register_node("aliveai_threats:killerplant", {
 		end
 		for i, ob in pairs(minetest.get_objects_inside_radius(pos, 1.5)) do
 			minetest.sound_play("default_grass_footstep", {pos=pos,max_hear_distance = 10, gain = 0.5})
-			ob:moveto({x=pos.x,y=pos.y-3,z=pos.z})
+			ob:move_to({x=pos.x,y=pos.y-3,z=pos.z})
 		end
 		return true
 	end,
@@ -2075,7 +2075,7 @@ aliveai.create_bot({
 		floating=1,
 		mindamage=5,
 	on_punching=function(self,target)
-		if not self.att and self.object:getvelocity().y==0 then
+		if not self.att and self.object:get_velocity().y==0 then
 			self.att=target
 			self.att:set_attach(self.object, "", {x=0,y=0,z=0}, {x=0,y=2,z=0})
 			self.att_pos=self.object:get_pos()
@@ -2085,13 +2085,13 @@ aliveai.create_bot({
 	end,
 	on_step=function(self,dtime)
 		if self.att then
-			self.object:setvelocity({x=math.random(-3,3), y=10, z=math.random(-3,3)})
+			self.object:set_velocity({x=math.random(-3,3), y=10, z=math.random(-3,3)})
 			aliveai.punch(self,self.att)
 			if self.object:get_pos().y-self.att_pos.y>40 then
 				self.att:set_detach()
 				minetest.after(0.5, function(self)
 					if self.att then
-						self.att:setacceleration(self.att_a)
+						self.att:set_acceleration(self.att_a)
 						self.att=nil
 					end
 					self.object:set_pos(self.att_pos)
@@ -2215,7 +2215,7 @@ aliveai.create_bot({
 		self.jtimer=0
 	end,
 	on_step=function(self,dtime)
-		local v=self.object:getvelocity()
+		local v=self.object:get_velocity()
 		if self.jtimer>1 and v.y==0 then
 			aliveai.jump(self)
 			self.jtimer=0
@@ -2335,7 +2335,7 @@ aliveai.create_bot({
 		tool_chance=1,
 	on_blow=function(self)
 		aliveai.kill(self)
-		self.death(self,self.object,self.object:getpos())
+		self.death(self,self.object,self.object:get_pos())
 	end,
 	death=function(self,puncher,pos)
 			if not self.ex then
@@ -2473,7 +2473,7 @@ aliveai.create_bot({
 		elseif self.fangs and not self.fight then
 			self.spawn(self)
 		elseif not self.fight and math.random(1,3)==1 then
-			for _, ob in ipairs(minetest.get_objects_inside_radius(self.object:getpos(), self.distance)) do
+			for _, ob in ipairs(minetest.get_objects_inside_radius(self.object:get_pos(), self.distance)) do
 				local pos=ob:get_pos()
 				if aliveai.is_bot(ob) and aliveai.team(ob)~=self.team and aliveai.viewfield(self,pos) then
 					local en=ob:get_luaentity()
@@ -2782,7 +2782,7 @@ aliveai.create_bot({
 		spawn_chance=100,
 	spawn=function(self,t,t2)
 		self.object:set_properties({visual="wielditem",visual_size={x=0.6,y=0.6},textures={"aliveai_threats:snowman"}})
-		local e=minetest.add_entity(self.object:getpos(), "aliveai_threats:hat")
+		local e=minetest.add_entity(self.object:get_pos(), "aliveai_threats:hat")
 		e:set_attach(self.object, "",{x=0, y=62 , z=0}, {x=0, y=0, z=0})
 		self.hat=e
 		self.cctime=0
@@ -2803,7 +2803,7 @@ aliveai.create_bot({
 			aliveai.lookat(self,ta)
 			local e=minetest.add_item(aliveai.pointat(self,2),"default:snow")
 			local dir=aliveai.get_dir(self,ta)
-			e:setvelocity({x =aliveai.nan(dir.x*30), y = aliveai.nan(dir.y*30), z = aliveai.nan(dir.z*30)})
+			e:set_velocity({x =aliveai.nan(dir.x*30), y = aliveai.nan(dir.y*30), z = aliveai.nan(dir.z*30)})
 			e:get_luaentity().age=(tonumber(minetest.setting_get("item_entity_ttl")) or 900)-2
 			table.insert(aliveai_threats.debris,{ob=e,n=self.botname})
 			return self

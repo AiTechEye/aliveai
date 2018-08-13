@@ -92,14 +92,14 @@ on_timer=function(pos, elapsed)
 				local v=ob:get_pos()
 				local s={x=(v.x-pos.x)*3,y=(v.y-pos.y)*3,z=(v.z-pos.z)*3}
 				local m=minetest.add_entity(pos, "aliveai_threats:bullet1")
-				m:setvelocity(s)
-				m:setacceleration(s)
+				m:set_velocity(s)
+				m:set_acceleration(s)
 				minetest.sound_play("aliveai_threats_bullet1", {pos=pos, gain = 1, max_hear_distance = 15})
 				minetest.after((math.random(1,9)*0.1), function(pos,s)
 					local m=minetest.add_entity(pos, "aliveai_threats:bullet1")
 					m:get_luaentity().team=t
-					m:setvelocity(s)
-					m:setacceleration(s)
+					m:set_velocity(s)
+					m:set_acceleration(s)
 					minetest.sound_play("aliveai_threats_bullet1", {pos=pos, gain = 1, max_hear_distance = 15})
 				end, pos,s)
 				return true
@@ -378,8 +378,8 @@ on_timer=function(pos, elapsed)
 				local s={x=(v.x-pos.x)*3,y=(v.y-pos.y)*3,z=(v.z-pos.z)*3}
 				local m=minetest.add_entity(pos, "aliveai_threats:bullet2")
 				m:get_luaentity().team=t
-				m:setvelocity(s)
-				m:setacceleration(s)
+				m:set_velocity(s)
+				m:set_acceleration(s)
 				minetest.sound_play("aliveai_threats_bullet1", {pos=pos, gain = 1, max_hear_distance = 15})
 				return true
 			end
@@ -425,3 +425,4 @@ on_step=function(self, dtime)
 	team=""
 })
 end
+
