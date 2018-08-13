@@ -91,7 +91,7 @@ aliveai.create_bot({
 			local p=self.object:get_pos()
 			self.temper=3
 			local a=aliveai.random_pos(self.fight:get_pos(),2,3)
-			if a then self.object:setpos(a) end
+			if a then self.object:set_pos(a) end
 			aliveai.lookat(self,self.fight:get_pos())
 			if aliveai.def(p,"buildable_to") then
 				minetest.set_node(p,{name="aliveai_electric:chock"})
@@ -110,7 +110,7 @@ aliveai.create_bot({
 	end,
 	on_blow=function(self)
 		aliveai.kill(self)
-		self.death(self,self.object,self.object:getpos())
+		self.death(self,self.object,self.object:get_pos())
 	end,
 	death=function(self,puncher,pos)
 		if not self.exx then
@@ -196,7 +196,7 @@ aliveai.create_bot({
 	end,
 	on_blow=function(self)
 		aliveai.kill(self)
-		self.death(self,self.object,self.object:getpos())
+		self.death(self,self.object,self.object:get_pos())
 	end,
 	death=function(self,puncher,pos)
 		if not self.exx then
@@ -289,7 +289,7 @@ aliveai.create_bot({
 	end,
 	on_blow=function(self)
 		aliveai.kill(self)
-		self.death(self,self.object,self.object:getpos())
+		self.death(self,self.object,self.object:get_pos())
 	end,
 	death=function(self,puncher,pos)
 		if not self.exx then
@@ -370,10 +370,10 @@ aliveai_threat_eletric.explode=function(pos,r)
 		local d=math.max(1,vector.distance(pos,pos2))
 		local dmg=(8/d)*r
 		if ob:get_luaentity() then
-			ob:setvelocity({x=(pos2.x-pos.x)*dmg, y=(pos2.y-pos.y)*dmg, z=(pos2.z-pos.z)*dmg})
+			ob:set_velocity({x=(pos2.x-pos.x)*dmg, y=(pos2.y-pos.y)*dmg, z=(pos2.z-pos.z)*dmg})
 		elseif ob:is_player() then
 			aliveai_nitroglycerine.new_player=ob
-			minetest.add_entity(pos2, "aliveai_nitroglycerine:playerp"):setvelocity({x=(pos2.x-pos.x)*dmg, y=(pos2.y-pos.y)*dmg, z=(pos2.z-pos.z)*dmg})
+			minetest.add_entity(pos2, "aliveai_nitroglycerine:playerp"):set_velocity({x=(pos2.x-pos.x)*dmg, y=(pos2.y-pos.y)*dmg, z=(pos2.z-pos.z)*dmg})
 			aliveai_nitroglycerine.new_player=nil
 		end
 	end
@@ -500,3 +500,4 @@ on_timer=function(pos, elapsed)
 		return true
 	end,
 })
+
