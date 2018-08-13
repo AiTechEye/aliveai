@@ -341,9 +341,9 @@ end)
 
 aliveai_mindcontroller.mob_walk = function(self,v)
 	local yaw=(self.object:getyaw() or 0)+self.rotate
-	self.object:setvelocity({
+	self.object:set_velocity({
 		x=math.sin(yaw)*-v,
-		y=self.object:getvelocity().y,
+		y=self.object:get_velocity().y,
 		z=math.cos(yaw)*v
 	})
 end
@@ -423,9 +423,9 @@ minetest.register_globalstep(function(dtime)
 				p.y=p.y-2
 				local n=minetest.get_node(p).name
 				if minetest.registered_nodes[n] and minetest.registered_nodes[n].walkable then
-					local v = e.ob:getvelocity()
+					local v = e.ob:get_velocity()
 					v.y = self.jump_height
-					e.ob:setvelocity(v)
+					e.ob:set_velocity(v)
 					aliveai_mindcontroller.mob_walk(self, self.run_velocity)
 				end
 			end
@@ -458,7 +458,7 @@ aliveai_mindcontroller.exit=function(e)
 		user:set_nametag_attributes({color={a=255,r=255,g=255,b=255}})
 		user:set_eye_offset({x=0,y=0,z=0},{x=0,y=0,z=0})
 		user:set_properties({visual_size = {x=1, y=1},visual="mesh"})
-		user:setpos(poss)
+		user:set_pos(poss)
 	end,user,poss)
 end
 
@@ -503,8 +503,8 @@ minetest.register_entity("aliveai_mindcontroller:standing_player",{
 			return self
 		end
 		if minetest.check_player_privs(self.username, {fly=true})==false then
-			self.object:setacceleration({x=0,y=-10,z =0})
-			self.object:setvelocity({x=0,y=-3,z =0})
+			self.object:set_acceleration({x=0,y=-10,z =0})
+			self.object:set_velocity({x=0,y=-3,z =0})
 		end
 
 		self.object:set_animation({ x=1, y=39, },30,0)
@@ -539,3 +539,4 @@ minetest.register_entity("aliveai_mindcontroller:standing_player",{
 	team="Sam",
 	time=0,
 })
+
