@@ -265,14 +265,14 @@ if node.velocity==1 then
 		local d=math.max(1,vector.distance(pos,pos2))
 		local dmg=(8/d)*node.radius
 		if ob:get_luaentity() and not ob:get_luaentity().attachplayer and not (ob:get_luaentity().nitroglycerine_dust and ob:get_luaentity().nitroglycerine_dust==2) then
-			ob:setvelocity({x=(pos2.x-pos.x)*dmg, y=(pos2.y-pos.y)*dmg, z=(pos2.z-pos.z)*dmg})
+			ob:set_velocity({x=(pos2.x-pos.x)*dmg, y=(pos2.y-pos.y)*dmg, z=(pos2.z-pos.z)*dmg})
 
 
 			if ob:get_luaentity() and ob:get_luaentity().nitroglycerine_dust then ob:get_luaentity().nitroglycerine_dust=2 end
 
 		elseif ob:is_player() then
 			aliveai_nitroglycerine.new_player=ob
-			minetest.add_entity({x=pos2.x,y=pos2.y+1,z=pos2.z}, "aliveai_nitroglycerine:playerp"):setvelocity({x=(pos2.x-pos.x)*dmg, y=(pos2.y-pos.y)*dmg, z=(pos2.z-pos.z)*dmg})
+			minetest.add_entity({x=pos2.x,y=pos2.y+1,z=pos2.z}, "aliveai_nitroglycerine:playerp"):set_velocity({x=(pos2.x-pos.x)*dmg, y=(pos2.y-pos.y)*dmg, z=(pos2.z-pos.z)*dmg})
 			aliveai_nitroglycerine.new_player=nil
 		end
 	end
@@ -311,7 +311,7 @@ aliveai_nitroglycerine.freeze=function(ob)
 		minetest.set_node(pos, {name = "aliveai_nitroglycerine:icebox"})
 		minetest.after(0.5, function(pos, ob) 
 			pos.y=pos.y-0.5
-			ob:moveto(pos,false)
+			ob:move_to(pos,false)
 		end, pos, ob)
 		return
 	end
@@ -401,8 +401,8 @@ minetest.register_entity("aliveai_nitroglycerine:ice",{
 		else
 			self.object:remove()
 		end
-		self.object:setacceleration({x = 0, y = -10, z = 0})
-		self.object:setvelocity({x = 0, y = -10, z = 0})
+		self.object:set_acceleration({x = 0, y = -10, z = 0})
+		self.object:set_velocity({x = 0, y = -10, z = 0})
 	end,
 	on_step = function(self, dtime)
 		self.timer=self.timer+dtime
@@ -442,7 +442,7 @@ minetest.register_entity("aliveai_nitroglycerine:dust",{
 		if not aliveai_nitroglycerine.new_dust then self.object:remove() return self end
 		self.drop=aliveai_nitroglycerine.new_dust.drop
 		self.object:set_properties({textures = aliveai_nitroglycerine.new_dust.t})
-		self.object:setacceleration({x=0,y=-10,z=0})
+		self.object:set_acceleration({x=0,y=-10,z=0})
 		return self
 	end,
 	on_step=function(self, dtime)
@@ -480,7 +480,7 @@ minetest.register_entity("aliveai_nitroglycerine:playerp",{
 	textures ={"aliveai_air.png"},
 	pointable=false,
 	on_punch=function(self)
-		local v=self.object:getvelocity().y
+		local v=self.object:get_velocity().y
 		if v<0.2 and v>-0.2 then
 			self.kill(self)
 		end
@@ -505,7 +505,7 @@ minetest.register_entity("aliveai_nitroglycerine:playerp",{
 		or minetest.check_player_privs(aliveai_nitroglycerine.new_player:get_player_name(), {fly=true}) then self.object:remove() return self end
 		self.ob=aliveai_nitroglycerine.new_player
 		self.ob:set_attach(self.object, "",{x = 0, y = 0, z = 0}, {x = 0, y = 0, z = 0})
-		self.object:setacceleration({x=0,y=-10,z=0})
+		self.object:set_acceleration({x=0,y=-10,z=0})
 		self.y=self.object:get_pos().y
 		return self
 	end,
@@ -668,3 +668,4 @@ minetest.register_abm({
 		end
 	end,
 })
+
