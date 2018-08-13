@@ -96,7 +96,7 @@ aliveai_aliens.newbullet=function(pos,dir,d,speed,user,texture,func)
 	aliveai_aliens.func=func
 	aliveai_aliens.user=user
 	local e=minetest.add_entity({x=aliveai.nan(pos.x+(dir.x)*speed),y=aliveai.nan(pos.y+(dir.y)*speed),z=aliveai.nan(pos.z+(dir.z)*speed)}, "aliveai_aliens:bullet")
-	e:setvelocity(d)
+	e:set_velocity(d)
 	if texture~="" then
 		e:set_properties({nametag="",textures={texture}})
 
@@ -414,7 +414,7 @@ minetest.register_entity("aliveai_aliens:bullet2",{
 			return self
 		end
 		local v={x=(pos.x-pos1.x)*-2,y=(pos.y-pos1.y)*-2,z=(pos.z-pos1.z)*-2}
-		self.object:setvelocity(v)
+		self.object:set_velocity(v)
 		if aliveai.distance(self,pos1)<1.5 then
 			if not self.user then self.user=self.object end
 			self.target:punch(self.user,1,{full_punch_interval=1,damage_groups={fleshy=4}})
@@ -448,7 +448,7 @@ minetest.register_entity("aliveai_aliens:shrinkbox",{
 		end
 
 		local acc=self.shrinking:getacceleration() or {x=0,y=0,z=0}
-		local v=self.shrinking:getvelocity() or {x=0,y=0,z=0}
+		local v=self.shrinking:get_velocity() or {x=0,y=0,z=0}
 		local y=self.shrinking:getyaw() or 0
 
 
@@ -457,8 +457,8 @@ minetest.register_entity("aliveai_aliens:shrinkbox",{
 		self.object:setyaw(y)
 
 
-		self.object:setvelocity(v)
-		self.object:setacceleration(acc)
+		self.object:set_velocity(v)
+		self.object:set_acceleration(acc)
 	end,
 	on_step = function(self, dtime)
 		self.timer=self.timer+dtime
@@ -637,3 +637,4 @@ minetest.register_ore({
 	y_min          = 30,
 	y_max          = 100,
 })
+
