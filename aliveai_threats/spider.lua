@@ -4,21 +4,23 @@ minetest.register_node("aliveai_threats:spiderspawner", {
 
 aliveai.register_on_generated("aliveai_threats:spiderspawner",function(y)
 	minetest.after(0, function(y)
-		y.y=y.y-4
-		local p=aliveai.get_nodes(y,4,1,{})
-		if not p then return end
-		local m={"aliveai_threats:trapstone","aliveai_threats:trapdirt"}
-		local mm={"default:stone","default:dirt"}
-		for _, pos in ipairs(p) do
-				if pos.y>=y.y and minetest.find_node_near(pos, 1,{"air","group:snappy"}) then
-					if pos.y>=y.y+4 then
-						minetest.set_node(pos,{name=m[math.random(1,2)]})
+		if math.random(1,3)==1 then
+			y.y=y.y-4
+			local p=aliveai.get_nodes(y,4,1,{})
+			if not p then return end
+			local m={"aliveai_threats:trapstone","aliveai_threats:trapdirt"}
+			local mm={"default:stone","default:dirt"}
+			for _, pos in ipairs(p) do
+					if pos.y>=y.y and minetest.find_node_near(pos, 1,{"air","group:snappy"}) then
+						if pos.y>=y.y+4 then
+							minetest.set_node(pos,{name=m[math.random(1,2)]})
+						else
+							minetest.set_node(pos,{name=mm[math.random(1,2)]})
+						end
 					else
-						minetest.set_node(pos,{name=mm[math.random(1,2)]})
+						minetest.set_node(pos,{name="aliveai_threats:steelnet"})
 					end
-				else
-					minetest.set_node(pos,{name="aliveai_threats:steelnet"})
-				end
+			end
 		end
 		minetest.get_node_timer(y):start(5)
 	end,y)
