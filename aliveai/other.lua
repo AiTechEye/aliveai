@@ -81,24 +81,27 @@ aliveai.show_terminal=function(user,a)
 	local n=0
 	local self
 	local botn=0
+	local coma=""
 	local gui="size[10,10]"
 
 	for i, bot in pairs(aliveai.active) do
 		if bot:get_luaentity() then
 			botn=botn+1
-			bots=bots .. bot:get_luaentity().botname .. ","
+			bots=bots .. coma .. bot:get_luaentity().botname
 			if bots_n==1 and bot:get_luaentity().botname==botname then
 				bots_n=botn
 				self=bot:get_luaentity()
 			elseif not self then
 				self=bot:get_luaentity()
 			end
+			coma=","
 		end
 	end
 
 	aliveai.terminal_users[name].obs={}
 	aliveai.terminal_users[name].bot=nil
 	if self then
+		coma=""
 		self.terminal_user=name
 		aliveai.terminal_users[name].botname=self.botname
 		aliveai.terminal_users[name].bot=self.object
@@ -113,7 +116,8 @@ aliveai.show_terminal=function(user,a)
 					na=ob:get_luaentity().name
 				end
 				table.insert(aliveai.terminal_users[name].obs,{ob=ob,name=na})	 -- .." " .. aliveai.team(ob)
-				obs_text=obs_text ..na .. ","					 --.. na .." " .. aliveai.team(ob) ..
+				obs_text=obs_text .. coma ..na					 --.. na .." " .. aliveai.team(ob) ..
+				coma=","
 				if not aliveai.terminal_users[name].target then
 					aliveai.terminal_users[name].target=ob
 				end
@@ -146,34 +150,41 @@ aliveai.show_terminal=function(user,a)
 	end
 
 	gui=gui
-	.."dropdown[-0.2,0;4,1;bot;" .. bots.. ";" .. bots_n .."]"
-	.."dropdown[-0.2,0.7;4,1;target;" .. obs_text.. ";1]"
+	.."dropdown[-0.2,0;3.7,1;bot;" .. bots.. ";" .. bots_n .."]"
+	.."dropdown[-0.2,0.7;3.7,1;target;" .. obs_text.. ";1]"
 	.."field[0,1.6;2,1;text;;]"
+	.."button[1.4,1.3;2,1;teleport;Teleport to]"
 	.. event
-
 	.."button[4,0;1.7,1;status;Live status " .. (aliveai.terminal_users[name].live_status or 0) .."]"
-	.."label[4,-0.3;Active bots: " .. (aliveai.active_num-1) .. "]"
+	.."label[4,-0.3;Active bots: " .. aliveai.active_num .. "]"
 	.."button[5.5,0;1.5,1;clearlimit;Clear limit]"
 	.."button[6.8,0;1.2,1;clearall;Clear all]"
 	.."button[7.8,0;1.2,1;botsstatus;Status]"
 	.."button[8.8,0;1.2,1;freeze;Freeze " .. aliveai.systemfreeze .."]"
+
+	if self then
+		gui=gui .. "item_image_button[3.2,-0.2;1,1;".. self.object:get_luaentity().name .."_spawner;imgbut;]"
+	end
+	if aliveai.terminal_users[name].target and aliveai.terminal_users[name].target:get_luaentity() then
+		gui=gui .. "item_image_button[3.2,0.6;1,1;".. aliveai.terminal_users[name].target:get_luaentity().name .."_spawner;imgbut;]"
+	end
 
 --system status
 	local delay=math.floor((aliveai.bots_delay2/aliveai.max_delay)*100)/100
 	gui=gui .."box[4," ..(3-(delay*2)) .. ";0.5," .. (delay*2) .. ";#" .. aliveai.terminal_status_color(delay) .."]"
 	.."label[4,1;System\n" .. (math.floor(delay*100)) .."%]"
 
-	minetest.after(0.1, function(gui)
-		return minetest.show_formspec(name, "aliveai.terminal",gui)
-	end, gui)
+	minetest.after(0.1, function(gui,name)
+		if aliveai.terminal_users[name] and aliveai.terminal_users[name].status then
+			return minetest.show_formspec(name, "aliveai.terminal",gui)
+		end
+	end, gui,name)
 	minetest.after(1, function(name,user)
 		if user and aliveai.terminal_users[name].live_status and not aliveai.terminal_users[name].bot and aliveai.terminal_users[name].status then
 			aliveai.show_terminal(user)
 		end
 	end, name,user)
 end
-
-
 
 aliveai.terminal_status_color=function(st)
 	local c="00ff00"
@@ -190,8 +201,6 @@ aliveai.terminal_status_color=function(st)
 	end
 	return c
 end
-
-
 
 minetest.register_on_player_receive_fields(function(user, form, pressed)
 	if form=="aliveai.terminal" then
@@ -335,6 +344,10 @@ minetest.register_on_player_receive_fields(function(user, form, pressed)
 				aliveai.node_handler(self)
 			elseif e=="light" then
 				aliveai.light(self)
+			end
+		elseif pressed.teleport then
+			if aliveai.terminal_users[name].bot then
+				user:set_pos(aliveai.terminal_users[name].bot:get_pos())
 			end
 		elseif pressed.status then
 			if aliveai.terminal_users[name].live_status then

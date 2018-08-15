@@ -388,7 +388,6 @@ end
 
 		self.delay_average={time=0}
 
-		table.insert(aliveai.active,self.object)
 		aliveai.max(self)
 
 		if self.old~=1 then
