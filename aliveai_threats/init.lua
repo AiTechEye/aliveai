@@ -2605,6 +2605,11 @@ minetest.register_node("aliveai_threats:statue", {
 		end
 	end,
 	on_timer = function (pos, elapsed)
+		if math.random(1,100)==1 and not minetest.is_protected(pos,"") then
+			minetest.remove_node(pos)
+			return
+		end
+
 		local l=minetest.get_node_light(pos)
 		if l and l>5 then return true end
 		local o
@@ -2692,7 +2697,7 @@ minetest.register_entity("aliveai_threats:statue",{
 	collisionbox={0,0,0,0,0,0},
 	textures ={"default_stone.png"},
 	on_activate=function(self, staticdata)
-		if not minetest.get_node(self.object:get_pos()).name=="aliveai_threats:statue" then
+		if minetest.get_node(self.object:get_pos()).name~="aliveai_threats:statue" then
 			self.object:remove()
 		end
 	end,
