@@ -9,6 +9,7 @@ aliveai={
 	check_spawn_space=true,
 	enable_build=true,
 	status=false,				--show bot status
+	systemfreeze=0,				--freeze the system
 	tools=0,					--hide bot tools
 	max_path_delay_time=1,			--max delay each second, if a path using more will all other be stopped until next secund
 	get_everything_to_build_chance=50,
@@ -19,7 +20,7 @@ aliveai={
 	max_new_bots=10,
 --========================not options==============================
 	delaytime=os.clock(),
-
+	terminal_users={},
 	bones=minetest.get_modpath("bones"),
 	creative=minetest.settings:get("creative_mode"),
 	bots_delay=0,
@@ -84,7 +85,7 @@ aliveai.ticks_pers=os.clock()
 aliveai.game_paused=true
 
 minetest.register_globalstep(function(dtime)
-	if os.clock()-aliveai.ticks_pers>1 then
+	if os.clock()-aliveai.ticks_pers>1 or aliveai.systemfreeze==1 then
 		aliveai.game_paused=true
 	else
 		aliveai.game_paused=false

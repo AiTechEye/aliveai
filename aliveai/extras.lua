@@ -52,22 +52,6 @@ if minetest.get_modpath("farming") then
 		aliveai.nodes_handler["farming:cotton_7"]="dig"
 		aliveai.nodes_handler["farming:cotton_8"]="dig"
 	end)
-
-	minetest.register_tool("aliveai:force_farming", {
-	description = "Force a bot to farming",
-	range = 7,
-	inventory_image = "default_stick.png^farming_wheat_seed.png",
-	groups={not_in_creative_inventory = aliveai.tools,},
-		on_use = function(itemstack, user, pointed_thing)
-			local ob=pointed_thing.ref
-			if ob and ob:get_luaentity() and ob:get_luaentity().aliveai then
-				ob:get_luaentity().home=ob:get_pos()
-				ob:get_luaentity().need=nil
-				aliveai.task_farming(ob:get_luaentity())
-			end
-		end
-	})
-
 else
 	aliveai.farming=nil
 end
@@ -273,20 +257,3 @@ if minetest.get_modpath("bows") then
 			tool_chance=3,
 		}
 end
-
-minetest.register_chatcommand("aliveai", {
-	params = "",
-	description = "aliveai settings",
-	privs = {server=true},
-	func = function(name, param)
-		if string.find(param,"status=true")~=nil then
-			aliveai.status=true
-			minetest.chat_send_player(name, "<aliveai> bot status on")
-		elseif string.find(param,"status=false")~=nil then
-			aliveai.status=false
-			minetest.chat_send_player(name, "<aliveai> bot status off")
-		elseif string.find(param,"count")~=nil then
-			minetest.chat_send_player(name, "<aliveai> max:".. aliveai.max_num .." by self:" .. aliveai.max_num_by_self .." monsters by self:" .. aliveai.max_num_by_self_monsters .." bots: " .. aliveai.active_num)
-		end
-	end
-})

@@ -1,3 +1,398 @@
+--show status / command / ai status
+
+
+minetest.register_chatcommand("aliveai", {
+	params = "",
+	description = "aliveai settings",
+	privs = {aliveai=true},
+	func = function(name, param)
+		local user=minetest.get_player_by_name(name)
+		if user then
+			aliveai.show_terminal()
+		end
+	end
+})
+
+minetest.register_privilege("aliveai", {
+	description = "Can use aliveai terminal",
+	give_to_singleplayer= false,
+})
+
+minetest.register_tool("aliveai:terminal", {
+	description = "Terminal",
+	range=15,
+	inventory_image = "aliveai_terminal.png",
+	on_use=function(itemstack, user, pointed_thing)
+		local name=user:get_player_name()
+		if minetest.check_player_privs(name, {aliveai=true})==false then
+			itemstack:replace(nil)
+			minetest.chat_send_player(name,"You are unallowed to use this tool")
+			return itemstack
+		end
+
+
+		if not aliveai.terminal_users[name] then
+			aliveai.terminal_users[name]={botname=""}
+		end
+		if pointed_thing.type=="object" then
+			if aliveai.is_bot(pointed_thing.ref) then
+				aliveai.terminal_users[name].bot=pointed_thing.ref
+				aliveai.terminal_users[name].botname=pointed_thing.ref:get_luaentity().botname
+				pointed_thing.ref:get_luaentity().terminal_user=name
+			end
+		end
+		aliveai.show_terminal(user)
+	end,
+	on_place=function(itemstack, user, pointed_thing)
+		aliveai.terminal_users[user:get_player_name()]=nil
+	end
+})
+
+minetest.register_on_leaveplayer(function(player)
+	if aliveai.terminal_users[player:get_player_name()] then
+		aliveai.terminal_users[player:get_player_name()]=nil
+	end
+end)
+
+aliveai.show_terminal=function(user,a)
+	local name=user:get_player_name()
+
+	if a and not aliveai.terminal_users[name].live_status then
+		return
+	end
+
+	if aliveai.gethp(aliveai.terminal_users[name].taget)<0 then
+		aliveai.terminal_users[name].taget=nil
+	end
+	if aliveai.gethp(aliveai.terminal_users[name].bot)<0 then
+		aliveai.terminal_users[name].bot=nil
+		aliveai.terminal_users[name].botname=""
+	else
+		aliveai.terminal_users[name].status=1
+	end
+
+	local bots=""
+	local bots_n=1
+	local obs_text=""
+	local botname=aliveai.terminal_users[name].botname or ""
+	local privs=""
+	local privsns=""
+	local cmds=""
+	local n=0
+	local self
+	local botn=0
+	local gui="size[10,10]"
+
+	for i, bot in pairs(aliveai.active) do
+		if bot:get_luaentity() then
+			botn=botn+1
+			bots=bots .. bot:get_luaentity().botname .. ","
+			if bots_n==1 and bot:get_luaentity().botname==botname then
+				bots_n=botn
+				self=bot:get_luaentity()
+			elseif not self then
+				self=bot:get_luaentity()
+			end
+		end
+	end
+
+	aliveai.terminal_users[name].obs={}
+	aliveai.terminal_users[name].bot=nil
+	if self then
+		self.terminal_user=name
+		aliveai.terminal_users[name].botname=self.botname
+		aliveai.terminal_users[name].bot=self.object
+		for _, ob in ipairs(minetest.get_objects_inside_radius(self.object:get_pos(),50)) do
+			if ob and aliveai.visiable(self,ob) and not aliveai.same_bot(self,ob) and not (ob:get_luaentity() and ob:get_luaentity().type==nil) then
+				local na=""
+				if ob:is_player() then
+					na=ob:get_player_name()
+				elseif aliveai.is_bot(ob) then
+					na=ob:get_luaentity().botname
+				elseif ob:get_luaentity() then
+					na=ob:get_luaentity().name
+				end
+				table.insert(aliveai.terminal_users[name].obs,{ob=ob,name=na})	 -- .." " .. aliveai.team(ob)
+				obs_text=obs_text ..na .. ","					 --.. na .." " .. aliveai.team(ob) ..
+				if not aliveai.terminal_users[name].target then
+					aliveai.terminal_users[name].target=ob
+				end
+			end
+		end
+
+		local sa=self.delay_average.time
+		gui=gui .."label[5,1;Bot\n" .. (sa*100) .. "%]"
+		if sa>1 then sa=1 elseif sa<0 then sa=0 end
+		gui=gui .."box[5," ..(3-(2*sa)) .. ";0.5," .. (2*sa) .. ";#" .. aliveai.terminal_status_color(sa) .."]"
+		.."label[4,3.5;HP: " .. self.hp  .. "]"
+		if aliveai.terminal_users[name].bot_showstatus then
+			local bsta=aliveai.terminal_users[name].bot_showstatus
+			gui=gui .."label[4,3;Bot status: " ..  minetest.colorize("#" .. bsta.color, bsta.msg) .. "]"
+		end
+
+	end
+
+	local events="remove,die,dying,relive,say,set team,sleep,use tool,search help,creative,superbuild,fly,goto bed,walk,run,look at,build,exit mine,farming,set home,stay at home,rndgoal,node handler,light,fight,escape,folow,come,walk to,rnd walk,stop rnd walk"
+	local event=""
+	local x=-0.2
+	local y=2
+	for i, v in pairs(events.split(events,",")) do
+		event=event .."button[" .. x .. "," .. y .. ";1.5,1;event;".. v .."]"
+		x=x+1.3
+		if x>3 then
+			x=-0.2
+			y=y+0.7
+		end
+	end
+
+	gui=gui
+	.."dropdown[-0.2,0;4,1;bot;" .. bots.. ";" .. bots_n .."]"
+	.."dropdown[-0.2,0.7;4,1;target;" .. obs_text.. ";1]"
+	.."field[0,1.6;2,1;text;;]"
+	.. event
+
+	.."button[4,0;1.7,1;status;Live status " .. (aliveai.terminal_users[name].live_status or 0) .."]"
+	.."label[4,-0.3;Active bots: " .. (aliveai.active_num-1) .. "]"
+	.."button[5.5,0;1.5,1;clearlimit;Clear limit]"
+	.."button[6.8,0;1.2,1;clearall;Clear all]"
+	.."button[7.8,0;1.2,1;botsstatus;Status]"
+	.."button[8.8,0;1.2,1;freeze;Freeze " .. aliveai.systemfreeze .."]"
+
+--system status
+	local delay=math.floor((aliveai.bots_delay2/aliveai.max_delay)*100)/100
+	gui=gui .."box[4," ..(3-(delay*2)) .. ";0.5," .. (delay*2) .. ";#" .. aliveai.terminal_status_color(delay) .."]"
+	.."label[4,1;System\n" .. (math.floor(delay*100)) .."%]"
+
+	minetest.after(0.1, function(gui)
+		return minetest.show_formspec(name, "aliveai.terminal",gui)
+	end, gui)
+	minetest.after(1, function(name,user)
+		if user and aliveai.terminal_users[name].live_status and not aliveai.terminal_users[name].bot and aliveai.terminal_users[name].status then
+			aliveai.show_terminal(user)
+		end
+	end, name,user)
+end
+
+
+
+aliveai.terminal_status_color=function(st)
+	local c="00ff00"
+	if st>2 then
+		c="000000"
+	elseif st>1.5 then
+		c="ff00ff"
+	elseif st>0.9 then
+		c="ff0000"
+	elseif st>0.66 then
+		c="ff6d00"
+	elseif st>0.33 then
+		c="ffff00"
+	end
+	return c
+end
+
+
+
+minetest.register_on_player_receive_fields(function(user, form, pressed)
+	if form=="aliveai.terminal" then
+		local name=user:get_player_name()
+
+		if not aliveai.terminal_users[name] then
+			return
+		elseif pressed.quit then
+			aliveai.terminal_users[name].status=nil
+			return
+		end
+
+		if aliveai.gethp(aliveai.terminal_users[name].taget)<0 then
+			aliveai.terminal_users[name].taget=nil
+		end
+		if aliveai.gethp(aliveai.terminal_users[name].bot)<0 then
+			aliveai.terminal_users[name].bot=nil
+			aliveai.terminal_users[name].botname=""
+		end
+
+		if pressed.event then
+			local e=pressed.event
+			local self=aliveai.terminal_users[name].bot
+
+
+			if not (self and self:get_luaentity()) then
+				aliveai.show_terminal(user)
+				return
+			end
+			self=self:get_luaentity()
+
+			local ob=aliveai.terminal_users[name].target
+
+			if e=="remove" then
+				self.object:remove()
+			elseif e=="die" then
+				aliveai.dying(self,2)
+			elseif e=="dying" then
+				aliveai.dying(self,1)
+			elseif e=="relive" then
+				self.dying={step=0,try=self.hp_max*2}
+				self.dead=nil
+			elseif e=="sleep" then
+				aliveai.sleep(self,2)
+			elseif e=="say" then
+				if pressed.text=="" and ob then
+					aliveai.rnd_talk_to(self,ob)
+				else
+					aliveai.say(self,pressed.text)
+				end
+			elseif e=="set team" and pressed.text~="" then
+				self.team=pressed.text
+			elseif e=="goto bed" then
+				local n=minetest.find_node_near(self.object:get_pos(), self.distance,aliveai.beds)
+				if n then
+					n.y=n.y+1
+					for ob, ob in ipairs(minetest.get_objects_inside_radius(n, 1)) do
+						if (aliveai.is_bot(ob) and ob:get_luaentity().sleeping) or ob:is_player() then return end
+					end
+					local p=aliveai.creatpath(self,self.object:get_pos(),n)
+					if p then
+						self.path=p
+						self.bedpath=n
+					end
+				end
+			elseif e=="walk" then
+				aliveai.walk(self)
+			elseif e=="run" then
+				aliveai.walk(self,2)
+			elseif e=="look at" and ob then
+				aliveai.lookat(self,ob)
+			elseif e=="fight" and ob then
+				if self.temper<5 then
+					self.temper=self.temper+1
+				end
+				self.fight=ob
+				aliveai.known(self,ob,"fight")
+				aliveai.lookat(self,ob)
+			elseif e=="escape" and ob then
+				if self.temper>-5 then
+					self.temper=self.temper-0.3
+				end
+				self.fly=ob
+				aliveai.known(self,ob,"fly")
+				aliveai.lookat(self,ob)
+			elseif e=="folow" and ob then
+				self.folow=ob
+			elseif e=="come" and ob then
+				self.come=ob
+				self.zeal=10
+				aliveai.come(self)
+			elseif e=="walk to" and ob then
+				self.folow=ob
+				aliveai.lookat(self,ob)
+				aliveai.walk(self)
+			elseif e=="rnd walk" and ob then
+				aliveai.rndwalk(self)
+			elseif e=="stop rnd walk" and ob then
+				aliveai.rndwalk(self,false)
+			elseif e=="search help" then
+				aliveai.searchhelp(self)
+			elseif e=="use tool" then
+				aliveai.use(self)
+			elseif e=="creative" then
+				if self.creative==0 then
+					self.creative=1
+				else
+					self.creative=0
+				end
+			elseif e=="superbuild" then
+				if self.superbuild==0 then
+					self.superbuild=1
+				else
+					self.superbuild=0
+				end
+			elseif e=="fly" then
+				if self.floating==0 then
+					aliveai.floating(self,1)
+				else
+					aliveai.floating(self)
+				end
+			elseif e=="build" then
+				aliveai.task_build(self)
+			elseif e=="exit mine" then
+				aliveai.exit_mine(self)
+			elseif e=="farming" then
+				self.home=aliveai.roundpos(self.object:get_pos())
+				self.need=nil
+				aliveai.task_farming(self)
+			elseif e=="set home" then
+				self.home=aliveai.roundpos(self.object:get_pos())
+			elseif e=="stay at home" then
+				aliveai.task_stay_at_home(self)
+			elseif e=="rndgoal" then
+				aliveai.rndgoal(self)
+			elseif e=="node handler" then
+				aliveai.node_handler(self)
+			elseif e=="light" then
+				aliveai.light(self)
+			end
+		elseif pressed.status then
+			if aliveai.terminal_users[name].live_status then
+				aliveai.terminal_users[name].live_status=nil
+				aliveai.show_terminal(user)
+			else
+				aliveai.terminal_users[name].live_status=1
+			end
+		elseif pressed.botsstatus then
+			if aliveai.status==true then
+				aliveai.status=false
+			else
+				aliveai.status=true
+			end
+		elseif pressed.clearlimit then
+			if aliveai.terminal_users[name].bot then
+				aliveai.max(aliveai.terminal_users[name].bot:get_luaentity())
+			end
+		elseif pressed.clearall then
+			for i,ob in pairs(aliveai.active) do
+				if ob then
+					ob:remove()
+				end
+				aliveai.active={}
+				aliveai.active_num=0
+				aliveai.show_terminal(user)
+			end
+		elseif pressed.freeze then
+			if aliveai.systemfreeze==0 then
+				aliveai.systemfreeze=1
+				for i,ob in pairs(aliveai.active) do
+					if ob:get_luaentity() and ob:get_luaentity().floating==0 then
+						ob:set_acceleration({x=0,y=-aliveai.gravity,z =0})
+						ob:set_velocity({x=0,y=-5,z =0})
+					end
+				end
+			else
+				aliveai.systemfreeze=0
+			end
+			aliveai.show_terminal(user)
+		elseif pressed.bot then
+			aliveai.terminal_users[name].botname=pressed.bot
+			local bot=aliveai.get_bot_by_name(pressed.bot)
+			if aliveai.gethp(bot)>0 then
+				bot:get_luaentity().terminal_user=name
+				aliveai.terminal_users[name].bot=bot
+			end
+		elseif pressed.target then
+			if aliveai.terminal_users[name].obs then
+				for i, v in pairs(aliveai.terminal_users[name].obs) do
+					if v.name==pressed.target then
+						aliveai.terminal_users[name].target=v.ob
+						return
+					end
+				end
+			end
+		end
+	end
+end)
+
+
+
 aliveai.generate_house=function(self)
 	local gen=true
 	if self.x and self.y and self.z and not self.aliveai then
@@ -5,8 +400,6 @@ aliveai.generate_house=function(self)
 	else
 		aliveai.showstatus(self,"generate house")
 	end
-
-
 
 --materials
 		local build_able=aliveai.random(1,aliveai.get_everything_to_build_chance)==1
@@ -431,6 +824,16 @@ aliveai.showpath=function(pos,i,table)
 end
 
 aliveai.showstatus=function(self,t,c)
+	if self.terminal_user then
+		if aliveai.terminal_users[self.terminal_user] and aliveai.terminal_users[self.terminal_user].botname==self.botname then
+			if aliveai.terminal_users[self.terminal_user].status then
+				local color={"ff0000","0000ff","00ff00","ffff00"}
+				aliveai.terminal_users[self.terminal_user].bot_showstatus={color=color[c or 2],msg=t}
+			end
+		else
+			self.terminal_user=nil
+		end
+	end
 	if not aliveai.status then return self end
 	local color={"ff0000","0000ff","00ff00","ffff00"}
 	c=c or 2
@@ -459,7 +862,6 @@ aliveai.form=function(name,text)
 	if not text then
 		local gui=""
 		.."size[3.5,0.2]"
-		.."tooltip[size;size: <x> <y> <z>]"
 		.."field[0,0;3,1;size;;]"
 		.."button_exit[2.5,-0.3;1.3,1;set;set]"
 		minetest.after((0.1), function(gui)
