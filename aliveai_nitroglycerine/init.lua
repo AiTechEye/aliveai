@@ -266,8 +266,6 @@ if node.velocity==1 then
 		local dmg=(8/d)*node.radius
 		if ob:get_luaentity() and not ob:get_luaentity().attachplayer and not (ob:get_luaentity().nitroglycerine_dust and ob:get_luaentity().nitroglycerine_dust==2) then
 			ob:set_velocity({x=(pos2.x-pos.x)*dmg, y=(pos2.y-pos.y)*dmg, z=(pos2.z-pos.z)*dmg})
-
-
 			if ob:get_luaentity() and ob:get_luaentity().nitroglycerine_dust then ob:get_luaentity().nitroglycerine_dust=2 end
 
 		elseif ob:is_player() then
@@ -450,7 +448,16 @@ minetest.register_entity("aliveai_nitroglycerine:dust",{
 		if self.time<self.timer then return self end
 		self.time=0
 		self.timer2=self.timer2-1
+
+		local v=self.object:get_velocity()
+		local x,y,z=math.abs(v.x),math.abs(v.y),math.abs(v.z)
 		local pos=self.object:get_pos()
+		
+		if not self.rounded and x+y+z<1 then
+			self.object:set_pos({x=math.floor(pos.x),y=math.floor(pos.y),z=math.floor(pos.z)})
+			self.rounded=1
+		end
+
 		local u=minetest.registered_nodes[minetest.get_node({x=pos.x,y=pos.y-1,z=pos.z}).name]
 		if u and u.walkable then
 			local n=minetest.registered_nodes[minetest.get_node(pos).name]
