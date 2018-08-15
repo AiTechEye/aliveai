@@ -228,7 +228,11 @@ minetest.register_on_player_receive_fields(function(user, form, pressed)
 			if e=="remove" then
 				self.object:remove()
 			elseif e=="die" then
-				aliveai.dying(self,2)
+				if self.type=="npc" then
+					aliveai.dying(self,2)
+				else
+					aliveai.die(self)
+				end
 			elseif e=="dying" then
 				aliveai.dying(self,1)
 			elseif e=="relive" then

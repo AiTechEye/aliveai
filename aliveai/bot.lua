@@ -1,9 +1,16 @@
 aliveai.main=function(self, dtime)
+	if aliveai.systemfreeze==1 then
+		if self.floating==0 then
+			self.object:set_acceleration({x=0,y=0,z =0})
+		end
+		self.object:set_velocity({x=0,y=0,z=0})
+		return self
+	end
+
 	if aliveai.bots_delay2>aliveai.max_delay then
 		if self.old==0 or (self.old==1 and aliveai.bots_delay2>aliveai.max_delay*1.2) then aliveai.max(self) end
 		return self
 	end
-
 
 	if aliveai.botdelay(self,1) then return self end
 	aliveai.bot(self, dtime)
@@ -381,8 +388,10 @@ end
 
 		self.delay_average={time=0}
 
+		table.insert(aliveai.active,self.object)
+		aliveai.max(self)
+
 		if self.old~=1 then
-			aliveai.max(self)
 			self.spawn(self)
 			aliveai.showstatus(self,"new bot spawned")
 			if self.type=="npc" and math.random(1, aliveai.get_random_stuff_chance)==1 then
@@ -398,7 +407,6 @@ end
 				end
 			end
 		else
-			aliveai.max(self)
 			self.on_load(self)
 			aliveai.showstatus(self,"bot loaded")
 		end
@@ -589,6 +597,9 @@ minetest.register_abm({
 	interval = def.spawn_interval or 30,
 	chance = def.spawn_chance,
 	action = function(pos)
+		if aliveai.systemfreeze==1 then
+			return
+		end
 		local pos1={x=pos.x,y=pos.y+1,z=pos.z}
 		local pos2={x=pos.x,y=pos.y+2,z=pos.z}
 		local l=minetest.get_node_light(pos1)
