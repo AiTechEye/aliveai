@@ -2624,7 +2624,7 @@ minetest.register_node("aliveai_threats:statue", {
 
 		end
 		if not cfo then
-			minetest.add_entity({x=pos.x,y=pos.y-0.5,z=pos.z}, "aliveai_threats:statue")
+			minetest.add_entity({x=pos.x,y=pos.y+0.5,z=pos.z}, "aliveai_threats:statue")
 			return true
 		end
 		for _, ob in ipairs(minetest.get_objects_inside_radius(pos, 15)) do
@@ -2697,7 +2697,7 @@ minetest.register_entity("aliveai_threats:statue",{
 	collisionbox={0,0,0,0,0,0},
 	textures ={"default_stone.png"},
 	on_activate=function(self, staticdata)
-		if minetest.get_node(self.object:get_pos()).name~="aliveai_threats:statue" then
+		if minetest.get_node(aliveai.newpos(self):yy(-0.5)).name~="aliveai_threats:statue" then
 			self.object:remove()
 		end
 	end,
