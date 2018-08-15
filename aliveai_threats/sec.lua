@@ -30,7 +30,14 @@ minetest.register_craft({
 		{"default:ice","default:coal_lump","default:ice"},
 	}
 })
-
+minetest.register_craft({
+	output = "aliveai_threats:timed_cleaning_bomb 4",
+	recipe = {
+		{"default:steel_ingot","default:coal_lump","default:steel_ingot"},
+		{"default:steel_ingot","default:mese_crystal_fragment","default:steel_ingot"},
+		{"group:tree","default:coal_lump","group:tree"},
+	}
+})
 
 minetest.register_node("aliveai_threats:secam_off", {
 	description = "Security cam",
@@ -424,5 +431,66 @@ on_step=function(self, dtime)
 	timer=0,
 	team=""
 })
-end
 
+minetest.register_node("aliveai_threats:timed_cleaning_bomb", {
+	description = "Timed cleaning bomb",
+	tiles = {"aliveai_threats_c4_controller.png^[colorize:#00550055"},
+	groups = {dig_immediate = 2,mesecon = 2,flammable = 5},
+	sounds = default.node_sound_wood_defaults(),
+	on_blast=function(pos)
+		local newp={}
+		for x=-7,7,1 do
+		for y=-7,7,1 do
+		for z=-7,7,1 do
+			local p={x=pos.x+x,y=pos.y+y,z=pos.z+z,}
+			if minetest.is_protected(p,"") then
+				return
+			end
+			if minetest.get_node(p).name=="aliveai_threats:timed_cleaning_bomb" then
+				table.insert(newp,p)
+			end
+		end
+		end
+		end
+		minetest.sound_play("aliveai_nitroglycerine_explode", {pos=pos, gain = 0.5, max_hear_distance = 50})
+		minetest.remove_node(pos)
+		for i, ob in pairs(minetest.get_objects_inside_radius(pos, 7)) do
+			if ob:get_luaentity() and ob:get_luaentity().type then
+				ob:remove()
+			end
+		end
+		local p1=vector.add(pos,-7)
+		local p2=vector.add(pos,7)
+		minetest.delete_area(p1, p2)
+		local t=0
+		for i, v in pairs(newp) do
+			t=t+0.1
+			minetest.after(t, function(newp)
+				minetest.registered_nodes["aliveai_threats:timed_cleaning_bomb"].on_blast(v)
+			end, newp)
+		end
+	end,
+	on_timer=function(pos, elapsed)
+		minetest.registered_nodes["aliveai_threats:timed_cleaning_bomb"].on_blast(pos)
+	end,
+	on_rightclick = function(pos, node, player, itemstack, pointed_thing)
+		local meta=minetest.get_meta(pos)
+		if meta:get_int("b")==1 then return end
+		meta:set_int("b",1)
+		minetest.get_node_timer(pos):start(5)
+		minetest.sound_play("aliveai_threats_on", {pos=pos, gain = 1, max_hear_distance = 7})
+	end,
+	mesecons = {effector =
+		{action_on=function(pos)
+			minetest.registered_nodes["aliveai_threats:timed_cleaning_bomb"].on_rightclick(pos)
+		end
+		}
+	},
+	on_burn = function(pos)
+		minetest.registered_nodes["aliveai_threats:timed_cleaning_bomb"].on_rightclick(pos)
+	end,
+	on_ignite = function(pos, igniter)
+		minetest.registered_nodes["aliveai_threats:timed_cleaning_bomb"].on_rightclick(pos)
+	end,
+})
+end

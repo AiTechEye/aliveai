@@ -437,7 +437,15 @@ minetest.register_node("aliveai_threats:gass", {
 	liquid_range = 0,
 	liquid_alternative_flowing = "aliveai_threats:gass",
 	liquid_alternative_source = "aliveai_threats:gass",
-	groups = {liquid = 4,crumbly = 1,not_in_creative_inventory=1}
+	groups = {liquid = 4,crumbly = 1,not_in_creative_inventory=1},
+	on_blast=function(pos)
+		minetest.after(0, function(pos)
+			local np=minetest.find_node_near(pos, 3,"aliveai_threats:gass")
+			if np then
+				aliveai_nitroglycerine.cons({pos=pos,max=5000,replace={["aliveai_threats:gass"]="air"}})
+			end
+		end,pos)
+	end,
 })
 
 if minetest.get_modpath("fire")~=nil then
