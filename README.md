@@ -1,5 +1,7 @@
 # Advanced survuver AI mobs Mod for minetest
 
+## compatible with minetest 0.4.16 and newer
+
 # code/media License: CC0
 
 # NPC
