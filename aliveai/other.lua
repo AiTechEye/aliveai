@@ -163,10 +163,16 @@ aliveai.show_terminal=function(user,a)
 	.."button[8.8,0;1.2,1;freeze;Freeze " .. aliveai.systemfreeze .."]"
 
 	if self then
-		gui=gui .. "item_image_button[3.2,-0.2;1,1;".. self.object:get_luaentity().name .."_spawner;imgbut;]"
+		local selfnam=self.object:get_luaentity().name .."_spawner"
+		if minetest.registered_items[selfnam] then
+			gui=gui .. "item_image_button[3.2,-0.2;1,1;".. selfnam ..";imgbut;]"
+		end
 	end
 	if aliveai.terminal_users[name].target and aliveai.terminal_users[name].target:get_luaentity() then
-		gui=gui .. "item_image_button[3.2,0.6;1,1;".. aliveai.terminal_users[name].target:get_luaentity().name .."_spawner;imgbut;]"
+		local ternam=aliveai.terminal_users[name].target:get_luaentity().name .."_spawner"
+		if minetest.registered_items[ternam] then
+			gui=gui .. "item_image_button[3.2,0.6;1,1;".. ternam .. ";imgbut;]"
+		end
 	end
 
 --system status
