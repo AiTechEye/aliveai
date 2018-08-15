@@ -1827,17 +1827,16 @@ end
 aliveai.max=function(self,update)
 	local c=0
 	for i,v in pairs(aliveai.active) do
-		c=c+1
-		if aliveai.gethp(v,1)==0 then
+		if aliveai.gethp(v,1)<0 then
 			table.remove(aliveai.active,c)
-			c=c-1
+		else
+			c=c+1
 		end
 	end
-	aliveai.active_num=c+1
-	if c==0 then aliveai.active_num=0 end
+	aliveai.active_num=c
 	local new=aliveai.newbot
 	aliveai.newbot=nil
-	if new and aliveai.active_num+1>aliveai.max_new_bots then
+	if new and aliveai.active_num>aliveai.max_new_bots then
 		self.object:remove()
 		return self
 	end
@@ -1895,6 +1894,16 @@ aliveai.botdelay=function(self,a)
 			
 		else
 			table.insert(self.delay_average,p)
+		end
+
+		if self.terminal_user then
+			if aliveai.terminal_users[self.terminal_user] and aliveai.terminal_users[self.terminal_user].botname==self.botname then
+				if aliveai.terminal_users[self.terminal_user].status then
+					aliveai.show_terminal(minetest.get_player_by_name(self.terminal_user),1)
+				end
+			else
+				self.terminal_user=nil
+			end
 		end
 
 		if self.delay_average.time>1 then
