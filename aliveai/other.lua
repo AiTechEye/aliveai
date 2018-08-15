@@ -365,6 +365,7 @@ minetest.register_on_player_receive_fields(function(user, form, pressed)
 		elseif pressed.clearlimit then
 			if aliveai.terminal_users[name].bot then
 				aliveai.max(aliveai.terminal_users[name].bot:get_luaentity())
+				aliveai.show_terminal(user)
 			end
 		elseif pressed.clearall then
 			for i,ob in pairs(aliveai.active) do
@@ -395,11 +396,13 @@ minetest.register_on_player_receive_fields(function(user, form, pressed)
 				bot:get_luaentity().terminal_user=name
 				aliveai.terminal_users[name].bot=bot
 			end
+			aliveai.show_terminal(user)
 		elseif pressed.target then
 			if aliveai.terminal_users[name].obs then
 				for i, v in pairs(aliveai.terminal_users[name].obs) do
 					if v.name==pressed.target then
 						aliveai.terminal_users[name].target=v.ob
+						aliveai.show_terminal(user)
 						return
 					end
 				end
