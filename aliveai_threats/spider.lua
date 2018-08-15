@@ -21,8 +21,8 @@ aliveai.register_on_generated("aliveai_threats:spiderspawner",function(y)
 						minetest.set_node(pos,{name="aliveai_threats:steelnet"})
 					end
 			end
+			minetest.get_node_timer(y):start(5)
 		end
-		minetest.get_node_timer(y):start(5)
 	end,y)
 	return "default:dirt"
 end)
