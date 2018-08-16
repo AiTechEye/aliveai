@@ -317,7 +317,7 @@ aliveai_nitroglycerine.freeze=function(ob)
 	if p.visual=="mesh" and p.mesh~="" and p.mesh~=nil and ob:get_luaentity().name~="aliveai_nitroglycerine:ice" then
 		aliveai_nitroglycerine.newice=true
 		local m=minetest.add_entity(pos, "aliveai_nitroglycerine:ice")
-		m:setyaw(ob:getyaw())
+		m:set_yaw(ob:get_yaw())
 		m:set_properties({
 			visual_size=p.visual_size,
 			visual="mesh",
@@ -675,4 +675,5 @@ minetest.register_abm({
 		end
 	end,
 })
+
 
