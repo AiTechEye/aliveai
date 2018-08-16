@@ -46,7 +46,7 @@ aliveai.create_bot({
 			for _, nodepos in ipairs(nodes) do
 				if aliveai.group(nodepos,"flora")>0 then
 					local f=minetest.add_entity(nodepos, "aliveai_threats:flower")
-					f:setyaw(math.random(0,6.28))
+					f:set_yaw(math.random(0,6.28))
 					local en=f:get_luaentity()
 					aliveai.known(en,self.fight,"fight")
 					en.folow=self.fight

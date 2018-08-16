@@ -626,7 +626,7 @@ minetest.register_node("aliveai_threats:labbottle", {
 		local e=minetest.add_item({x=pos.x+(dir.x*2),y=pos.y+2+(dir.y*2),z=pos.z+(dir.z*2)},"aliveai_threats:labbottle")
 		local vc = {x = dir.x*15, y = dir.y*15, z = dir.z*15}
 		e:set_velocity(vc)
-		e:get_luaentity().age=(tonumber(minetest.setting_get("item_entity_ttl")) or 900)-10
+		e:get_luaentity().age=(tonumber(minetest.settings:get("item_entity_ttl")) or 900)-10
 		e:get_luaentity().on_punch=nil 
 		e:get_luaentity().hp_max=10
 		table.insert(aliveai_threats.debris,{ob=e,n=user:get_player_name()})
@@ -650,7 +650,7 @@ minetest.override_item("vessels:drinking_glass", {
 		local e=minetest.add_item({x=pos.x+(dir.x*2),y=pos.y+2+(dir.y*2),z=pos.z+(dir.z*2)},"vessels:drinking_glass")
 		local vc = {x = dir.x*15, y = dir.y*15, z = dir.z*15}
 		e:set_velocity(vc)
-		e:get_luaentity().age=(tonumber(minetest.setting_get("item_entity_ttl")) or 900)-10
+		e:get_luaentity().age=(tonumber(minetest.settings:get("item_entity_ttl")) or 900)-10
 		table.insert(aliveai_threats.debris,{ob=e,n=user:get_player_name()})
 		itemstack:take_item()
 		return itemstack
@@ -663,7 +663,7 @@ minetest.override_item("vessels:glass_bottle", {
 		local e=minetest.add_item({x=pos.x+(dir.x*2),y=pos.y+2+(dir.y*2),z=pos.z+(dir.z*2)},"vessels:glass_bottle")
 		local vc = {x = dir.x*15, y = dir.y*15, z = dir.z*15}
 		e:set_velocity(vc)
-		e:get_luaentity().age=(tonumber(minetest.setting_get("item_entity_ttl")) or 900)-10
+		e:get_luaentity().age=(tonumber(minetest.settings:get("item_entity_ttl")) or 900)-10
 		table.insert(aliveai_threats.debris,{ob=e,n=user:get_player_name()})
 		itemstack:take_item()
 		return itemstack
@@ -709,4 +709,5 @@ minetest.register_node("aliveai_threats:labtable", {
 		return false
 	end,
 })
+
 

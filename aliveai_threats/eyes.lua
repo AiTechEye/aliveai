@@ -86,7 +86,7 @@ aliveai_threats_eyes.shoot=function(self)
 	local vc = {x = aliveai.nan(dir.x*30), y = aliveai.nan(dir.y*30), z = aliveai.nan(dir.z*30)}
 	if not (vc and vc.x and vc.y and vc.z) or vc.x==math.huge or vc.x~=vc.x then return end
 	e:set_velocity(vc)
-	e:get_luaentity().age=(tonumber(minetest.setting_get("item_entity_ttl")) or 900)-2
+	e:get_luaentity().age=(tonumber(minetest.settings:get("item_entity_ttl")) or 900)-2
 	table.insert(aliveai_threats.debris,{ob=e,n=self.botname})
 end
 
@@ -147,7 +147,7 @@ minetest.register_entity("aliveai_threats:eyes",{
 			elseif self.side==3 then
 				s=0
 			end
-			self.object:setyaw(s)
+			self.object:set_yaw(s)
 			table.insert(aliveai_threats_eyes.active,self.object)
 			if self.side==1 then
 				self.opos.x=self.opos.x-0.49
@@ -250,4 +250,5 @@ minetest.register_entity("aliveai_threats:eyes",{
 	aliveai_eyes=1,
 })
 aliveai.loaded("aliveai_threats:eyes")
+
 

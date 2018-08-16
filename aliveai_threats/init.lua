@@ -1008,7 +1008,7 @@ minetest.register_tool("aliveai_threats:mind_manipulator", {
 						m:get_luaentity().light=0
 						m:get_luaentity().building=0
 						m:get_luaentity().fighting=1
-						m:setyaw(math.random(0,6.28))
+						m:set_yaw(math.random(0,6.28))
 						m:set_properties({
 							mesh = aliveai.character_model,
 							textures = tex
@@ -1079,7 +1079,7 @@ aliveai.create_bot({
 						e:get_luaentity().save__clone=1
 						e:get_luaentity().fight=self.fight
 						e:get_luaentity().temper=3
-						e:setyaw(math.random(0,6.28))
+						e:set_yaw(math.random(0,6.28))
 						n=n+1
 						if n>=10 then
 							return
@@ -1419,7 +1419,7 @@ aliveai.create_bot({
 			local vc = {x = dir.x*30, y = dir.y*30, z = dir.z*30}
 			e:set_velocity(vc)
 
-			e:get_luaentity().age=(tonumber(minetest.setting_get("item_entity_ttl")) or 900)-2
+			e:get_luaentity().age=(tonumber(minetest.settings:get("item_entity_ttl")) or 900)-2
 			table.insert(aliveai_threats.debris,{ob=e,n=self.botname})
 			return self
 		elseif self.fight and self.cctime>1 then
@@ -2088,7 +2088,7 @@ aliveai.create_bot({
 			self.att:set_attach(self.object, "", {x=0,y=0,z=0}, {x=0,y=2,z=0})
 			self.att_pos=self.object:get_pos()
 			self.controlled=1
-			self.att_a=self.att:getacceleration()
+			self.att_a=self.att:get_acceleration()
 		end
 	end,
 	on_step=function(self,dtime)
@@ -2817,7 +2817,7 @@ aliveai.create_bot({
 			local e=minetest.add_item(aliveai.pointat(self,2),"default:snow")
 			local dir=aliveai.get_dir(self,ta)
 			e:set_velocity({x =aliveai.nan(dir.x*30), y = aliveai.nan(dir.y*30), z = aliveai.nan(dir.z*30)})
-			e:get_luaentity().age=(tonumber(minetest.setting_get("item_entity_ttl")) or 900)-2
+			e:get_luaentity().age=(tonumber(minetest.settings:get("item_entity_ttl")) or 900)-2
 			table.insert(aliveai_threats.debris,{ob=e,n=self.botname})
 			return self
 		elseif self.fight and self.cctime>1 then
@@ -3062,7 +3062,7 @@ aliveai.create_bot({
 			local t=fight:get_properties().textures[1]
 			local e=minetest.add_entity(pos, "aliveai_threats:toxic_npc")
 			local en=e:get_luaentity()
-			e:setyaw(self.object:getyaw())
+			e:set_yaw(self.object:get_yaw())
 			en.inv=fight:get_luaentity().inv
 			en.namecolor="ff0000"
 			en.save__1=t
@@ -3092,3 +3092,4 @@ aliveai.create_bot({
 	end,
 })
 end
+
