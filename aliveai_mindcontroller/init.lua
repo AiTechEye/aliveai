@@ -150,10 +150,10 @@ minetest.register_tool("aliveai_mindcontroller:controller", {
 				e.texture[3]=armor.textures[username].weilditem
 			end
 			local m=minetest.add_entity({x=pos.x,y=pos.y+1,z=pos.z}, "aliveai_mindcontroller:standing_player")
-			m:setyaw(user:get_look_yaw()-math.pi/2)
+			m:set_yaw(user:get_look_yaw()-math.pi/2)
 			user:set_nametag_attributes({color={a=0,r=255,g=255,b=255}})
 			user:set_attach(e.ob, "",{x = 0, y = 0, z = 0}, {x = 0, y = 0, z = 0})
-			user:set_look_horizontal(e.ob:getyaw())
+			user:set_look_horizontal(e.ob:get_yaw())
 			user:set_eye_offset({x = 0, y = -10, z = 5}, {x = 0, y = 0, z = 0})
 			user:set_properties({visual_size = {x=0, y=0},visual="mesh"})
 		elseif pointed_thing.type=="object" then
@@ -340,7 +340,7 @@ minetest.register_on_player_receive_fields(function(player, form, pressed)
 end)
 
 aliveai_mindcontroller.mob_walk = function(self,v)
-	local yaw=(self.object:getyaw() or 0)+self.rotate
+	local yaw=(self.object:get_yaw() or 0)+self.rotate
 	self.object:set_velocity({
 		x=math.sin(yaw)*-v,
 		y=self.object:get_velocity().y,
@@ -382,12 +382,12 @@ minetest.register_globalstep(function(dtime)
 			self.controlled=1
 			e.user:set_eye_offset({x = 0, y = 0, z = 5}, {x = 0, y = 0, z = 0})
 		elseif self.controlled==0 then
-			e.user:set_look_horizontal(e.ob:getyaw())
+			e.user:set_look_horizontal(e.ob:get_yaw())
 		end
 		if e.mobs and self.rotate and self.rotate~=0 then
-			e.ob:setyaw(e.user:get_look_yaw() + self.rotate*4 or -1.57)
+			e.ob:set_yaw(e.user:get_look_yaw() + self.rotate*4 or -1.57)
 		else
-			e.ob:setyaw(e.user:get_look_yaw()-1.57)
+			e.ob:set_yaw(e.user:get_look_yaw()-1.57)
 		end
 		if key.up then
 			if e.aliveai then
@@ -539,4 +539,5 @@ minetest.register_entity("aliveai_mindcontroller:standing_player",{
 	team="Sam",
 	time=0,
 })
+
 
