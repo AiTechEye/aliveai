@@ -8,7 +8,7 @@ aliveai.sitchair=function(self,pos)
 	aliveai.anim(self,"sit")
 	self.sleeptimer=math.random(20,200)
 	self.object:set_pos({x=pos.x+(p.x*-0.05),y=pos.y+1,z=pos.z+(p.z*-0.05)})
-	self.object:setyaw(y)
+	self.object:set_yaw(y)
 	aliveai.showstatus(self,"sit")
 	return self
 end
@@ -287,4 +287,5 @@ aliveai.use_smartshop=function(self)
 	end
 end
 end
+
 

@@ -870,7 +870,7 @@ end
 
 aliveai.createuser=function(self,index)
 	index=index or 1
-	local yaw=self.object:getyaw()
+	local yaw=self.object:get_yaw()
 	if type(yaw)~="number" then yaw=0 end
 	yaw=yaw+1.575
 	local pos=self.object:get_pos()
@@ -886,7 +886,7 @@ aliveai.createuser=function(self,index)
 		set_eye_offset=aliveai.re(),
 		get_look_dir=aliveai.re(aliveai.get_dir(self,aliveai.pointat(self))),
 		get_look_pitch=aliveai.re(math.pi/2),
-		get_look_yaw=aliveai.re(self.object:getyaw()),
+		get_look_yaw=aliveai.re(self.object:get_yaw()),
 		get_player_control=aliveai.re({jump=false,right=false,left=false,LMB=false,RMB=false,sneak=false,aux1=false,down=false,up=false}),
 		get_player_control_bits=aliveai.re(0),
 		is_player=aliveai.re(true),
@@ -1027,4 +1027,5 @@ minetest.register_tool("aliveai:genbuildingtool", {
 			end
 		end
 })
+
 

@@ -186,7 +186,7 @@ aliveai.show_terminal=function(user,a)
 		end
 	end, gui,name)
 	minetest.after(1, function(name,user)
-		if user and aliveai.terminal_users[name].live_status and not aliveai.terminal_users[name].bot and aliveai.terminal_users[name].status then
+		if user and aliveai.terminal_users[name] and aliveai.terminal_users[name].live_status and not aliveai.terminal_users[name].bot and aliveai.terminal_users[name].status then
 			aliveai.show_terminal(user)
 		end
 	end, name,user)
@@ -1085,7 +1085,7 @@ minetest.register_node("aliveai:spawner", {
 			meta:set_int("reach",0) 
 			if aliveai.mesecons and mese==5 then return true end
 			local b=minetest.add_entity({x=pos.x,y=pos.y+1,z=pos.z}, aliveai.registered_bots[bot].bot)
-			b:setyaw(math.random(0,6.28))
+			b:set_yaw(math.random(0,6.28))
 			if team~="" then b:get_luaentity().team=meta:get_string("team") end
 			b:set_properties({nametag=b:get_luaentity().botname,nametag_color="#" ..  color})
 			b:get_luaentity().namecolor=color
@@ -1132,7 +1132,7 @@ minetest.register_node("aliveai:spawner", {
 			end
 			if aliveai.registered_bots[bot] and n>aliveai.active_num and mese==3 then
 				local b=minetest.add_entity({x=pos.x,y=pos.y+1,z=pos.z}, aliveai.registered_bots[bot].bot)
-				b:setyaw(math.random(0,6.28))
+				b:set_yaw(math.random(0,6.28))
 				if team~="" then b:get_luaentity().team=meta:get_string("team") end
 				b:set_properties({nametag=b:get_luaentity().botname,nametag_color="#" ..  color})
 				b:get_luaentity().namecolor=color
@@ -1709,3 +1709,4 @@ minetest.register_entity("aliveai:protectortest",{
 	end,
 	time=0,
 })
+

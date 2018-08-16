@@ -51,16 +51,16 @@ aliveai.sleep=function(self,set)
 
 		if n.param2==1 then
 			self.object:set_pos({x=pos2.x+0.5,y=pos2.y,z=pos2.z})
-			self.object:setyaw(math.pi*0.5)
+			self.object:set_yaw(math.pi*0.5)
 		elseif n.param2==3 then
 			self.object:set_pos({x=pos2.x-0.5,y=pos2.y,z=pos2.z})
-			self.object:setyaw(math.pi+1.5)
+			self.object:set_yaw(math.pi+1.5)
 		elseif n.param2==0 then
 			self.object:set_pos({x=pos2.x,y=pos2.y,z=pos2.z+0.5})
-			self.object:setyaw(math.pi*1)
+			self.object:set_yaw(math.pi*1)
 		else
 			self.object:set_pos({x=pos2.x,y=pos2.y,z=pos2.z-0.5})
-			self.object:setyaw(math.pi*0)
+			self.object:set_yaw(math.pi*0)
 		end
 		return
 	end
@@ -327,7 +327,7 @@ aliveai.stuckinblock=function(self)
 	local stuck=1
 	local p2={}
 	local arm=math.floor(self.arm)+1
-	self.object:setyaw(math.random(0,6.28))
+	self.object:set_yaw(math.random(0,6.28))
 	aliveai.walk(self)
 	if minetest.registered_nodes[n.name] and minetest.registered_nodes[n.name].walkable then
 		local p
@@ -800,15 +800,15 @@ aliveai.fly=function(self)
 		if self.temper<-1.2 or self.object:get_hp()>=self.hp_max then self.temper=5 self.fight=self.fly self.fly=nil self.time=self.otime return self end
 	end
 	if self.fly and self.temper<0 and aliveai.visiable(self,self.fly:get_pos()) then
-		self.object:setyaw(self.object:getyaw()+3.14)
+		self.object:set_yaw(self.object:get_yaw()+3.14)
 		if not aliveai.viewfield(self,self.fly) then return self end
 		self.on_escaping(self,self.fly)
 		local pos1=self.object:get_pos()
 		local pos2=self.fly:get_pos()
 		pos1.y=pos1.y-1
 		aliveai.lookat(self,pos2)
-		local yaw=self.object:getyaw()+3.14
-		self.object:setyaw(yaw)
+		local yaw=self.object:get_yaw()+3.14
+		self.object:set_yaw(yaw)
 		aliveai.walk(self,2)
 		aliveai.showstatus(self,"fly " .. self.temper,1)
 		if math.random(1,5)==1 then
@@ -871,7 +871,7 @@ aliveai.fly=function(self)
 			local r={}
 			r[1]=aliveai.random(yaw-2.5,yaw)
 			r[2]=aliveai.random(yaw,yaw+2.5)
-			self.object:setyaw(r[aliveai.random(1,2)])
+			self.object:set_yaw(r[aliveai.random(1,2)])
 			aliveai.walk(self,2)
 			return self
 		end
@@ -984,9 +984,9 @@ aliveai.fight=function(self)
 						end
 						return self
 					elseif self.smartfight==1 and self.temper>1 then
-						local yaw=self.object:getyaw()
+						local yaw=self.object:get_yaw()
 						aliveai.lookat(self,fpos)
-						self.object:setyaw(aliveai.random(yaw*0.5,yaw*1.5))
+						self.object:set_yaw(aliveai.random(yaw*0.5,yaw*1.5))
 						aliveai.walk(self,2)
 						if math.random(1,3)==1 and self.object:get_velocity().y==0 then
 							self.object:set_velocity({x = self.move.x*4, y = 5.2, z =self.move.z*4})
@@ -1442,7 +1442,7 @@ aliveai.path=function(self)
 					end
 					aliveai.exitpath(self)
 					aliveai.showstatus(self,"path blocked")
-					self.object:setyaw(math.random(0,6.28))
+					self.object:set_yaw(math.random(0,6.28))
 					aliveai.walk(self)
 					self.mood=self.mood-1
 					return 
@@ -1513,4 +1513,5 @@ aliveai.path=function(self)
 		return self
 	end
 end
+
 

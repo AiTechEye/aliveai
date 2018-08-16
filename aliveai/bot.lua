@@ -163,7 +163,7 @@ if not def.visual or def.visual=="mesh" then
 			if pointed_thing.type=="node" then
 				local pos=aliveai.roundpos(pointed_thing.above)
 				pos.y=pos.y+0.5 + def.spawn_y
-				minetest.add_entity(pos, def.mod_name ..":" .. def.name):setyaw(math.random(0,6.28))
+				minetest.add_entity(pos, def.mod_name ..":" .. def.name):set_yaw(math.random(0,6.28))
 				itemstack:take_item()
 				
 			end
@@ -181,7 +181,7 @@ else
 			if pointed_thing.type=="node" then
 				local pos=aliveai.roundpos(pointed_thing.above)
 				pos.y=pos.y+0.5 + def.spawn_y
-				minetest.add_entity(pos, def.mod_name ..":" .. def.name):setyaw(math.random(0,6.28))
+				minetest.add_entity(pos, def.mod_name ..":" .. def.name):set_yaw(math.random(0,6.28))
 				itemstack:take_item()
 			end
 			return itemstack
@@ -610,7 +610,7 @@ minetest.register_abm({
 			if aliveai.check_spawn_space==false or def.check_spawn_space==0 or (minetest.get_node(pos1).name==def.spawn_in and minetest.get_node(pos2).name==def.spawn_in) then
 				aliveai.newbot=true
 				pos1.y=pos1.y+def.spawn_y
-				minetest.add_entity(pos1, def.mod_name ..":" .. def.name):setyaw(math.random(0,6.28))
+				minetest.add_entity(pos1, def.mod_name ..":" .. def.name):set_yaw(math.random(0,6.28))
 			end
 		end
 	end,
@@ -649,7 +649,7 @@ minetest.register_craftitem("aliveai:npcspawner", {
 				local bot=list[aliveai.random(1,ii)]
 				if not bot then return end
 				pos.y=pos.y+bot.y
-				minetest.add_entity(pos, aliveai.registered_bots[bot.name].bot):setyaw(math.random(0,6.28))
+				minetest.add_entity(pos, aliveai.registered_bots[bot.name].bot):set_yaw(math.random(0,6.28))
 				itemstack:take_item()
 			end
 			return itemstack
@@ -674,9 +674,10 @@ minetest.register_craftitem("aliveai:teampawner", {
 				local bot=list[aliveai.random(1,ii)]
 				if not bot then return end
 				pos.y=pos.y+bot.y
-				minetest.add_entity(pos, aliveai.registered_bots[bot.name].bot):setyaw(math.random(0,6.28))
+				minetest.add_entity(pos, aliveai.registered_bots[bot.name].bot):set_yaw(math.random(0,6.28))
 				itemstack:take_item()
 			end
 			return itemstack
 		end,
 	})
+

@@ -386,7 +386,7 @@ aliveai.lookaround=function(self)
 							end
 						end
 					elseif self.attention_nodes[n]==-1 and math.random(1,1)==1 then
-						self.object:setyaw(math.random(0,6.28))
+						self.object:set_yaw(math.random(0,6.28))
 						aliveai.walk(self)
 					elseif math.random(1,20)==1 then
 						aliveai.lookat(self,nodepos)
@@ -578,12 +578,12 @@ aliveai.turnlook=function(self,dtime)
 	self.turnlook.cur=self.turnlook.cur+self.turnlook.add
 	local cur=self.turnlook.cur<self.turnlook.yaw
 	if self.turnlook.times<1 or (self.turnlook.turn==true and cur==true) or (self.turnlook.turn==false and cur==false) then
-		self.object:setyaw(self.turnlook.yaw)
+		self.object:set_yaw(self.turnlook.yaw)
 		if self.turnlook.walk then aliveai.walk(self) end
 		self.turnlook=nil
 		return
 	end
-	self.object:setyaw(self.turnlook.cur)
+	self.object:set_yaw(self.turnlook.cur)
 	return self
 end
 
@@ -1000,7 +1000,7 @@ aliveai.rndwalk=function(self,toogle)
 			if rnd<2 then
 				local yaw=self.falllook[r]
 				if type(yaw)~="number" then yaw=0 end
-				self.object:setyaw(yaw)
+				self.object:set_yaw(yaw)
 				aliveai.stand(self)
 			elseif rnd==2 then
 				local pos=self.object:get_pos()
@@ -1018,7 +1018,7 @@ aliveai.rndwalk=function(self,toogle)
 			else
 				local yaw=self.falllook[r]
 				if type(yaw)~="number" then yaw=0 end
-				self.object:setyaw(yaw)
+				self.object:set_yaw(yaw)
 				aliveai.walk(self)
 			end
 			if self.falllook.times<=0 then
@@ -1170,14 +1170,14 @@ aliveai.dmgbynode=function(self)
 	if d1 and d1>0 then
 		aliveai.punchdmg(self.object,d1)
 		if not (self.dying or self.dead or self.sleeping) then 
-			self.object:setyaw(math.random(0,6.28))
+			self.object:set_yaw(math.random(0,6.28))
 			aliveai.walk(self,2)
 			aliveai.showstatus(self,"hurts by node",1)
 		end
 	elseif d2 and d2>0 then
 		aliveai.punchdmg(self.object,d2)
 		if not (self.dying or self.dead or self.sleeping) then
-			self.object:setyaw(math.random(0,6.28))
+			self.object:set_yaw(math.random(0,6.28))
 			aliveai.walk(self,2)
 			aliveai.showstatus(self,"hurts by node",1)
 		end
@@ -1190,7 +1190,7 @@ aliveai.falling=function(self)
 	self.timerfalling=0
 
 	if self.floating==1 then
-		local a=self.object:getacceleration()
+		local a=self.object:get_acceleration()
 		local v=self.object:get_velocity()
 		if v.y~=0 and v.y<-0.02 or v.y>0.02 then
 			v.y=v.y*0.79
@@ -1244,7 +1244,7 @@ aliveai.falling=function(self)
 		elseif self.air>=20 then
 			aliveai.punchdmg(self.object,1)
 		elseif self.air>=5 then
-			self.object:setyaw(math.random(0,6.28))
+			self.object:set_yaw(math.random(0,6.28))
 			aliveai.walk(self)
 			self.object:set_acceleration({x =0, y =-0.2, z =0})
 			self.object:set_velocity({x = self.move.x, y =-2, z =self.move.z})
@@ -1589,7 +1589,7 @@ end
 
 aliveai.pointat=function(self,d)
 	local pos=self.object:get_pos()
-	local yaw=self.object:getyaw()
+	local yaw=self.object:get_yaw()
 	if yaw ~= yaw or type(yaw)~="number" then
 		yaw=0
 	end
@@ -1641,7 +1641,7 @@ end
 
 aliveai.walk=function(self,sp)
 	local pos=self.object:get_pos()
-	local yaw=self.object:getyaw()
+	local yaw=self.object:get_yaw()
 	if yaw ~= yaw or type(yaw)~="number" then
 		return nil
 	end
@@ -1695,18 +1695,18 @@ aliveai.lookat=function(self,pos2,advanced,walk)
 		local yaw = math.atan(vec.z/vec.x)-math.pi/2
 		if type(yaw)~="number" then yaw=0 end
 		if pos1.x >= pos2.x then yaw = yaw+math.pi end
-		if not advanced then self.object:setyaw(yaw) end
+		if not advanced then self.object:set_yaw(yaw) end
 		self.tmp_yw=yaw
 		self.lookat=pos2
 	else
 		yaw=pos2
-		if not advanced then self.object:setyaw(pos2) end
+		if not advanced then self.object:set_yaw(pos2) end
 	end
 	yaw=self.tmp_yw
 	if not advanced or self.turnlook or type(yaw)~="number" then return end
 	
 	self.tmp_yw=nil
-	local cy=self.object:getyaw()
+	local cy=self.object:get_yaw()
 	local turn=cy>yaw
 	local add=0.314
 	if turn==true then add=-0.314 end
@@ -1921,3 +1921,4 @@ aliveai.botdelay=function(self,a)
 		self.delaytimer=os.clock()
 	end
 end
+
