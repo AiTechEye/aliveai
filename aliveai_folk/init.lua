@@ -112,7 +112,7 @@ aliveai.create_bot({
 			self.time=1 -((self.juggle*0.1)*0.9)
 			local y=5 + self.juggle
 			local pos=self.object:get_pos()
-			local yaw=self.object:getyaw()
+			local yaw=self.object:get_yaw()
 			if not self.jside then self.jside=1
 			elseif self.jside==0.2 then self.jside=-0.2
 			else self.jside=0.2 end
@@ -238,6 +238,7 @@ aliveai.create_bot({
 			self.object:set_properties({nametag=self.botname,nametag_color="#" .. self.namecolor})
 		end,
 })
+
 
 
 
