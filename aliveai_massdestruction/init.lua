@@ -805,7 +805,7 @@ minetest.register_node("aliveai_massdestruction:blackholecore", {
 		local e=minetest.add_item({x=pos.x+(dir.x*2),y=pos.y+2+(dir.y*2),z=pos.z+(dir.z*2)},"aliveai_massdestruction:blackholecore")
 		local vc = {x = dir.x*15, y = dir.y*15, z = dir.z*15}
 		e:set_velocity(vc)
-		e:get_luaentity().age=(tonumber(minetest.setting_get("item_entity_ttl")) or 900)-10
+		e:get_luaentity().age=(tonumber(minetest.settings:get("item_entity_ttl")) or 900)-10
 		e:get_luaentity().on_punch=nil 
 		e:get_luaentity().hp_max=10
 		table.insert(aliveai_threats.debris,{ob=e,n=user:get_player_name(),
@@ -1151,4 +1151,5 @@ aliveai_massdestruction.iceblow=function(pos)
 		})
 	end
 end
+
 
