@@ -31,7 +31,7 @@ minetest.register_craft({
 	}
 })
 minetest.register_craft({
-	output = "aliveai_threats:timed_cleaning_bomb 4",
+	output = "aliveai_threats:timed_cleaning_bomb",
 	recipe = {
 		{"default:steel_ingot","default:coal_lump","default:steel_ingot"},
 		{"default:steel_ingot","default:mese_crystal_fragment","default:steel_ingot"},
@@ -439,14 +439,13 @@ minetest.register_node("aliveai_threats:timed_cleaning_bomb", {
 	sounds = default.node_sound_wood_defaults(),
 	on_blast=function(pos)
 		local newp={}
-		for x=-7,7,1 do
-		for y=-7,7,1 do
-		for z=-7,7,1 do
+		for x=-20,20,1 do
+		for y=-20,20,1 do
+		for z=-20,20,1 do
 			local p={x=pos.x+x,y=pos.y+y,z=pos.z+z,}
 			if minetest.is_protected(p,"") then
 				return
-			end
-			if minetest.get_node(p).name=="aliveai_threats:timed_cleaning_bomb" then
+			elseif minetest.get_node(p).name=="aliveai_threats:timed_cleaning_bomb" then
 				table.insert(newp,p)
 			end
 		end
@@ -454,13 +453,8 @@ minetest.register_node("aliveai_threats:timed_cleaning_bomb", {
 		end
 		minetest.sound_play("aliveai_nitroglycerine_explode", {pos=pos, gain = 0.5, max_hear_distance = 50})
 		minetest.remove_node(pos)
-		for i, ob in pairs(minetest.get_objects_inside_radius(pos, 7)) do
-			if ob:get_luaentity() and ob:get_luaentity().type then
-				ob:remove()
-			end
-		end
-		local p1=vector.add(pos,-7)
-		local p2=vector.add(pos,7)
+		local p1=vector.add(pos,-1)
+		local p2=vector.add(pos,1)
 		minetest.delete_area(p1, p2)
 		local t=0
 		for i, v in pairs(newp) do
