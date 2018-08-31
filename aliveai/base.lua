@@ -1138,23 +1138,16 @@ end
 aliveai.punchdmg=function(ob,hp)
 	if not ob or type(ob)~="userdata" then return end
 	hp=hp or 1
-	--if aliveai.is_bot(ob) then
-	--	local self=ob:get_luaentity()
-	--	self.on_punch(self, ob, 1, {damage_groups={fleshy=hp}}, aliveai.get_dir(self))
-	--else
-		ob:punch(ob,1,{full_punch_interval=1,damage_groups={fleshy=hp}})
-	--end
+	ob:punch(ob,1,{full_punch_interval=1,damage_groups={fleshy=hp}})
 end
 
 aliveai.punch=function(self,ob,hp)
 	if not ob or type(ob)~="userdata" then return end
 	hp=hp or 1
 	if ob:get_luaentity() and ob:get_luaentity().itemstring then ob:remove() return end
-	--if aliveai.is_bot(ob) and aliveai.get_bot_name(ob)==self.botname then
-	--	self.on_punch(self, self.object, 1, {damage_groups={fleshy=hp}}, aliveai.get_dir(self))
-	--else
-		ob:punch(self.object,1,{full_punch_interval=1,damage_groups={fleshy=hp}})
-	--end
+
+	ob:punch(self.object,1,{full_punch_interval=1,damage_groups={fleshy=hp}})
+
 	if self.object:get_hp()<=0 then
 		return nil
 	end

@@ -39,9 +39,11 @@ aliveai.rnd_talk_to=function(self,ob)
 	end
 end
 
-
 aliveai.on_spoken_to=function(self,name,speaker,msg)
 	aliveai.showstatus(self,"spoken to: " .. msg)
+	self.on_chat(self,name,speaker,msg)
+
+
 	local player=minetest.get_player_by_name(speaker)
 	if player==nil or self.coming_players==0 then
 		player=aliveai.get_bot_by_name(speaker)
@@ -49,6 +51,28 @@ aliveai.on_spoken_to=function(self,name,speaker,msg)
 	if player==nil then return self end
 	local known=aliveai.getknown(self,player)
 
+	aliveai.sub_response(self,msg,5,{{2,"i"," am","my"," me"},{2,"im ","my"," me"}},{"not me","me too","ok","i dont think so","thats cool"})
+	aliveai.sub_response(self,msg,5,{"sorry","sry","my wrong"},{"no problem"})
+	aliveai.sub_response(self,msg,5,{2,"what is ","how old are "," you"," your"," age"},{"i dont know"})
+	aliveai.sub_response(self,msg,5,{"what are you","who are you","your name"},{"im "..self.botname.." and you?","a npc","a bot","you cant see my nametag?"})
+	aliveai.sub_response(self,msg,5,{"what","why"},{"yes","yeah","because i think so","as i said","because you said it"})
+	aliveai.sub_response(self,msg,5,{"call you"},{"?"})
+	aliveai.sub_response(self,msg,3,{"?"},{"what?"})
+	aliveai.sub_response(self,msg,3,{"with what?"},{"this"})
+
+	aliveai.sub_response(self,msg,5,{"go to the spawn"},{"whare is that?","where are spawn?","what spawn?","what is that?"})
+	aliveai.sub_response(self,msg,5,{{"tp to me"},{"teleport to me"},{"tp me to"},{"teleport me to"}},{"im not a taxi!","admin, " .. speaker .. " want teleport"})
+
+	if aliveai.sub_response(self,msg,3,{{"grant"},{"grant me"},{"grantme"}},{"admin, " .. speaker .. " asks for privs!","no im not admin","no i will be moderator next time, me!!","no"}) then
+		if math.random(1,2)==1 then minetest.chat_send_all("*** " .. speaker .. " has been granted the privilege: Noob") end
+	end
+
+	if aliveai.sub_response(self,msg,1,{"can you help me",{"i will build a house, any help?"}},{"with?","with what?"},speaker) then
+		return
+	elseif aliveai.expected_response(self,speaker,msg,"this") then
+		aliveai.say(self,aliveai.rndkey({"ok","comming","right"}))
+		msg="come"
+	end
 		if known~="member" and (known=="fight" or known=="fly" or self.temper>1 or self.mood<-4 or aliveai.team(player)~=self.team) then
 			local name=""
 			if aliveai.is_bot(player) then
@@ -75,8 +99,8 @@ aliveai.on_spoken_to=function(self,name,speaker,msg)
 		end
 		if player:get_luaentity() then
 			if player:get_luaentity().fly then
-				self.fight=player:get_luaentity().fly
-				self.temper=2
+				self.fly=player:get_luaentity().fly
+				self.temper=-2
 				return self
 			elseif player:get_luaentity().fight then
 				self.fight=player:get_luaentity().fight
@@ -86,7 +110,11 @@ aliveai.on_spoken_to=function(self,name,speaker,msg)
 		end
 		local no_came
 
-		if msg=="hi" then self.mood=self.mood-1 aliveai.say(self,"hi") end
+		if msg=="hi" or msg=="hello" then
+			self.mood=self.mood-1
+			aliveai.say(self,aliveai.rndkey({"hi","hello","hey"}))
+		end
+
 		if aliveai.find(msg,{"?"}) then self.mood=self.mood-1 end
 		aliveai.find(msg,{"him"},self,"who?")
 		aliveai.find(msg,{"aaa"},self,"what?")
@@ -100,6 +128,27 @@ aliveai.on_spoken_to=function(self,name,speaker,msg)
 		aliveai.find(msg,{"your","team"},self,self.team)
 		aliveai.find(msg,{"what","you","doing"},self,self.task .." step " .. self.taskstep)
 		aliveai.find(msg,{"where are you"},self,aliveai.strpos(self.object:get_pos()))
+
+		if aliveai.find(msg,{"kill","help"},self) then
+			for _, ob in ipairs(minetest.get_objects_inside_radius(self.object:get_pos(), self.distance)) do
+				if aliveai.team(ob)~=self.team then
+					self.fight=ob
+					self.temper=self.temper+1
+					aliveai.lookat(self,ob:get_pos())
+					aliveai.say(self,"ok")
+					return
+				end
+			end
+		end
+
+		if aliveai.find(msg,{"run","ahh","no"},self) then
+			for _, ob in ipairs(minetest.get_objects_inside_radius(self.object:get_pos(), self.distance)) do
+				if aliveai.visiable(self,ob:get_pos()) and ob:get_luaentity() and ob:get_luaentity().type=="monster" then
+					aliveai.flee_from(self,ob)
+					return
+				end
+			end
+		end
 
 		if msg=="can i live with you?" or msg=="friends?" then
 			if self.mood>20 then aliveai.say(self,"ok") self.folow=player
@@ -279,21 +328,88 @@ aliveai.find_item=function(self,msg,inv)-- self, item exist, item in inventory
 end
 
 
-
 aliveai.find=function(msg,strs,self,say)
 	if not (strs and msg) or type(strs)~="table" then
 		return false
 	end
+	if aliveai.find_in(msg,strs,self,say) then
+		return true
+	end
+	for i, s in pairs(strs) do
+		if type(s)=="table" and aliveai.find_in(msg,s,self,say,wait_for_answere) then
+			return true
+		end
+	end
+	return false
+end
+
+
+aliveai.find_in=function(msg,strs,self,say)
 	local tr=#strs
 	local trs=0
 	for i, s in pairs(strs) do
-		if string.find(msg,s)~=nil then
+		if type(s)=="string" and string.find(msg,s)~=nil then
 			trs=trs+1
 			if trs>=tr then
-				if self and say then aliveai.say(self,say) end
-				return true
-			end 
+				break
+			end
+		elseif type(s)=="table" then
+			tr=tr-1
 		end
+	end
+	if trs>=tr then
+		if self and say then
+			aliveai.say(self,say)
+		end
+		return true
+	end
+end
+
+aliveai.sub_response=function(self,msg,chance,keywords,response,talking_to)
+	if math.random(1,chance)~=1 or not (msg and self and keywords and response) then
+		return false
+	end
+	local num=1
+	for i, s in pairs(keywords) do
+		if type(s)=="table" then
+			local num2=1
+			for i, ss in pairs(s) do
+				if type(ss)=="number" then
+					num2=num2+ss
+				elseif string.find(msg,ss)~=nil then
+					num2=num2-1
+					if num2<=0 then
+						break
+					end
+				end
+			end
+			if num2<=0 then
+				num=0
+				break
+			end
+		elseif type(s)=="number" then
+			num=num+s
+		elseif string.find(msg,s)~=nil then
+			num=num-1
+			if num<=0 then
+				break
+			end
+		end
+	end
+	if num<=0 then
+		local say=response[math.random(1,#response)]
+		aliveai.say(self,say)
+		if talking_to and type(talking_to)=="string" then
+			self.talking_to=talking_to
+		end
+		return true
+	end
+	return false
+end
+
+aliveai.expected_response=function(self,speaker,msg,keyword)
+	if self.talking_to and self.talking_to==speaker and msg==keyword then
+		return true
 	end
 	return false
 end
@@ -304,7 +420,7 @@ aliveai.sayrnd=function(self,t,t2,nmood)
 	if t=="coming" then
 		a={"ok","what?","ok, but then?","so?"}
 	elseif t=="ahh" then
-		a={"AHH!!","nooo","help!","HELP MEEE","ohh no","you again","hey be cool!","need something?","i dont have enough","STOP HIM!!!","plz stop him!"}
+		a={"AHHH NOOB","im sorry!!!!","run","RUN!!","AHH!!","nooo","help!","HELP MEEE","ohh no","you again","hey be cool!","need something?","i dont have enough","STOP HIM!!!","plz stop him!"}
 	elseif t=="ouch" then
 		a={"ow","ah","ahhh","ohha","it hurts","A","stop it!","aaaa"}
 	elseif t=="come here" then
@@ -320,9 +436,9 @@ aliveai.sayrnd=function(self,t,t2,nmood)
 	elseif t=="murder!" then
 		a={"criminal!","stop him","get him!","killer","betrayer!","hey look that","what r u doing?"}
 	elseif t=="its dead!" then
-		a={"ohh a corpse","what happend here?","cool!","um?","something went wrong, please try again","hey look!","?","en of the life","Fail!","ugly","this is crazy!"}
+		a={"weird","ohh a corpse","what happend here?","cool!","um?","something went wrong, please try again","hey look!","?","en of the life","Fail!","ugly","this is crazy!"}
 	elseif t=="mine" then
-		a={"this is hard!","borring","who are you","im hungry","what are you doing?","i need " .. self.lastitem_name,"cant find " .. self.lastitem_name,"plz give me","just 1 more","thats cool","what are your name","hey, can someone give me " .. self.lastitem_count .." " .. self.lastitem_name .."?","this is creepy",":D","how are you",":)",":@","...",":(","what are this",".","hey you","can you meet at " .. math.random(1,24) ..":" .. math.random(0,59) .." ?",aliveai.genname(),aliveai.genname() .." " ..aliveai.genname(),"i just have " .. self.lastitem_count,"do you want ".. self.lastitem_name .."?","k","no","zzz","did someone hear that?","i want a pet","lag","afk","how to craft " .. self.lastitem_name,"folow me"}
+		a={"its not safe here","lol this is so much","look in the chest","me want blocks","hi guys","back","i have skills in buildning","go to the spawn","tp to me","tp me to","grant me eveything","i want be admin","go to the spawn","where are " .. self.talking_to ,"can you help me","i will build a house, any help?","yumm","go to the spawn","plz protect this to me","this is hard!","borring","who are you","im hungry","what are you doing?","i need " .. self.lastitem_name,"cant find " .. self.lastitem_name,"thats cool","what are your name","hey, can someone give me " .. self.lastitem_count .." " .. self.lastitem_name .."?","this is creepy",":D","how are you",":)",":(","what are this",".","hey you","can you meet at " .. math.random(1,24) ..":" .. math.random(0,59) .." ?",aliveai.genname() .." " ..aliveai.genname(),"i just have " .. self.lastitem_count,"do you want ".. self.lastitem_name .."?","k","no","zzz","did someone hear that?","i want a pet","lag","afk","how to craft " .. self.lastitem_name,"folow me"}
 	elseif t=="AHHH" then
 		a={"aaaaaaaaa","ooooo","hhaaaaa","waaaaa","njaaaaa","?","?????","!??","DOH","Hey im flying!","WEEEE"}
 	elseif t=="Hey, im flying!" then
@@ -340,13 +456,17 @@ aliveai.sayrnd=function(self,t,t2,nmood)
 	aliveai.on_chat(self.object:get_pos(),self.botname,say)	
 end
 
-
-
 aliveai.say=function(self,text)
 	if self.talking==0 then return self end
 	minetest.chat_send_all("<" .. self.botname .."> " .. text)
 	aliveai.last_spoken_to=text
 	aliveai.on_chat(self.object:get_pos(),self.botname,text)
+end
+
+aliveai.rndkey=function(a)
+	if not a or #a<1 then return "" end
+	local r=math.random(1,#a)
+	return a[r]
 end
 
 aliveai.msghandler=function(self)
@@ -395,4 +515,3 @@ aliveai.on_chat=function(pos,name,message)
 	end
 	return
 end
-

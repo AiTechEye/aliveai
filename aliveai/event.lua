@@ -613,6 +613,12 @@ aliveai.searchobjects=function(self)
 					if math.random(1,2)+i==1 then
 						rndob=ob
 					elseif (aliveai.team_fight==true or (en and en.type=="animal") or known=="fight") and (self.attacking==1 or enemy or known=="fight" or (known==nil and self.object:get_hp()<self.hp_max and not (self.attack_players==0 and ob:is_player()))) then
+
+						if aliveai.team(ob)=="nuke" or (en and en.mindamage and en.mindamage>self.dmg and not self.tools) then
+							aliveai.flee_from(self,ob)
+							return self
+						end
+
 						self.temper=2
 						self.fight=ob
 						self.on_detect_enemy(self,self.fight)
@@ -787,18 +793,42 @@ aliveai.come=function(self)
 	return nil
 end
 
+aliveai.flee_from=function(self,ob)
+	if self.escape~=1 then return end
+	self.time=self.otime
+	aliveai.known(self,ob,"fly")
+	self.fly=ob
+	self.fight=nil
+	self.temper=-3
+	self.fight_hp=nil
+	aliveai.sayrnd(self,"ahh","",1)
+	aliveai.fly(self)
+	return self
+end
+
 aliveai.fly=function(self)
-	if self.fly and self.path then
+
+	if self.fly and self.fly_path and self.path then
 		aliveai.path(self)
 		return self
 	elseif self.fly and self.done~="" then
 		self.done=""
+		self.fly_path=nil
 		aliveai.stand(self)
 	elseif self.temper<0 then
 		self.temper=self.temper+0.01
-		if self.temper>=0 then self.temper=0 self.fly=nil end
-		if self.temper<-1.2 or self.object:get_hp()>=self.hp_max then self.temper=5 self.fight=self.fly self.fly=nil self.time=self.otime return self end
+		if self.temper>=0 then
+			self.temper=0
+			self.fly=nil 
+		elseif self.temper>-1 and self.object:get_hp()>=self.hp_max then
+			self.temper=5
+			self.fight=self.fly
+			self.fly=nil
+			self.time=self.otime
+			return self
+		end
 	end
+
 	if self.fly and self.temper<0 and aliveai.visiable(self,self.fly:get_pos()) then
 		self.object:set_yaw(self.object:get_yaw()+3.14)
 		if not aliveai.viewfield(self,self.fly) then return self end
@@ -822,13 +852,13 @@ aliveai.fly=function(self)
 			local xl=xr*-1
 			local z=self.move.z
 			local x=self.move.x
-
 			if aliveai.def({x=pos1.x+xr+x,y=pos1.y,z=pos1.z+zr+z},"walkable")==false 
 			and aliveai.def({x=pos1.x+xr+x,y=pos1.y+1,z=pos1.z+zr+z},"walkable")==false
 			and not aliveai.visiable({x=pos1.x+xr+x,y=pos1.y+1,z=pos1.z+zr+z},self.fly:get_pos()) then
 				local path=aliveai.creatpath(self,pos1,{x=pos1.x+math.floor(xr+x+0.5),y=pos1.y,z=pos1.z+math.floor(zr+z+0.5)})
 				if path then
 					self.path=path
+					self.fly_path=1
 					aliveai.path(self)
 					aliveai.showstatus(self,"hide",3)
 					return self
@@ -840,6 +870,7 @@ aliveai.fly=function(self)
 				local path=aliveai.creatpath(self,pos1,{x=pos1.x+math.floor(xl+x+0.5),y=pos1.y,z=pos1.z+math.floor(zl+z+0.5)})
 				if path then
 					self.path=path
+					self.fly_path=1
 					aliveai.path(self)
 					aliveai.showstatus(self,"hide",3)
 					return self
@@ -862,6 +893,7 @@ aliveai.fly=function(self)
 					if path then
 						aliveai.rndwalk(self,false)
 						self.path=path
+						self.fly_path=1
 						aliveai.path(self)
 						return self
 					end
@@ -907,13 +939,7 @@ aliveai.fight=function(self)
 		pos.y=pos.y-1
 -- fly from
 		if self.escape==1 and self.object:get_hp()<self.fight_hp then
-			self.time=self.otime
-			aliveai.known(self,self.fight,"fly")
-			self.fly=self.fight
-			self.fight=nil
-			self.temper=-0.3
-			self.fight_hp=nil
-			aliveai.fly(self)
+			aliveai.flee_from(self,self.fight)
 			aliveai.searchhelp(self)
 			return self
 		end
@@ -960,6 +986,12 @@ aliveai.fight=function(self)
 					aliveai.stand(self)
 					aliveai.lookat(self,fpos)
 					self.on_fighting(self,self.fight)
+
+					if self.type=="npc" and aliveai.is_bot(self.fight) and self.fight:get_luaentity().mindamage>self.dmg then
+						aliveai.flee_from(self,self.fight)
+						return self
+					end
+
 					if aliveai.random(1,math.floor(6-self.temper)+0.5)==1 then
 						self.on_punching(self,self.fight)
 						if self.tool_near==1 and aliveai.random(1,self.tool_chance)==1 then

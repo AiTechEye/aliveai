@@ -36,6 +36,7 @@ aliveai.bot=function(self, dtime)
 	aliveai.jumping(self)-- if need to jump
 	if aliveai.fight(self) then return self end
 	if aliveai.fly(self) then return self end
+
 	if aliveai.come(self) then return self end
 	if aliveai.folowing(self) then return self end
 	aliveai.searchobjects(self)
@@ -410,6 +411,7 @@ end
 			aliveai.showstatus(self,"bot loaded")
 		end
 		self.lastitem_name="wooden planks"
+		self.talking_to="you"
 		self.lastitem_count=1
 		self.hp=self.object:get_hp()
 
@@ -541,6 +543,9 @@ on_step=aliveai.main,
 		sit={x=101,y=111,speed=0},
 	},
 --functions
+
+
+	on_chat= def.on_chat or aliveai.do_nothing,
 	on_spoken_to= def.on_spoken_to or aliveai.on_spoken_to,
 	on_fighting= def.on_fighting or aliveai.do_nothing,
 	on_escaping= def.on_escaping or aliveai.do_nothing,
