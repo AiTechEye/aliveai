@@ -419,7 +419,7 @@ end)
 
 
 
-aliveai.generate_house=function(self)
+aliveai.generate_house=function(self,v)
 	local gen=true
 	if self.x and self.y and self.z and not self.aliveai then
 		gen=false
@@ -481,9 +481,9 @@ aliveai.generate_house=function(self)
 		return
 	end
 --generate
-	if math.random(1,2)==1 then
+	if (v and v==1) or math.random(1,5)>1 then
 		aliveai.generate_house_v1(self,build_able,window,furn_len,door,floor,wall,pos,gen)
-	else
+	else	--if v and v==2 then
 		aliveai.generate_house_v2(self,build_able,window,furn_len,door,floor,wall,pos,gen)
 	end
 --check failure 2
