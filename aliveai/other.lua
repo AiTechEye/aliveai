@@ -136,7 +136,7 @@ aliveai.show_terminal=function(user,a)
 
 	end
 
-	local events="remove,die,dying,relive,say,set team,sleep,use tool,search help,creative,superbuild,fly,goto bed,walk,run,look at,build,exit mine,farming,set home,stay at home,rndgoal,node handler,light,fight,escape,folow,come,walk to,rnd walk,stop rnd walk"
+	local events="Remove,Die,Harm,Respawn,Speak,Set Team,Sleep,Use Tool,Search For Help,Creative Mode,Superbuild,Fly,Go To Bed,Walk,Run,Look At Something,Build,Exit,Farm,Set Spawn,Stay Home,RNDgoal,Node Handler,Light,Fight,Escape,Follow,Come,Walk To,RNDwalk,Stop RNDwalk"
 	local event=""
 	local x=-0.2
 	local y=2
