@@ -4,6 +4,9 @@
 
 # code/media License: CC0
 
+
+**Wiki:** https://github.com/AiTechEye/aliveai/wiki
+
 # NPC
 Npc mobs that does stuff like looks for stuff it needs, mining, crafting, talking, building houses in randomly with furnitures, using tools, and do things it needs to do, and so much more
 
@@ -17,13 +20,6 @@ There are also spawning some (generated) buildings, like big underground-lab, fo
 ...and weather & a lot of misc stuff
 
 some extra info
-
-Commands:
-enable/diable bot status
-/aliveai status=true
-/aliveai status=false
-show count of bots
-/aliveai count
 
 call bots like: <name> come
 and <team> come
