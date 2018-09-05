@@ -135,8 +135,9 @@ aliveai.show_terminal=function(user,a)
 		end
 
 	end
-
-	local events="remove,die,dying,relive,say,set team,sleep,use tool,search help,creative,superbuild,fly,goto bed,walk,run,look at,build,exit mine,farming,set home,stay at home,rndgoal,node handler,light,fight,escape,folow,come,walk to,rnd walk,stop rnd walk"
+	local events="Remove,Die,Dying,Relive,Say,setTeam,Sleep,useTool,Search Help,Creative,Superbuild,Fly,gotoBed,Walk,Run,Look At,Build,exit Mine,Farming,setHome,StayAt Home,rndGoal,NodeHandler,Light,Fight,Escape,Folow,Come,Walk To,rndWalk,stop rndWalk"
+	--local events="Remove,Die,Dying,Relive,Say,setTeam,Sleep,useTool,Search Help,Creative,Superbuild,Fly,gotoBed,Walk,Run,Look At,Build,exit Mine,Farming,setHome,Stay At Home,rndGoal,Node Handler,Light,Fight,Escape,Folow,Come,Walk To,rndWalk,stop rndWalk"
+	--local events="remove,die,dying,relive,say,set team,sleep,use tool,search help,creative,superbuild,fly,goto bed,walk,run,look at,build,exit mine,farming,set home,stay at home,rndgoal,node handler,light,fight,escape,folow,come,walk to,rnd walk,stop rnd walk"
 	local event=""
 	local x=-0.2
 	local y=2
@@ -240,30 +241,30 @@ minetest.register_on_player_receive_fields(function(user, form, pressed)
 
 			local ob=aliveai.terminal_users[name].target
 
-			if e=="remove" then
+			if e=="Remove" then
 				self.object:remove()
-			elseif e=="die" then
+			elseif e=="Die" then
 				if self.type=="npc" then
 					aliveai.dying(self,2)
 				else
 					aliveai.die(self)
 				end
-			elseif e=="dying" then
+			elseif e=="Dying" then
 				aliveai.dying(self,1)
-			elseif e=="relive" then
+			elseif e=="Relive" then
 				self.dying={step=0,try=self.hp_max*2}
 				self.dead=nil
-			elseif e=="sleep" then
+			elseif e=="Sleep" then
 				aliveai.sleep(self,2)
-			elseif e=="say" then
+			elseif e=="Say" then
 				if pressed.text=="" and ob then
 					aliveai.rnd_talk_to(self,ob)
 				else
 					aliveai.say(self,pressed.text)
 				end
-			elseif e=="set team" and pressed.text~="" then
+			elseif e=="setTeam" and pressed.text~="" then
 				self.team=pressed.text
-			elseif e=="goto bed" then
+			elseif e=="gotoBed" then
 				local n=minetest.find_node_near(self.object:get_pos(), self.distance,aliveai.beds)
 				if n then
 					n.y=n.y+1
@@ -276,79 +277,79 @@ minetest.register_on_player_receive_fields(function(user, form, pressed)
 						self.bedpath=n
 					end
 				end
-			elseif e=="walk" then
+			elseif e=="Walk" then
 				aliveai.walk(self)
-			elseif e=="run" then
+			elseif e=="Run" then
 				aliveai.walk(self,2)
-			elseif e=="look at" and ob then
+			elseif e=="Look At" and ob then
 				aliveai.lookat(self,ob)
-			elseif e=="fight" and ob then
+			elseif e=="Fight" and ob then
 				if self.temper<5 then
 					self.temper=self.temper+1
 				end
 				self.fight=ob
 				aliveai.known(self,ob,"fight")
 				aliveai.lookat(self,ob)
-			elseif e=="escape" and ob then
+			elseif e=="Escape" and ob then
 				if self.temper>-5 then
 					self.temper=self.temper-0.3
 				end
 				self.fly=ob
 				aliveai.known(self,ob,"fly")
 				aliveai.lookat(self,ob)
-			elseif e=="folow" and ob then
+			elseif e=="Folow" and ob then
 				self.folow=ob
-			elseif e=="come" and ob then
+			elseif e=="Come" and ob then
 				self.come=ob
 				self.zeal=10
 				aliveai.come(self)
-			elseif e=="walk to" and ob then
+			elseif e=="Walk To" and ob then
 				self.folow=ob
 				aliveai.lookat(self,ob)
 				aliveai.walk(self)
-			elseif e=="rnd walk" and ob then
+			elseif e=="rndWalk" and ob then
 				aliveai.rndwalk(self)
-			elseif e=="stop rnd walk" and ob then
+			elseif e=="stop rndWalk" and ob then
 				aliveai.rndwalk(self,false)
-			elseif e=="search help" then
+			elseif e=="Search Help" then
 				aliveai.searchhelp(self)
-			elseif e=="use tool" then
+			elseif e=="useTool" then
 				aliveai.use(self)
-			elseif e=="creative" then
+			elseif e=="Creative" then
 				if self.creative==0 then
 					self.creative=1
 				else
 					self.creative=0
 				end
-			elseif e=="superbuild" then
+			elseif e=="Superbuild" then
 				if self.superbuild==0 then
 					self.superbuild=1
 				else
 					self.superbuild=0
 				end
-			elseif e=="fly" then
+			elseif e=="Fly" then
 				if self.floating==0 then
 					aliveai.floating(self,1)
 				else
 					aliveai.floating(self)
 				end
-			elseif e=="build" then
+			elseif e=="Build" then
 				aliveai.task_build(self)
-			elseif e=="exit mine" then
+			elseif e=="exit Mine" then
 				aliveai.exit_mine(self)
-			elseif e=="farming" then
+			elseif e=="Farming" then
 				self.home=aliveai.roundpos(self.object:get_pos())
 				self.need=nil
 				aliveai.task_farming(self)
-			elseif e=="set home" then
+			elseif e=="setHome" then
 				self.home=aliveai.roundpos(self.object:get_pos())
-			elseif e=="stay at home" then
+			elseif e=="StayAt Home" then
 				aliveai.task_stay_at_home(self)
-			elseif e=="rndgoal" then
+			elseif e=="rndGoal" then
 				aliveai.rndgoal(self)
-			elseif e=="node handler" then
+			elseif e=="NodeHandler" then
 				aliveai.node_handler(self)
-			elseif e=="light" then
+			elseif e=="Light" then
 				aliveai.light(self)
 			end
 		elseif pressed.teleport then
