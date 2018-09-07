@@ -99,9 +99,9 @@ aliveai.give_to_bot=function(self,clicker)
 		local i=clicker:get_wield_index()
 		stack:take_item(1)
 		inv:set_stack("main", i,stack)
+
 		if self.dying or self.dead then
-			self.dying={step=0,try=self.hp_max*2}
-			self.dead=nil
+			aliveai.dying(self,3)
 		elseif self.hp_max<101 and self.drop_dead_body==1 then
 			self.hp=-10
 			aliveai.dying(self,1)

@@ -159,6 +159,9 @@ aliveai.dying=function(self,set)
 		self.object:set_hp(self.hp)
 		self.dying=nil
 		self.dead=20
+	elseif set and set==3 and (self.dying or self.dead) then
+		self.dying={step=0,try=self.hp_max*2}
+		self.dead=nil
 	end
 
 	if self.dying then
