@@ -136,8 +136,6 @@ aliveai.show_terminal=function(user,a)
 
 	end
 	local events="Remove,Die,Dying,Relive,Say,setTeam,Sleep,useTool,Search Help,Creative,Superbuild,Fly,gotoBed,Walk,Run,Look At,Build,exit Mine,Farming,setHome,StayAt Home,rndGoal,NodeHandler,Light,Fight,Escape,Folow,Come,Walk To,rndWalk,stop rndWalk"
-	--local events="Remove,Die,Dying,Relive,Say,setTeam,Sleep,useTool,Search Help,Creative,Superbuild,Fly,gotoBed,Walk,Run,Look At,Build,exit Mine,Farming,setHome,Stay At Home,rndGoal,Node Handler,Light,Fight,Escape,Folow,Come,Walk To,rndWalk,stop rndWalk"
-	--local events="remove,die,dying,relive,say,set team,sleep,use tool,search help,creative,superbuild,fly,goto bed,walk,run,look at,build,exit mine,farming,set home,stay at home,rndgoal,node handler,light,fight,escape,folow,come,walk to,rnd walk,stop rnd walk"
 	local event=""
 	local x=-0.2
 	local y=2
@@ -1605,6 +1603,7 @@ minetest.register_entity("aliveai:path" .. i,{
 	automatic_rotate = false,
 	is_falling=0,
 	on_step = function(self, dtime)
+		if aliveai.systemfreeze==1 then return end
 		self.timer=self.timer+dtime
 		if self.timer<0.1 then return self end
 		self.timer=0
