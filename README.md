@@ -30,3 +30,21 @@ they can aslo buy things using smartshop
 make them to a guard:
 right click a npc with a diamond, this makes them stay around the position.
 useful to keep monsters and enemies away.
+
+## To do:
+
+### working on
+- [ ] spawn / gen buildnings
+
+### need to do:
+- [ ] better "on_node_generate" function or a alternative replace the old converting/storage system, its very limeted
+
+### plans:
+- [ ] generate villages
+
+### wish to do:
+
+- [ ] ai chat learing
+- [ ] use cotton/wheat
+- [ ] use furnaces
+- [ ] new "need" system (let bots know what they need to dig) the corrently system only alows bots to collect and build 1 house/thing at time
