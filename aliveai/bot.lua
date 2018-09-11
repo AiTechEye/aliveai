@@ -171,6 +171,10 @@ if not def.visual or def.visual=="mesh" then
 			return itemstack
 		end,
 		on_construct=function(pos)
+			minetest.get_node_timer(pos):start(0.1)
+			minetest.remove_node(pos)
+		end,
+		on_timer=function(pos, elapsed)
 			minetest.remove_node(pos)
 		end,
 	})
