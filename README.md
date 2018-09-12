@@ -4,8 +4,7 @@
 
 # code/media License: CC0
 
-
-**Wiki:** https://github.com/AiTechEye/aliveai/wiki
+# [Wiki](https://github.com/AiTechEye/aliveai/wiki)
 
 # NPC
 Npc mobs that does stuff like looks for stuff it needs, mining, crafting, talking, building houses in randomly with furnitures, using tools, and do things it needs to do, and so much more
@@ -35,6 +34,7 @@ useful to keep monsters and enemies away.
 
 ### working on
 - [ ] spawn / gen buildnings
+- [ ] Wiki
 
 ### need to do:
 - [ ] better "on_node_generate" function or a alternative replace the old converting/storage system, its very limeted
