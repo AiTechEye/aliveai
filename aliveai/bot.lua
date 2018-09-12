@@ -154,10 +154,11 @@ if not def.visual or def.visual=="mesh" then
 	if def.texture~=nil and type(def.texture)=="string" then def.texture={def.texture} end
 	minetest.register_node(def.mod_name ..":" .. def.name .."_spawner", {
 		description = def.name .." spawner",
-		wield_image=itemtexture or "character.png",
+	--	wield_image=itemtexture  or "character.png",
+		wield_scale={x=0.2,y=0.2,z=0.2},
 		tiles=def.texture,
 		drawtype="mesh",
-		mesh=def.mesh or aliveai.character_model,
+		mesh=def.mesh or aliveai.character_preview_model,
 		paramtype="light",
 		visual_scale=0.1,
 		on_place = function(itemstack, user, pointed_thing)
@@ -166,16 +167,8 @@ if not def.visual or def.visual=="mesh" then
 				pos.y=pos.y+0.5 + def.spawn_y
 				minetest.add_entity(pos, def.mod_name ..":" .. def.name):set_yaw(math.random(0,6.28))
 				itemstack:take_item()
-				
 			end
 			return itemstack
-		end,
-		on_construct=function(pos)
-			minetest.get_node_timer(pos):start(0.1)
-			minetest.remove_node(pos)
-		end,
-		on_timer=function(pos, elapsed)
-			minetest.remove_node(pos)
 		end,
 	})
 else

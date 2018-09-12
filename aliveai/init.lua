@@ -1,8 +1,9 @@
 aliveai={
 	version=25,
 --========================options==============================
-	spawning=true,				--spawning by self
-	character_model="aliveai_character.b3d",	--character model
+	spawning=true,					--spawning by self
+	character_model="aliveai_character.b3d",		--character model
+	character_preview_model="aliveai_preview_character.obj",	--character model
 	set_bones=true,			
 	default_team="Sam",
 	gravity=10,
