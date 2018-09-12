@@ -32,20 +32,13 @@ useful to keep monsters and enemies away.
 
 ## To do:
 
-### working on
-- [ ] spawn / gen buildnings
-- [x] Wiki
-
-### need to do:
-- [ ] better "on_node_generate" function or a alternative
+#### is working on
+- [x] spawn / gen buildnings
+- [x] better "on_node_generate" function or a alternative
 - [ ] replace the old converting/storage system, its very limeted
-
-### plans:
 - [ ] in game guide
 - [ ] generate villages
-
-### wish to do:
-
+#### wish to do:
 - [ ] ai chat learing
 - [ ] use cotton/wheat
 - [ ] use furnaces
