@@ -41,6 +41,7 @@ useful to keep monsters and enemies away.
 - [ ] replace the old converting/storage system, its very limeted
 
 ### plans:
+- [ ] in game guide
 - [ ] generate villages
 
 ### wish to do:
