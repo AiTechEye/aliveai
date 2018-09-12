@@ -34,7 +34,7 @@ useful to keep monsters and enemies away.
 
 ### working on
 - [ ] spawn / gen buildnings
-- [ ] Wiki
+- [x] Wiki
 
 ### need to do:
 - [ ] better "on_node_generate" function or a alternative
