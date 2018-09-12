@@ -37,7 +37,8 @@ useful to keep monsters and enemies away.
 - [ ] Wiki
 
 ### need to do:
-- [ ] better "on_node_generate" function or a alternative replace the old converting/storage system, its very limeted
+- [ ] better "on_node_generate" function or a alternative
+- [ ] replace the old converting/storage system, its very limeted
 
 ### plans:
 - [ ] generate villages
