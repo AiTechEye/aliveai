@@ -35,7 +35,7 @@ useful to keep monsters and enemies away.
 #### is working on
 - [x] spawn / gen buildnings
 - [ ] replace the old converting/storage system, its very limeted
-- [ ] in game guide
+- [x] in game guide
 - [ ] generate villages
 #### wish to do:
 - [ ] ai chat learing
