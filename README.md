@@ -30,11 +30,10 @@ make them to a guard:
 right click a npc with a diamond, this makes them stay around the position.
 useful to keep monsters and enemies away.
 
-## To do:
+# To do list:
 
 #### is working on
 - [x] spawn / gen buildnings
-- [x] better "on_node_generate" function or a alternative
 - [ ] replace the old converting/storage system, its very limeted
 - [ ] in game guide
 - [ ] generate villages
