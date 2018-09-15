@@ -1,3 +1,23 @@
+minetest.register_node("aliveai_aliens:asteroid", {
+	drawtype="airlike",
+	groups = {not_in_creative_inventory=1},
+})
+minetest.register_node("aliveai_aliens:ufo_spawner", {
+	drawtype="airlike",
+	groups = {not_in_creative_inventory=1},
+})
+
+minetest.register_lbm({
+	name="aliveai_aliens:astrewmove",
+	run_at_every_load=true,
+	nodenames = {"aliveai_aliens:asteroid","aliveai_aliens:ufo_spawner"},
+	action = function(pos, node)
+		minetest.set_node(pos, {name = "air"})
+	end,
+})
+
+
+
 minetest.register_craftitem("aliveai_aliens:shrinker_battery", {
 	description = "Shrinker battery",
 	groups={aliveai_alien_weapon_battery=1},
@@ -447,14 +467,14 @@ minetest.register_entity("aliveai_aliens:shrinkbox",{
 			self.c[i]=self.c[i] or 0.5
 		end
 
-		local acc=self.shrinking:getacceleration() or {x=0,y=0,z=0}
+		local acc=self.shrinking:get_acceleration() or {x=0,y=0,z=0}
 		local v=self.shrinking:get_velocity() or {x=0,y=0,z=0}
-		local y=self.shrinking:getyaw() or 0
+		local y=self.shrinking:get_yaw() or 0
 
 
 		self.object:set_properties({collisionbox=self.c})
 		self.shrinking:set_attach(self.object, "", {x=0,y=0,z=0}, {x=0,y=2,z=0})
-		self.object:setyaw(y)
+		self.object:set_yaw(y)
 
 
 		self.object:set_velocity(v)
@@ -514,7 +534,6 @@ minetest.register_node("aliveai_aliens:lazer_node", {
 	end,
 })
 
-
 minetest.register_node("aliveai_aliens:wsteelblock", {
 	description = "Hardened steel block",
 	tiles = {"default_steel_block.png"},
@@ -523,118 +542,83 @@ minetest.register_node("aliveai_aliens:wsteelblock", {
 	sounds = default.node_sound_metal_defaults(),
 })
 
-minetest.register_node("aliveai_aliens:ufo_spawner", {
-	tiles = {"aliveai_air.png"},
-	groups = {not_in_creative_inventory=1},
-	sunlight_propagates = true,
-	is_ground_content = false,
-	drawtype = "glasslike_framed_optional",
-	paramtype = "light",
-	paramtype2 = "glasslikeliquidlevel",
-})
-
 minetest.register_node("aliveai_aliens:alien_spawner", {
-	description = "Alien group spawner",
-	tiles = {"default_diamond_block.png"},
-})
-
-minetest.register_node("aliveai_aliens:asteroid", {
-	description = "Asteroid",
-	tiles = {"aliveai_air.png"},
+	drawtype="airlike",
 	groups = {not_in_creative_inventory=1},
-	sunlight_propagates = true,
-	is_ground_content = false,
-	drawtype = "glasslike_framed_optional",
-	paramtype = "light",
-	paramtype2 = "glasslikeliquidlevel",
 })
 
-
-minetest.register_abm({
-	nodenames = {"aliveai_aliens:ufo_spawner","aliveai_aliens:alien_spawner","aliveai_aliens:asteroid"},
-	interval = 2,
-	chance = 1,
-	action = function(pos, node, active_object_count, active_object_count_wider)
-		local n=minetest.get_node(pos).name
-
-		minetest.set_node(pos, {name = "air"})
-
-		if n=="aliveai_aliens:alien_spawner" then
-			for i=1,9,1 do
-				minetest.add_entity(pos, "aliveai_aliens:alien" .. i)
-			end
-			return
-		end
-
-		if n=="aliveai_aliens:asteroid" and minetest.get_modpath("aliveai_nitroglycerine")~=nil then
-			if math.random(1,100)~=1 then return end
-			local x=math.random(-1,1)
-			local z=math.random(-1,1)
-			local pos3={}
-			local fire={name="aliveai_nitroglycerine:fire2"}
-			local id=math.random(1,900)
-			aliveai_aliens.atra[id]=0
-			for i=1,150,1 do
-				pos3={x=pos.x+(x*i),y=pos.y-i,z=pos.z+(z*i)}
-				local fn = minetest.registered_nodes[minetest.get_node(pos3).name]
-				if minetest.is_protected(pos3,"") then
+if minetest.get_modpath("aliveai_nitroglycerine")~=nil then
+aliveai.register_rndcheck_on_generated({
+	node="air",
+	maxy=200,
+	miny=30,
+	first_only=true,
+	chance=100,
+	mindistance=1000,
+	run=function(pos)
+		local x=math.random(-1,1)
+		local z=math.random(-1,1)
+		local pos3={}
+		local fire={name="aliveai_nitroglycerine:fire2"}
+		local id=math.random(1,900)
+		aliveai_aliens.atra[id]=0
+		for i=1,150,1 do
+			pos3={x=pos.x+(x*i),y=pos.y-i,z=pos.z+(z*i)}
+			local fn = minetest.registered_nodes[minetest.get_node(pos3).name]
+			if minetest.is_protected(pos3,"") then
+				aliveai_aliens.atra[id]=nil
+				return
+			elseif not (fn and fn.buildable_to) or aliveai_aliens.atra[id]==1 or i==150 then
+				minetest.after(i*0.05, function(pos3,fire)
 					aliveai_aliens.atra[id]=nil
-					return
-				elseif not (fn and fn.buildable_to) or aliveai_aliens.atra[id]==1 or i==150 then
-					minetest.after(i*0.05, function(pos3,fire)
-						aliveai_aliens.atra[id]=nil
-						aliveai_nitroglycerine.explode(pos3,{
-							radius=5,
-							set="air",
-							drops=0,
-							place={"aliveai_nitroglycerine:fire","air","air","air","air"}
-						})
-						minetest.set_node(pos3,{name="aliveai_aliens:alien_spawner"})
-						minetest.sound_play("aliveai_nitroglycerine_nuke", {pos=pos3, gain = 0.5, max_hear_distance = 5*30})
-					end, pos3,fire)
-					return
-				end
-				minetest.after(i*0.05, function(pos3,fire,id)
-					if not aliveai_aliens.atra[id] or aliveai_aliens.atra[id]==1 then return end
-					local fn = minetest.registered_nodes[minetest.get_node(pos3).name]
-					if not (fn and fn.buildable_to) then aliveai_aliens.atra[id]=1 i=150 print("bug") end
-					minetest.set_node(pos3,fire)
-					minetest.set_node({x=pos3.x+math.random(-1,1),y=pos3.y,z=pos3.z+math.random(-1,1)},fire)
-					minetest.set_node({x=pos3.x+math.random(-1,1),y=pos3.y,z=pos3.z+math.random(-1,1)},fire)
-				end, pos3,fire,id)
+					aliveai_nitroglycerine.explode(pos3,{
+						radius=5,
+						set="air",
+						drops=0,
+						place={"aliveai_nitroglycerine:fire","air","air","air","air"}
+					})
+					minetest.set_node(pos3,{name="aliveai_aliens:alien_spawner"})
+					minetest.sound_play("aliveai_nitroglycerine_nuke", {pos=pos3, gain = 0.5, max_hear_distance = 5*30})
+				end, pos3,fire)
+				return
 			end
-			return
+			minetest.after(i*0.05, function(pos3,fire,id)
+				if not aliveai_aliens.atra[id] or aliveai_aliens.atra[id]==1 then return end
+				local fn = minetest.registered_nodes[minetest.get_node(pos3).name]
+				if not (fn and fn.buildable_to) then aliveai_aliens.atra[id]=1 i=150 print("bug") end
+				minetest.set_node(pos3,fire)
+				minetest.set_node({x=pos3.x+math.random(-1,1),y=pos3.y,z=pos3.z+math.random(-1,1)},fire)
+				minetest.set_node({x=pos3.x+math.random(-1,1),y=pos3.y,z=pos3.z+math.random(-1,1)},fire)
+			end, pos3,fire,id)
 		end
+		return
+	end
+})
+end
 
-		if math.random(1,40)~=1 then return end
+aliveai.register_rndcheck_on_generated({
+	node="air",
+	maxy=200,
+	miny=30,
+	first_only=true,
+	chance=500,
+	mindistance=1000,
+	run=function(pos)
 		for i=1,30,1 do
 			if minetest.get_node({x=pos.x,y=pos.y-i,z=pos.z}).name~="air" then return end
 		end
-		local u=minetest.get_modpath("aliveai_aliens").."/schematics/ufo.mts"
-		minetest.place_schematic({x=pos.x-15,y=pos.y,z=pos.z-15}, u, "random", {}, true)
+		minetest.place_schematic({x=pos.x-15,y=pos.y,z=pos.z-15}, minetest.get_modpath("aliveai_aliens").."/schematics/ufo.mts", "random", {}, true)
+	end
+})
+
+minetest.register_lbm({
+	name="aliveai_aliens:alien_spawner",
+	run_at_every_load=true,
+	nodenames = {"aliveai_aliens:alien_spawner"},
+	action = function(pos, node)
+		minetest.set_node(pos, {name = "air"})
+		for i=1,9,1 do
+			minetest.add_entity(pos, "aliveai_aliens:alien" .. i)
+		end
 	end,
 })
-
-minetest.register_ore({
-	ore_type       = "scatter",
-	ore            = "aliveai_aliens:ufo_spawner",
-	wherein        = "air",
-	clust_scarcity = 64 * 64 * 64,
-	clust_num_ores = 1,
-	clust_size     = 1,
-	y_min          = 30,
-	y_max          = 100,
-})
-
-
-minetest.register_ore({
-	ore_type       = "scatter",
-	ore            = "aliveai_aliens:asteroid",
-	wherein        = "air",
-	clust_scarcity = 64 * 64 * 64,
-	clust_num_ores = 1,
-	clust_size     = 1,
-	y_min          = 30,
-	y_max          = 100,
-})
-
