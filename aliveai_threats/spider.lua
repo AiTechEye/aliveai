@@ -1,9 +1,8 @@
-minetest.register_node("aliveai_threats:spiderspawner", {
-	drawtype="airlike"
-})
-
-aliveai.register_on_generated("aliveai_threats:spiderspawner",function(y)
-	minetest.after(0, function(y)
+aliveai.register_rndcheck_on_generated({
+	group="spreading_dirt_type",
+	miny=0,
+	maxy=100,
+	run=function(y)
 		if math.random(1,3)==1 then
 			y.y=y.y-4
 			local p=aliveai.get_nodes(y,4,1,{})
@@ -23,19 +22,7 @@ aliveai.register_on_generated("aliveai_threats:spiderspawner",function(y)
 			end
 			minetest.get_node_timer(y):start(5)
 		end
-	end,y)
-	return "default:dirt"
-end)
-
-minetest.register_ore({
-	ore_type       = "scatter",
-	ore            = "aliveai_threats:spiderspawner",
-	wherein        = "group:spreading_dirt_type",
-	clust_scarcity = 34 * 34 * 34,
-	clust_num_ores = 1,
-	clust_size     = 1,
-	y_min          = 0,
-	y_max          = 100,
+	end
 })
 
 minetest.register_node("aliveai_threats:steelnet", {

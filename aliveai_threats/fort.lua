@@ -12,56 +12,18 @@ minetest.register_tool("aliveai_threats:fortspawner", {
 	end,
 })
 
-minetest.register_node("aliveai_threats:fort_spawner", {
-	tiles={"default_stone.png"},
-	groups = {not_in_creative_inventory=1},
-	is_ground_content = false
+aliveai.register_rndcheck_on_generated({	
+	group="spreading_dirt_type",
+	node="default:snowblock",
+	chance=30,
+	mindistance=1000,
+	run=function(pos)
+		aliveai_threats.fort.spawning(pos)
+	end
 })
-
-minetest.register_ore({
-	ore_type       = "scatter",
-	ore            = "aliveai_threats:fort_spawner",
-	wherein        = "group:spreading_dirt_type",
-	clust_scarcity = 20 * 20 * 20,
-	clust_num_ores = 1,
-	clust_size     = 1,
-	y_min          = -1,
-	y_max          = 50,
-})
-
-minetest.register_ore({
-	ore_type       = "scatter",
-	ore            = "aliveai_threats:fort_spawner",
-	wherein        = "default:snow",
-	clust_scarcity = 20 * 20 * 20,
-	clust_num_ores = 1,
-	clust_size     = 1,
-	y_min          = -1,
-	y_max          = 50,
-})
-
-minetest.register_ore({
-	ore_type       = "scatter",
-	ore            = "aliveai_threats:fort_spawner",
-	wherein        = "default:snowblock",
-	clust_scarcity = 20 * 20 * 20,
-	clust_num_ores = 1,
-	clust_size     = 1,
-	y_min          = -1,
-	y_max          = 50,
-})
-
-aliveai.register_on_generated("aliveai_threats:fort_spawner",function(pos)
-	minetest.after(0, function(pos)
-		if math.random(1,10)==1 then
-			aliveai_threats.fort.spawning(pos)
-		end
-	end,pos)
-	return "default:stone"
-end)
 
 aliveai_threats.fort.spawning=function(pos,nrnd)
-		if not nrnd and math.random(1,20)~=1 then return end
+		if not nrnd then return end
 		local test1=0
 		local test2=0
 
@@ -81,7 +43,7 @@ aliveai_threats.fort.spawning=function(pos,nrnd)
 		end
 		end
 
-		if test1<7000 then return end
+		if test1<6000 then return end
 
 		local door=math.random(11,17)
 		local n

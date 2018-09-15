@@ -21,51 +21,24 @@ minetest.register_tool("aliveai_threats:labspawner", {
 	end
 })
 
-minetest.register_node("aliveai_threats:lab_spawner", {
-	description = "Lab spawner",
-	drawtype="airlike",
-	groups = {not_in_creative_inventory=1},
-	is_ground_content = false
+aliveai.register_rndcheck_on_generated({
+	node="default:stone_with_coal",
+	chance=30,
+	mindistance=1000,
+	run=function(pos)
+		aliveai_threats.lab.spawning(pos)
+	end
 })
-
-minetest.register_ore({
-	ore_type       = "scatter",
-	ore            = "aliveai_threats:lab_spawner",
-	wherein        = "default:stone",
-	clust_scarcity = 36 * 36 * 36,
-	clust_num_ores = 1,
-	clust_size     = 1,
-	y_min          = -100,
-	y_max          = 20,
-})
-
-minetest.register_ore({
-	ore_type       = "scatter",
-	ore            = "aliveai_threats:lab_spawner",
-	wherein        = "default:desert_stone",
-	clust_scarcity = 36 * 36 * 36,
-	clust_num_ores = 1,
-	clust_size     = 1,
-	y_min          = -100,
-	y_max          = 20,
-})
-
-aliveai.register_on_generated("aliveai_threats:lab_spawner",function(pos)
-	minetest.after(0, function(pos)
-		if math.random(1,10)==1 then
-			aliveai_threats.lab.spawning(pos)
-		end
-	end,pos)
-	return "default:stone"
-end)
 
 aliveai_threats.lab.spawning=function(p,nrnd)
-		if not nrnd and math.random(1,100)~=1 then return end
+		if not nrnd and math.random(1,30)~=1 then return end
 		local pos4
 		for i=1,20,1 do
 			pos4={x=p.x,y=p.y+i,z=p.z}
 			local get_light=minetest.get_node_light(pos4)
-			if minetest.get_node(pos4).name=="ignore" or (get_light and get_light>3) or minetest.is_protected(pos4,"") then return end
+			if minetest.get_node(pos4).name=="ignore" or (get_light and get_light>3) or minetest.is_protected(pos4,"") then
+				return
+			end
 		end
 			p={x=p.x-20,y=p.y-3,z=p.z-20}
 			local sta
