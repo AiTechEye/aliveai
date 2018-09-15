@@ -13,9 +13,7 @@ aliveai_pyramid={
 		"",
 		"",
 	}
-
 }
-
 
 aliveai.create_bot({
 		attack_players=1,
@@ -59,39 +57,13 @@ minetest.register_tool("aliveai_pyramid:spawner", {
 	end,
 })
 
-
-minetest.register_ore({
-	ore_type       = "scatter",
-	ore            = "aliveai_pyramid:spawn",
-	wherein        = "default:desert_sand",
-	clust_scarcity = 20 * 20 * 20,
-	clust_num_ores = 1,
-	clust_size     = 1,
-	y_min          = -1,
-	y_max          = 20,
-})
-
-
-minetest.register_node("aliveai_pyramid:spawn", {
-	tiles = {"default_desert_sand.png"},
-	groups = {not_in_creative_inventory=1},
-	is_ground_content = false,
-})
-
-
-minetest.register_abm({
-	nodenames = {"aliveai_pyramid:spawn"},
-	neighbors={"air"},
-	interval = 10,
-	chance = 1,
-	action = function(pos, node, active_object_count, active_object_count_wider)
-		minetest.set_node(pos,{name="default:desert_sand"})
-		if math.random(1,10)==1 then
-			aliveai_pyramid.gen(pos)
-		end
+aliveai.register_rndcheck_on_generated({
+	node="default:desert_sand",
+	chance=20,
+	run=function(pos)
+		aliveai_pyramid.gen(pos)
 	end
 })
-
 
 aliveai_pyramid.settreasure=function(pos)
 	minetest.place_node(pos, {name="default:chest"})
