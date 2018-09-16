@@ -7,7 +7,7 @@ minetest.register_tool("aliveai:book", {
 		local pos2=pointed_thing.under
 		local item=itemstack:to_table()
 		local save
-		local meta=minetest.deserialize(item.metadata) or {bots={},selected="",pages=0,selected_num=0}
+		local meta=minetest.deserialize(item.metadata) or {bots={},selected="",pages=0,selected_num=0,user=user:get_player_name()}
 		local bots={}
 		for i, b in ipairs(meta.bots) do
 			bots[b]=1
