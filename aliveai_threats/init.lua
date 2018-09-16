@@ -1648,12 +1648,14 @@ minetest.register_node("aliveai_threats:slime", {
 
 aliveai.create_bot({
 		name="killerplant",
-		type="",
+		type="node",
+		team="killerplants",
+		hp=1,
+		mindamage=1,
 		texture="default_grass_5.png^[colorize:#00ff0022",
 		talking=0,
 		light=0,
 		building=0,
-		type="monster",
 		name_color="",
 		collisionbox={-0.5,-0.5,-0.5,0.5,0.5,0.5},
 		visual="cube",
@@ -1664,17 +1666,13 @@ aliveai.create_bot({
 	spawn=function(self)
 		local pos=self.object:get_pos()
 		local opos=pos
-		local npos
-		local n
 		for i=0,10,1 do
-			npos={x=pos.x,y=pos.y-i,z=pos.z,}
-			n=minetest.registered_nodes[minetest.get_node(npos).name]
-			if n and n.walkable then
+			if aliveai.def({x=pos.x,y=pos.y-i,z=pos.z,},"walkable") and not minetest.is_protected(opos,"") then
 				minetest.set_node(opos,{name="aliveai_threats:killerplant"})
 				aliveai.kill(self)
 				return
 			end
-			opos=npos
+			opos={x=pos.x,y=pos.y-i,z=pos.z,}
 		end
 		aliveai.kill(self)
 	end,	
@@ -1683,7 +1681,7 @@ aliveai.create_bot({
 
 minetest.register_node("aliveai_threats:killerplant", {
 	description = "Killerplant",
-	groups = {attached_node=1,choppy = 1,not_in_creative_inventory=1},
+	groups = {attached_node=1,choppy = 1,aliveai=1,not_in_creative_inventory=1},
 	tiles = {"default_grass_5.png^[colorize:#00ff0022"},
 	paramtype="light",
 	walkable=false,
@@ -2569,25 +2567,42 @@ minetest.register_node("aliveai_threats:fangs_attack", {
 	node_box = fangsbox
 })
 
-
-minetest.register_abm{
-	nodenames = {"air"},
-	neighbors = {"group:soil","group:stone"},
-	interval = 300,
-	chance = 10000,
-	action = function(pos)
-		if not minetest.is_protected(pos,"") and minetest.get_node({x=pos.x,y=pos.y+1,z=pos.z}).name=="air" then
-			minetest.set_node(pos, {name = "aliveai_threats:statue"})
+aliveai.create_bot({
+		name="statue",
+		type="node",
+		team="statue",
+		hp=1,
+		mindamage=2,
+		texture="default_stone.png",
+		talking=0,
+		light=0,
+		building=0,
+		name_color="",
+		collisionbox={-0.5,-0.5,-0.5,0.5,0.5,0.5},
+		drop_dead_body=0,
+		spawn_on={"group:soil","group:stone"},
+		spawn_y=0,
+	spawn=function(self)
+		local pos=self.object:get_pos()
+		local opos=pos
+		for i=0,10,1 do
+			if aliveai.def({x=pos.x,y=pos.y-i,z=pos.z,},"walkable") and not minetest.is_protected(opos,"") then
+				minetest.set_node(opos,{name="aliveai_threats:statue"})
+				aliveai.kill(self)
+				return
+			end
+			opos={x=pos.x,y=pos.y-i,z=pos.z,}
 		end
-	end,
-}
+		aliveai.kill(self)
+	end,	
+})
 
 minetest.register_node("aliveai_threats:statue", {
 	description = "Statue",
 	tiles = {"aliveai_air.png"},
 	inventory_image = "default_stone.png",
 	wield_image = "default_stone.png",
-	groups = {cracky = 1,level=3,stone=1},
+	groups = {cracky = 1,level=3,stone=1,aliveai=1,not_in_creative_inventory=1},
 	sounds = default.node_sound_stone_defaults(),
 	paramtype = "light",
 	sunlight_propagates = true,
@@ -2601,13 +2616,13 @@ minetest.register_node("aliveai_threats:statue", {
 		}
 	},
 	on_construct = function(pos)
-		minetest.add_entity({x=pos.x,y=pos.y+0.5,z=pos.z}, "aliveai_threats:statue")
+		minetest.add_entity({x=pos.x,y=pos.y+0.5,z=pos.z}, "aliveai_threats:statue_standing")
 		minetest.get_node_timer(pos):start(5)
 	end,
 	on_destruct = function(pos)
 		for _, ob in ipairs(minetest.get_objects_inside_radius(pos, 1)) do
 			local en=ob:get_luaentity()
-			if en and en.name=="aliveai_threats:statue" then
+			if en and en.name=="aliveai_threats:statue_standing" then
 				ob:remove()
 			end
 		end
@@ -2625,19 +2640,19 @@ minetest.register_node("aliveai_threats:statue", {
 		local c=0
 		for _, ob in ipairs(minetest.get_objects_inside_radius(pos, 1)) do
 			local en=ob:get_luaentity()
-			if en and en.name=="aliveai_threats:statue" then
+			if en and en.name=="aliveai_threats:statue_standing" then
 				cfo=ob
 				break
 			end
 
 		end
 		if not cfo then
-			minetest.add_entity({x=pos.x,y=pos.y+0.5,z=pos.z}, "aliveai_threats:statue")
+			minetest.add_entity({x=pos.x,y=pos.y+0.5,z=pos.z}, "aliveai_threats:statue_standing")
 			return true
 		end
 		for _, ob in ipairs(minetest.get_objects_inside_radius(pos, 15)) do
 			local en=ob:get_luaentity()
-			if not (en and (en.type==nil or en.name=="aliveai_threats:statue")) and aliveai.visiable(pos,ob:get_pos()) then
+			if not (en and (en.type==nil or en.name=="aliveai_threats:statue_standing")) and aliveai.visiable(pos,ob:get_pos()) then
 				c=c+1
 				if c>1 then return true end
 				o=ob
@@ -2661,7 +2676,7 @@ minetest.register_node("aliveai_threats:statue", {
 		local self=cfo:get_luaentity()
 		local p=aliveai.pointat(self,1)
 		if aliveai.distance(pos,d)>aliveai.distance(pos,opos) then
-			if minetest.get_node(p).name=="aliveai_threats:statue" then
+			if minetest.get_node(p).name=="aliveai_threats:statue_standing" then
 				return true
 			end
 			if not aliveai.def(p,"buildable_to")
@@ -2680,14 +2695,14 @@ minetest.register_node("aliveai_threats:statue", {
 			if not aliveai.def(p,"buildable_to") or minetest.is_protected(p,"") then
 				return true
 			end
-			minetest.set_node(p,{name="aliveai_threats:statue"})
+			minetest.set_node(p,{name="aliveai_threats:statue_standing"})
 			minetest.remove_node(pos)
 			if aliveai.distance(p,opos)<1 then
 				aliveai.punchdmg(o,50)
 			end
 			for _, ob in ipairs(minetest.get_objects_inside_radius(p, 1)) do
 				local en=ob:get_luaentity()
-				if en and en.name=="aliveai_threats:statue" then
+				if en and en.name=="aliveai_threats:statue_standing" then
 					aliveai.lookat(en,opos)
 					return true
 				end
@@ -2696,7 +2711,7 @@ minetest.register_node("aliveai_threats:statue", {
 		return true
 	end,
 })
-minetest.register_entity("aliveai_threats:statue",{
+minetest.register_entity("aliveai_threats:statue_standing",{
 	hp_max = 10,
 	physical =false,
 	pointable=false,
@@ -2710,7 +2725,6 @@ minetest.register_entity("aliveai_threats:statue",{
 		end
 	end,
 })
-aliveai.loaded("aliveai_threats:statue")
 
 minetest.register_node("aliveai_threats:hat", {
 	tiles = {"default_coal_block.png^[colorize:#000000aa"},
