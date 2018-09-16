@@ -92,7 +92,7 @@ end)
 
 minetest.register_on_leaveplayer(function(player)
 	local name=player:get_player_name()
-	if aliveai_weather.players[name] then
+	if aliveai_weather.players[name] and aliveai_weather.players[name].sound then
 		minetest.sound_stop(aliveai_weather.players[name].sound)
 		aliveai_weather.players[name]=nil
 	end
