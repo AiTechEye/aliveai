@@ -162,7 +162,6 @@ if not def.visual or def.visual=="mesh" then
 	if def.texture~=nil and type(def.texture)=="string" then def.texture={def.texture} end
 	minetest.register_node(def.mod_name ..":" .. def.name .."_spawner", {
 		description = def.name .." spawner",
-	--	wield_image=itemtexture  or "character.png",
 		wield_scale={x=0.2,y=0.2,z=0.2},
 		tiles=def.texture,
 		drawtype="mesh",
@@ -646,7 +645,7 @@ minetest.register_craftitem("aliveai:npcspawner", {
 				local ii=1
 				for i, v in pairs(aliveai.registered_bots) do
 					if v.type=="npc" then
-						list[ii]={y=v.spawn_y,name=v.name}
+						list[ii]={y=v.spawn_y,name=v.bot}
 						ii=ii+1
 					end
 				end
@@ -671,7 +670,7 @@ minetest.register_craftitem("aliveai:teampawner", {
 				local ii=1
 				for i, v in pairs(aliveai.registered_bots) do
 					if v.type=="npc" and v.team==aliveai.default_team then
-						list[ii]={y=v.spawn_y,name=v.name}
+						list[ii]={y=v.spawn_y,name=v.bot}
 						ii=ii+1
 					end
 				end
