@@ -37,7 +37,14 @@ aliveai.nodes_handler={			-- dig, mesecon_on, mesecon_off, punch, function
 	["default:apple"]="dig",["aliveai_ants:antbase"]="dig",["tnt:tnt"]="dig",["tnt:tnt_burning"]="dig",["fire:basic_flame"]="dig",
 }
 
-
+minetest.register_craft({			-- right click to see
+	output = "aliveai:book",
+	recipe = {
+		{"","default:steel_ingot",""},
+		{"default:paper","default:paper","default:paper"},
+		{"","default:steel_ingot",""},
+	}
+})
 
 minetest.register_craft({			-- right click to see
 	output = "aliveai:protector",
