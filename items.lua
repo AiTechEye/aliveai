@@ -1,5 +1,5 @@
 minetest.register_tool("aliveai:book", {
-	description = "The Ai Book (point or use to add ai)",
+	description = "The Ai Book",
 	range=15,
 	inventory_image = "aliveai_book.png",
 	on_use=function(itemstack, user, pointed_thing)
@@ -7,7 +7,7 @@ minetest.register_tool("aliveai:book", {
 		local pos2=pointed_thing.under
 		local item=itemstack:to_table()
 		local save
-		local meta=minetest.deserialize(item.metadata) or {bots={},selected="",pages=1,selected_num=0}
+		local meta=minetest.deserialize(item.metadata) or {bots={},selected="",pages=0,selected_num=0}
 		local bots={}
 		for i, b in ipairs(meta.bots) do
 			bots[b]=1
@@ -56,44 +56,49 @@ aliveai.view_book=function(user,meta)
 	table.sort(meta.bots)
 	local list=""
 	local c=""
-	local a=aliveai.registered_bots[meta.selected] or {name="?",type="",dmg=0,item="aliveai:book",team="",description="text"}
+	local name=user:get_player_name()
+	local a=aliveai.registered_bots[meta.selected]
 	for i, bot in ipairs(meta.bots) do
 		list=list .. c .. bot
 		c=","
 	end
 
-	local light="light"
-	local flying="true"
-	local drops="none"
-	local aggressive="false"
-	if a.floating==0 then
-		flying="false"
-	end
-	if a.attacking==1 then
-		aggressive="true"
-	end
-	if a.light<0 then
-		light="darknes"
-	elseif a.light==0 then
-		light="light and darknes"
-	end
-	if type(a.start_with_items)=="table" then
-		drops=""
-		local rit
-		for it, c in pairs(a.start_with_items) do
-			rit=it
-			if minetest.registered_items[it] then
-				rit=minetest.registered_items[it].description
-			end
-			drops=drops .. rit .." " .. c ..", "
-		end
-	end
-
-	local name=user:get_player_name()
 	local gui="size[10,8]"
 	.."background[-0.2,-0.2;10.4,8.6;gui_formbg.png]"
 	.. "label[8,0;Page: " .. meta.selected_num.. "/" .. meta.pages .. " (" .. aliveai.loaded_objects ..")]"
-	.. "label[0,0.5;"
+	.."dropdown[0,-0.1;3,1;list;" .. list.. ";" .. meta.selected_num .."]"
+	.."button[3,-0.2;1,1;bac;<]"
+	.."button[4,-0.2;1,1;fro;>]"
+
+	if a then
+		local light="light"
+		local flying="true"
+		local drops="none"
+		local aggressive="false"
+		if a.floating==0 then
+			flying="false"
+		end
+		if a.attacking==1 then
+			aggressive="true"
+		end
+		if a.light<0 then
+			light="darknes"
+		elseif a.light==0 then
+			light="light and darknes"
+		end
+		if type(a.start_with_items)=="table" then
+			drops=""
+			local rit
+			for it, c in pairs(a.start_with_items) do
+				rit=it
+				if minetest.registered_items[it] then
+					rit=minetest.registered_items[it].description
+				end
+				drops=drops .. rit .." " .. c ..", "
+			end
+		end
+		gui=gui
+		.. "label[0,0.5;"
 		.."Name: " .. a.name .."\n"
 		.."Type: " .. a.type .."\n"
 		.."Team: " .. a.team .."\n"
@@ -105,11 +110,11 @@ aliveai.view_book=function(user,meta)
 		.."Aggressive: " .. aggressive .."\n"
 		.."Thrive in " .. light .."\n\n"
 		.. a.description
-	.."]"
-	.."dropdown[0,-0.1;3,1;list;" .. list.. ";" .. meta.selected_num .."]"
-	.."button[3,-0.2;1,1;bac;<]"
-	.."button[4,-0.2;1,1;fro;>]"
-	.."item_image[5.5,0.5;5,5;" .. a.item .. "]"
+		.."]"
+		.."item_image[5.5,0.5;5,5;" .. a.item .. "]"
+	else
+		gui=gui .. "label[0,0.5;\nEmpty Ai Book\n\nPunch one or use the book near AI to add.\nBlocks too.]"
+	end
 	minetest.after(0, function(gui)
 		return minetest.show_formspec(name, "aliveai.book",gui)
 	end, gui)
@@ -124,6 +129,7 @@ minetest.register_on_player_receive_fields(function(player, form, pressed)
 		end
 		local item=player:get_wielded_item():to_table()
 		local meta=minetest.deserialize(item.metadata) or {bots={},selected=""}
+		if not meta.pages or meta.pages==0 then return end
 		table.sort(meta.bots)
 		if pressed.fro then
 			meta.selected_num=meta.selected_num+1
