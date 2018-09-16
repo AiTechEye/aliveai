@@ -1,6 +1,7 @@
 aliveai={
-	version=25,
+	version=25.1,
 --========================options==============================
+	loaded_objects=0,
 	spawning=true,					--spawning by self
 	character_model="aliveai_character.b3d",		--character model
 	character_preview_model="aliveai_preview_character.obj",	--character model

@@ -138,16 +138,24 @@ aliveai.create_bot=function(def)
 		end
 	end
 
-	aliveai.registered_bots[def.name]={
+	aliveai.registered_bots[def.mod_name ..":" .. def.name]={
+		dmg=def.dmg or 1,
+		hp=def.hp or 20,
+		team=def.team or "Sam",
+		description=def.description or "No description able",
 		name=def.name,
 		mod_name=def.mod_name,
 		bot=def.mod_name ..":" .. def.name,
 		type=def.type or "npc",
 		item=def.mod_name ..":" .. def.name .. "_spawner",
 		textures=def.texture,
-		dead="",
 		spawn_y=def.spawn_y,
-		team=def.team or aliveai.default_team
+		team=def.team or aliveai.default_team,
+		start_with_items=def.start_with_items or "",
+		floating=def.floating or 0,
+		attacking=def.attacking or 0,
+		light=def.light or 1,
+		mindamage=def.mindamage or 0,
 	}
 
 if not def.visual or def.visual=="mesh" then
@@ -622,12 +630,6 @@ end
 
 
 aliveai.loaded=function(name)
-	if not aliveai.loaded_objects then
-		aliveai.loaded_objects=0
-		minetest.after(5, function()
-			aliveai.loaded_objects=nil
-		end)
-	end
 	aliveai.loaded_objects=aliveai.loaded_objects+1
 	print("[aliveai] loaded " .. aliveai.loaded_objects .. ": " .. name)
 end

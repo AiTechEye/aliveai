@@ -1,3 +1,165 @@
+minetest.register_tool("aliveai:book", {
+	description = "The Ai Book",
+	range=15,
+	inventory_image = "aliveai_book.png",
+	on_use=function(itemstack, user, pointed_thing)
+		local pos=user:get_pos()
+		local pos2=pointed_thing.under
+		local item=itemstack:to_table()
+		local save
+		local meta=minetest.deserialize(item.metadata) or {bots={},selected="",pages=0,selected_num=0}
+		local bots={}
+		for i, b in ipairs(meta.bots) do
+			bots[b]=1
+		end
+		if pointed_thing.type=="node" and aliveai.group(pointed_thing.under,"aliveai")>0 and not bots[minetest.get_node(pointed_thing.under).name] then
+			bots[minetest.get_node(pointed_thing.under).name]=1
+			if meta.selected=="" then
+				meta.selected=minetest.get_node(pointed_thing.under).name
+			end
+			save=true
+		elseif pointed_thing.type=="object" and aliveai.is_bot(pointed_thing.ref) and not bots[pointed_thing.ref:get_luaentity().name] then
+			bots[pointed_thing.ref:get_luaentity().name]=1
+			meta.selected=pointed_thing.ref:get_luaentity().name
+			save=true
+		else
+			for _, ob in ipairs(minetest.get_objects_inside_radius(pos,5)) do
+				if aliveai.is_bot(ob) and not bots[ob:get_luaentity().name] and aliveai.visiable(pos,ob) then
+					bots[ob:get_luaentity().name]=1
+					meta.selected=ob:get_luaentity().name
+					save=true
+				end
+			end
+		end
+		if save then
+			local sbots={}
+			local num=0
+			for b, n in pairs(bots) do
+				num=num+1
+				table.insert(sbots,b)
+				if meta.selected_num==0 and b==meta.selected then
+					meta.selected_num=num
+				end
+				meta.pages=num
+			end
+			meta.bots=sbots
+			item.metadata=minetest.serialize(meta)
+			itemstack:replace(item)
+			minetest.chat_send_player(user:get_player_name(), "Book: New content added")
+		end
+		aliveai.view_book(user,meta)
+		return itemstack
+	end,
+})
+
+aliveai.view_book=function(user,meta)
+	table.sort(meta.bots)
+	local list=""
+	local c=""
+	local name=user:get_player_name()
+	local a=aliveai.registered_bots[meta.selected]
+	for i, bot in ipairs(meta.bots) do
+		list=list .. c .. bot
+		c=","
+	end
+
+	local gui="size[10,8]"
+	.."background[-0.2,-0.2;10.4,8.6;gui_formbg.png]"
+	.. "label[8,0;Page: " .. meta.selected_num.. "/" .. meta.pages .. " (" .. aliveai.loaded_objects ..")]"
+	.."dropdown[0,-0.1;3,1;list;" .. list.. ";" .. meta.selected_num .."]"
+	.."button[3,-0.2;1,1;bac;<]"
+	.."button[4,-0.2;1,1;fro;>]"
+
+	if a then
+		local light="light"
+		local flying="true"
+		local drops="none"
+		local aggressive="false"
+		if a.floating==0 then
+			flying="false"
+		end
+		if a.attacking==1 then
+			aggressive="true"
+		end
+		if a.light<0 then
+			light="darknes"
+		elseif a.light==0 then
+			light="light and darknes"
+		end
+		if type(a.start_with_items)=="table" then
+			drops=""
+			local rit
+			for it, c in pairs(a.start_with_items) do
+				rit=it
+				if minetest.registered_items[it] then
+					rit=minetest.registered_items[it].description
+				end
+				drops=drops .. rit .." " .. c ..", "
+			end
+		end
+		gui=gui
+		.. "label[0,0.5;"
+		.."Name: " .. a.name .."\n"
+		.."Type: " .. a.type .."\n"
+		.."Team: " .. a.team .."\n"
+		.."Health: " .. a.hp .."\n"
+		.."Damage: " .. a.dmg .."\n"
+		.."Durability: " .. a.mindamage .."\n"
+		.."Drops: " .. drops .."\n"
+		.."Flying: " .. flying .."\n"
+		.."Aggressive: " .. aggressive .."\n"
+		.."Thrive in " .. light .."\n\n"
+		.. a.description
+		.."]"
+		.."item_image[5.5,0.5;5,5;" .. a.item .. "]"
+	else
+		gui=gui .. "label[0,0.5;\nEmpty Ai Book\n\nPunch one or use the book near AI to add.\nBlocks too.]"
+	end
+	minetest.after(0, function(gui)
+		return minetest.show_formspec(name, "aliveai.book",gui)
+	end, gui)
+end
+
+
+
+minetest.register_on_player_receive_fields(function(player, form, pressed)
+	if form=="aliveai.book" then
+		if pressed.quit then
+			return
+		end
+		local item=player:get_wielded_item():to_table()
+		local meta=minetest.deserialize(item.metadata) or {bots={},selected=""}
+		if not meta.pages or meta.pages==0 then return end
+		table.sort(meta.bots)
+		if pressed.fro then
+			meta.selected_num=meta.selected_num+1
+			if meta.selected_num>meta.pages then
+				meta.selected_num=1
+			end
+			meta.selected=meta.bots[meta.selected_num]
+		elseif pressed.bac then
+			meta.selected_num=meta.selected_num-1
+			if meta.selected_num<1 then
+				meta.selected_num=meta.pages
+			end
+			meta.selected=meta.bots[meta.selected_num]
+		elseif pressed.list then
+			meta.selected=pressed.list
+			for i, b in ipairs(meta.bots) do
+				if b==meta.selected then
+					meta.selected_num=i
+					break
+				end
+			end
+		end
+		item.metadata=minetest.serialize(meta)
+		player:get_inventory():set_stack("main", player:get_wield_index(),item)
+		aliveai.view_book(player,meta)
+	end
+end)
+
+
+
 aliveai.crafttools=function(self,t)
 	if self.crafting~=1 or math.random(1,10)~=1 then return end
 	if type(self.tools)=="table" then return end

@@ -45,6 +45,48 @@ minetest.register_craft({			-- right click to see
 		{"","default:steel_ingot",""},
 	}
 })
+--[[
+Was meant to marge books content, but still returns one old by no reason
+
+minetest.register_craft_predict(function(itemstack, player, old_craft_grid, craft_inv)
+	if itemstack:get_name()=="aliveai:book" then
+		local b={}
+		local c
+		for i, it in pairs(old_craft_grid) do
+			if it:get_name()=="aliveai:book" then
+				table.insert(b,it)
+				c=1
+			end
+		end
+		if c then
+			local bo={}
+			local bots={}
+			local num=0
+			local selected=""
+			for i, it in ipairs(b) do
+				local meta=minetest.deserialize(it:to_table().metadata) or {bots={},selected="",pages=1,selected_num=0}
+				for ii, iit in ipairs(meta.bots) do
+					bots[iit]=1
+				end
+			end
+			for i, it in pairs(bots) do
+				num=num+1
+				table.insert(bo,i)
+				if selected=="" then
+					selected=i
+				end
+			end
+			local item=itemstack:to_table()
+			item.metadata=minetest.serialize({bots=bo,selected=selected,pages=num,selected_num=1})
+			local a=ItemStack(item)
+			itemstack:replace(item)
+		return a
+		end
+	end
+	return itemstack
+end)
+--]]
+
 
 minetest.register_craft({			-- right click to see
 	output = "aliveai:protector",
