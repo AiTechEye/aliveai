@@ -1,51 +1,56 @@
 minetest.register_tool("aliveai:book", {
-	description = "The Ai Book",
+	description = "Ai Book",
 	range=15,
 	inventory_image = "aliveai_book.png",
 	on_use=function(itemstack, user, pointed_thing)
 		local pos=user:get_pos()
+		local name=user:get_player_name()
 		local pos2=pointed_thing.under
 		local item=itemstack:to_table()
 		local save
-		local meta=minetest.deserialize(item.metadata) or {bots={},selected="",pages=0,selected_num=0,user=user:get_player_name()}
-		local bots={}
-		for i, b in ipairs(meta.bots) do
-			bots[b]=1
-		end
-		if pointed_thing.type=="node" and aliveai.group(pointed_thing.under,"aliveai")>0 and not bots[minetest.get_node(pointed_thing.under).name] then
-			bots[minetest.get_node(pointed_thing.under).name]=1
-			if meta.selected=="" then
-				meta.selected=minetest.get_node(pointed_thing.under).name
+		local meta=minetest.deserialize(item.metadata) or {bots={},selected="",pages=0,selected_num=0,user=name,description="Ai Book by ".. name}
+
+		if meta.user==name then
+			local bots={}
+			for i, b in ipairs(meta.bots) do
+				bots[b]=1
 			end
-			save=true
-		elseif pointed_thing.type=="object" and aliveai.is_bot(pointed_thing.ref) and not bots[pointed_thing.ref:get_luaentity().name] then
-			bots[pointed_thing.ref:get_luaentity().name]=1
-			meta.selected=pointed_thing.ref:get_luaentity().name
-			save=true
-		else
-			for _, ob in ipairs(minetest.get_objects_inside_radius(pos,5)) do
-				if aliveai.is_bot(ob) and not bots[ob:get_luaentity().name] and aliveai.visiable(pos,ob) then
-					bots[ob:get_luaentity().name]=1
-					meta.selected=ob:get_luaentity().name
-					save=true
+			if pointed_thing.type=="node" and aliveai.group(pointed_thing.under,"aliveai")>0 and not bots[minetest.get_node(pointed_thing.under).name] then
+				bots[minetest.get_node(pointed_thing.under).name]=1
+				if meta.selected=="" then
+					meta.selected=minetest.get_node(pointed_thing.under).name
+				end
+				save=true
+			elseif pointed_thing.type=="object" and aliveai.is_bot(pointed_thing.ref) and not bots[pointed_thing.ref:get_luaentity().name] then
+				bots[pointed_thing.ref:get_luaentity().name]=1
+				meta.selected=pointed_thing.ref:get_luaentity().name
+				save=true
+			else
+				for _, ob in ipairs(minetest.get_objects_inside_radius(pos,5)) do
+					if aliveai.is_bot(ob) and not bots[ob:get_luaentity().name] and aliveai.visiable(pos,ob) then
+						bots[ob:get_luaentity().name]=1
+						meta.selected=ob:get_luaentity().name
+						save=true
+					end
 				end
 			end
-		end
-		if save then
-			local sbots={}
-			local num=0
-			for b, n in pairs(bots) do
-				num=num+1
-				table.insert(sbots,b)
-				if meta.selected_num==0 and b==meta.selected then
-					meta.selected_num=num
+			if save then
+				local sbots={}
+				local num=0
+				for b, n in pairs(bots) do
+					num=num+1
+					table.insert(sbots,b)
+					if meta.selected_num==0 and b==meta.selected then
+						meta.selected_num=num
+					end
+					meta.pages=num
 				end
-				meta.pages=num
+				meta.bots=sbots
+				item.meta={description="Ai Book by ".. name}
+				item.metadata=minetest.serialize(meta)
+				itemstack:replace(item)
+				minetest.chat_send_player(user:get_player_name(), "Book: New content added")
 			end
-			meta.bots=sbots
-			item.metadata=minetest.serialize(meta)
-			itemstack:replace(item)
-			minetest.chat_send_player(user:get_player_name(), "Book: New content added")
 		end
 		aliveai.view_book(user,meta)
 		return itemstack
