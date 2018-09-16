@@ -996,8 +996,8 @@ aliveai.spawnerform=function(player,pos)
 		end
 	for i, v in pairs(aliveai.registered_bots) do
 		nn=nn+1
-		list=list .. "," .. v.name
-		if v.name==bot then
+		list=list .. "," .. v.bot
+		if v.bot==bot then
 			nn_n=nn
 			but="item_image_button[2.7,0.5;1,1;".. v.item ..";imgbut;]"
 		end
@@ -1072,7 +1072,7 @@ minetest.register_node("aliveai:spawner", {
 			local y=0
 			for i, v in pairs(aliveai.registered_bots) do
 			if v.type=="npc" and (a or math.random(1,4)==1) then
-					bot=v.name
+					bot=v.bot
 					y=v.spawn_y
 					a=false
 				end
@@ -1083,7 +1083,7 @@ minetest.register_node("aliveai:spawner", {
 		if n>aliveai.active_num then
 			meta:set_int("reach",0) 
 			if aliveai.mesecons and mese==5 then return true end
-			local b=minetest.add_entity({x=pos.x,y=pos.y+1,z=pos.z}, aliveai.registered_bots[bot].bot)
+			local b=minetest.add_entity({x=pos.x,y=pos.y+1,z=pos.z}, bot)
 			b:set_yaw(math.random(0,6.28))
 			if team~="" then b:get_luaentity().team=meta:get_string("team") end
 			b:set_properties({nametag=b:get_luaentity().botname,nametag_color="#" ..  color})
@@ -1122,7 +1122,7 @@ minetest.register_node("aliveai:spawner", {
 				local y=0
 				for i, v in pairs(aliveai.registered_bots) do
 				if v.type=="npc" and (a or math.random(1,4)==1) then
-						bot=v.name
+						bot=v.bot
 						y=v.spawn_y
 						a=false
 					end
@@ -1130,7 +1130,7 @@ minetest.register_node("aliveai:spawner", {
 				pos.y=pos.y+y
 			end
 			if aliveai.registered_bots[bot] and n>aliveai.active_num and mese==3 then
-				local b=minetest.add_entity({x=pos.x,y=pos.y+1,z=pos.z}, aliveai.registered_bots[bot].bot)
+				local b=minetest.add_entity({x=pos.x,y=pos.y+1,z=pos.z}, bot)
 				b:set_yaw(math.random(0,6.28))
 				if team~="" then b:get_luaentity().team=meta:get_string("team") end
 				b:set_properties({nametag=b:get_luaentity().botname,nametag_color="#" ..  color})
