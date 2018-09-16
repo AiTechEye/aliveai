@@ -23,6 +23,7 @@ minetest.register_tool("aliveai:terminal", {
 	range=15,
 	inventory_image = "aliveai_terminal.png",
 	on_use=function(itemstack, user, pointed_thing)
+		if not user or type(user)~="userdata" then return end
 		local name=user:get_player_name()
 		if minetest.check_player_privs(name, {aliveai=true})==false then
 			itemstack:replace(nil)
@@ -55,6 +56,7 @@ minetest.register_on_leaveplayer(function(player)
 end)
 
 aliveai.show_terminal=function(user,a)
+	if not user or type(user)~="userdata" then return end
 	local name=user:get_player_name()
 
 	if a and not aliveai.terminal_users[name].live_status then
