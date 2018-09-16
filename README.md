@@ -1,3 +1,20 @@
+<br><br>
+<details>
+<summary>To do list:</summary>
+  
+#### progress
+- [x] spawn / gen buildnings
+- [ ] replace the old converting/storage system, its very limeted
+- [x] ai book
+- [ ] generate villages
+#### wish to do:
+- [ ] ai chat learing
+- [ ] use cotton/wheat
+- [ ] use furnaces
+- [ ] new "need" system (let bots know what they need to dig) the corrently system only alows bots to collect and build 1 house/thing at time
+</details>
+
+
 # Advanced survuver AI mobs Mod for minetest
 
 ## compatible with minetest 0.4.16 and newer
@@ -29,16 +46,3 @@ they can aslo buy things using smartshop
 make them to a guard:
 right click a npc with a diamond, this makes them stay around the position.
 useful to keep monsters and enemies away.
-
-# To do list:
-
-#### is working on
-- [x] spawn / gen buildnings
-- [ ] replace the old converting/storage system, its very limeted
-- [x] ai book
-- [ ] generate villages
-#### wish to do:
-- [ ] ai chat learing
-- [ ] use cotton/wheat
-- [ ] use furnaces
-- [ ] new "need" system (let bots know what they need to dig) the corrently system only alows bots to collect and build 1 house/thing at time
