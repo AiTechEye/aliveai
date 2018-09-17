@@ -3,13 +3,11 @@
 
 minetest.register_chatcommand("aliveai", {
 	params = "",
-	description = "aliveai settings",
+	description = "aliveai terminal",
 	privs = {aliveai=true},
 	func = function(name, param)
 		local user=minetest.get_player_by_name(name)
-		if user then
-			aliveai.show_terminal()
-		end
+		minetest.registered_items["aliveai:terminal"].on_use(1,user,{type=""})
 	end
 })
 
@@ -58,7 +56,6 @@ end)
 aliveai.show_terminal=function(user,a)
 	if not user or type(user)~="userdata" then return end
 	local name=user:get_player_name()
-
 	if a and not aliveai.terminal_users[name].live_status then
 		return
 	end
