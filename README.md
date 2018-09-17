@@ -1,3 +1,12 @@
+<a href="https://forum.minetest.net/viewtopic.php?f=11&t=16083">
+The "AI Book"  <img src="https://raw.githubusercontent.com/AiTechEye/aliveai/master/aliveai/textures/aliveai_book.png"> is just added, use it on or near AI/bots/blocks to add them (add a page about them) to the book.
+But to fill the book you have to travel around in the world to find them, but what happens when you collected all?
+  
+Vote here!
+</a>
+
+
+
 <br><br>
 <details>
 <summary>To do list:</summary>
