@@ -450,7 +450,7 @@ aliveai.invadd=function(self,add,num,nfeedback)
 				if tool.damage_groups and tool.damage_groups.fleshy and tool.damage_groups.fleshy> self.dmg then
 					self.dmg=tool.damage_groups.fleshy
 				end
-			elseif minetest.registered_craftitems[add].on_use then
+			elseif minetest.registered_craftitems[add].on_use and minetest.get_item_group(add,"aliveai_eatable")==0 then
 				self.tools={add}
 				self.tool_near=1
 				self.savetool=1
@@ -1044,7 +1044,7 @@ aliveai.use=function(self)
 	for i, name in pairs(self.tools) do
 		n=n+1
 		if n==self.tool_index then
-			if not (minetest.registered_tools[name] and minetest.registered_tools[name].on_use) then print("error: the tool to use have no .on_use() function") return self end
+			if not (minetest.registered_tools[name] and minetest.registered_tools[name].on_use) then print("error: tried to use " .. name .." as a tool, but doesn't have the on_use() function") return self end
 			tool=name
 		end
 		inv:set_stack("main", n, ItemStack(name .. " " .. 1))
