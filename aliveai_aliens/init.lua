@@ -10,13 +10,17 @@ aliveai_aliens.set_color=function(self)
 	})
 end
 
-aliveai_aliens.gen_color=function(self)
+aliveai_aliens.gen_color=function(self,retry)
 	local c=""
 	local n=0
 	local t="0123456789ABCDEF"
   	for i=1,6,1 do
         		n=math.random(1,16)
        		c=c .. string.sub(t,n,n)
+	end
+	if type(c)~="string" then
+		if retry then return end
+		aliveai_aliens.gen_color(self,1)
 	end
 	self.save__acolor=c .. "55"
 	aliveai_aliens.set_color(self)
