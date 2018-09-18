@@ -455,7 +455,7 @@ aliveai.light=function(self)
 			aliveai.rndwalk(self)
 			return self
 		end
-		local l=minetest.get_node_light(self.object:get_pos())
+		local l=minetest.get_node_light(self.object:get_pos()) or 0
 		if (self.light>0 and l>=self.lowestlight) or (self.light<0 and l<=self.lowestlight) then
 			aliveai.exitpath(self)
 		end
