@@ -12,7 +12,8 @@ Vote here!
 <summary>To do list:</summary>
   
 #### progress
-- [x] spawn / gen buildnings
+- [x] spawn / gen buildnings by mapgen
+- [x] spawn all buildnings from same tool/guy
 - [ ] replace the old converting/storage system, its very limeted
 - [x] ai book
 - [ ] generate villages
