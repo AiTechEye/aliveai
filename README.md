@@ -11,12 +11,14 @@ Vote here!
 <details>
 <summary>To do list:</summary>
   
-#### progress
+#### in progress
 - [x] spawn / gen buildnings by mapgen
 - [x] spawn all buildnings from same tool/gui
 - [ ] replace the old converting/storage system, its very limeted
 - [x] ai book
 - [ ] generate villages
+#### Done
+spawn all buildnings from same tool/gui
 #### wish to do:
 - [ ] ai chat learing
 - [ ] use cotton/wheat
