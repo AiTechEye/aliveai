@@ -22,6 +22,7 @@ aliveai={
 	max_new_bots=10,
 --========================not options==============================
 	delaytime=os.clock(),
+	buildings_spawners={},
 	terminal_users={},
 	bones=minetest.get_modpath("bones"),
 	creative=minetest.settings:get("creative_mode"),

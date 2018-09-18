@@ -11,6 +11,12 @@ minetest.register_chatcommand("aliveai", {
 	end
 })
 
+
+minetest.register_privilege("aliveai_buildings_spawning", {
+	description = "Can use aliveai buildings_spawning",
+	give_to_singleplayer= false,
+})
+
 minetest.register_privilege("aliveai", {
 	description = "Can use aliveai terminal",
 	give_to_singleplayer= false,
@@ -24,11 +30,12 @@ minetest.register_tool("aliveai:terminal", {
 		if not user or type(user)~="userdata" then return end
 		local name=user:get_player_name()
 		if minetest.check_player_privs(name, {aliveai=true})==false then
-			itemstack:replace(nil)
+			if type(itemstack)=="userdata" then
+				itemstack:replace(nil)
+			end
 			minetest.chat_send_player(name,"You are unallowed to use this tool")
 			return itemstack
 		end
-
 
 		if not aliveai.terminal_users[name] then
 			aliveai.terminal_users[name]={botname=""}

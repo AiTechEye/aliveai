@@ -126,6 +126,71 @@ aliveai.view_book=function(user,meta)
 end
 
 
+aliveai.register_buildings_spawner=function(name,def)
+	aliveai.buildings_spawners[minetest.get_current_modname() .. "." .. name]={
+		name=name,
+		mod=minetest.get_current_modname(),
+		on_use=def.on_use,
+		on_place=def.on_place
+	}
+end
+
+minetest.register_tool("aliveai:buildings_spawner", {
+	description = "Buildings spawner",
+	range=15,
+	inventory_image = "aliveai_buildings_spawner.png",
+	on_use=function(itemstack, user, pointed_thing)
+		aliveai.show_buildings_spawner(itemstack, user, pointed_thing)
+		return itemstack
+	end,
+	on_place=function(itemstack, user, pointed_thing)
+		aliveai.show_buildings_spawner(itemstack, user, pointed_thing,true)
+		return itemstack
+	end,
+})
+
+aliveai.show_buildings_spawner=function(itemstack, user, pointed_thing,place)
+		if not user or type(user)~="userdata" then return end
+		local name=user:get_player_name()
+		if minetest.check_player_privs(name, {aliveai_buildings_spawning=true})==false then
+			if type(itemstack)=="userdata" then
+				itemstack:replace(nil)
+			end
+			minetest.chat_send_player(name,"You are unallowed to use this tool")
+			return itemstack
+		end
+		local use=":on_use"
+		if place then
+			use=":on_place"
+		end
+		local gui="size[10,8]"
+		local x,y=0,0
+		local l=0
+		for i, v in pairs(aliveai.buildings_spawners) do
+			if (not place and v.on_use) or (place and v.on_place) then
+				l=string.len(v.name)
+				if l<5 then
+					l=1
+				elseif l<15 then
+					l=2
+				else
+					l=3	
+				end
+				gui=gui .. "tooltip[" .. v.mod .."." .. v.name .. use ..";" .. v.name .."]"
+				.. "button[" .. x .."," .. y .. ";" .. l ..",1;" .. v.mod .."." .. v.name .. use ..";" .. v.name .."]"
+				x=x+l
+				if x>10 then
+					x=0
+					y=y+1
+				end
+
+			end
+		end
+		aliveai.terminal_users[user:get_player_name()]={itemstack=itemstack,user=user,pointed_thing=pointed_thing}
+		minetest.after(0, function(gui)
+			return minetest.show_formspec(name, "aliveai.buildings_spawner",gui)
+		end, gui)
+end
 
 minetest.register_on_player_receive_fields(function(player, form, pressed)
 	if form=="aliveai.book" then
@@ -160,6 +225,23 @@ minetest.register_on_player_receive_fields(function(player, form, pressed)
 		item.metadata=minetest.serialize(meta)
 		player:get_inventory():set_stack("main", player:get_wield_index(),item)
 		aliveai.view_book(player,meta)
+	elseif form=="aliveai.buildings_spawner" then
+		local name=player:get_player_name()
+		if pressed.quit or not aliveai.terminal_users[name] then
+			aliveai.terminal_users[name]=nil
+			return
+		end
+		local na
+		local s
+		for name, v in pairs(pressed) do
+			na=name
+			break
+		end
+		s=na.split(na,":")
+		if s and s[2] and aliveai.buildings_spawners[s[1]] then
+			local a=aliveai.terminal_users[name]
+			aliveai.buildings_spawners[s[1]][s[2]](a.itemstack,a.user,a.pointed_thing)
+		end
 	end
 end)
 
@@ -1088,11 +1170,8 @@ aliveai.createuser=function(self,index)
 	}
 end
 
-minetest.register_tool("aliveai:copy", {
-	description = "Copy building tool",
-	range = 7,
-	inventory_image = "default_stick.png^[colorize:#ffff00aa",
-	groups={not_in_creative_inventory = aliveai.tools,},
+
+aliveai.register_buildings_spawner("Copy building",{
 		on_use = function(itemstack, user, pointed_thing)
 			if pointed_thing.type=="node" then
 				aliveai.form(user:get_player_name())
@@ -1165,34 +1244,28 @@ minetest.register_tool("aliveai:copy", {
 		end
 })
 
-minetest.register_tool("aliveai:genbuildingtool", {
-	description = "Generate building tool",
-	range = 7,
-	inventory_image = "default_stick.png^[colorize:#ff0000aa",
-	groups={not_in_creative_inventory = aliveai.tools,},
-		on_use = function(itemstack, user, pointed_thing)
-			if pointed_thing.type=="node" then
-				local pos=pointed_thing.above
-				local name=user:get_player_name()
-				for y=0,7,1 do
-				for x=0,10,1 do
-				for z=0,10,1 do
-					local p={x=pos.x+x,y=pos.y+y,z=pos.z+z}
-					local node=minetest.get_node(p)
-					if not node then
-						minetest.set_node(p,{name="air"})
-						node=minetest.get_node(p)
-					end
-					if minetest.registered_nodes[node.name].buildable_to==false or minetest.is_protected(p,name) then
-						minetest.chat_send_player(name, "aliveai: area not able: " .. node.name)
-						return itemstack
-					end
+aliveai.register_buildings_spawner("Generate building",{
+	on_use=function(itemstack, user, pointed_thing)
+		if pointed_thing.type=="node" then
+			local pos=pointed_thing.above
+			local name=user:get_player_name()
+			for y=0,7,1 do
+			for x=0,10,1 do
+			for z=0,10,1 do
+				local p={x=pos.x+x,y=pos.y+y,z=pos.z+z}
+				local node=minetest.get_node(p)
+				if not node then
+					minetest.set_node(p,{name="air"})
+					node=minetest.get_node(p)
 				end
+				if minetest.registered_nodes[node.name].buildable_to==false or minetest.is_protected(p,name) then
+					minetest.chat_send_player(name, "aliveai: area not able: " .. node.name)
+					return itemstack
 				end
-				end
-				aliveai.generate_house(pos)
 			end
+			end
+			end
+			aliveai.generate_house(pos)
 		end
+	end
 })
-
-
