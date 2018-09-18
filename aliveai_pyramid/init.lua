@@ -44,13 +44,8 @@ aliveai.create_bot({
 	end,
 })
 
-
-minetest.register_tool("aliveai_pyramid:spawner", {
-	description = "pyramid spawner",
-	range=15,
-	groups={not_in_creative_inventory=1},
-	inventory_image = "default_stick.png",
-	on_use = function(itemstack, user, pointed_thing)
+aliveai.register_buildings_spawner("Pyramid",{
+	on_use=function(itemstack, user, pointed_thing)
 		if pointed_thing.type=="node" then
 			aliveai_pyramid.gen(pointed_thing.above)
 		end
