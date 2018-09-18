@@ -1,15 +1,14 @@
 aliveai_threats.fort={furnishings={"aliveai_threats:toxic_tank","aliveai_threats:labbottle_containing","aliveai_threats:timed_bumb","aliveai_threats:timed_nitrobumb","aliveai_threat_eletric:timed_ebumb","aliveai_threats:landmine","aliveai_threats:deadlock","aliveai_massdestruction:nuclearbarrel"},}
 
-minetest.register_tool("aliveai_threats:fortspawner", {
-	description = "fort spawner",
-	range=15,
-	groups={not_in_creative_inventory=1},
-	inventory_image = "default_stick.png",
-	on_use = function(itemstack, user, pointed_thing)
+
+aliveai.register_buildings_spawner("Fort",{
+	on_use=function(itemstack, user, pointed_thing)
 		if pointed_thing.type=="node" then
 			aliveai_threats.fort.spawning(pointed_thing.under,1)
 		end
 	end,
+	on_place=function(itemstack, user, pointed_thing)
+	end
 })
 
 aliveai.register_rndcheck_on_generated({	

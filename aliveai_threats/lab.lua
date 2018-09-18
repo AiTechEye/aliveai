@@ -4,22 +4,19 @@ aliveai_threats.lab={
 		cam={"aliveai_threats:secam","aliveai_threats:secam2","aliveai_threat_eletric:secam"}
 		}
 
-minetest.register_tool("aliveai_threats:labspawner", {
-	description = "labspawner",
-	range=15,
-	groups={not_in_creative_inventory=1},
-	inventory_image = "default_stick.png",
-	on_use = function(itemstack, user, pointed_thing)
+aliveai.register_buildings_spawner("Lab",{
+	on_use=function(itemstack, user, pointed_thing)
 		if pointed_thing.type=="node" then
 			aliveai_threats.lab.spawning(pointed_thing.under,1)
 		end
 	end,
-	on_place = function(itemstack, user, pointed_thing)
+	on_place=function(itemstack, user, pointed_thing)
 		if pointed_thing.type=="node" then
 			aliveai_threats.lab.gen_stair2(pointed_thing.above)
 		end
 	end
 })
+
 
 aliveai.register_rndcheck_on_generated({
 	node="default:stone_with_coal",
