@@ -595,6 +595,12 @@ aliveai.register_rndcheck_on_generated({
 	end
 })
 end
+aliveai.register_buildings_spawner("UFO",{
+	on_use=function(itemstack, user, pointed_thing)
+		local pos=user:get_pos()
+		minetest.place_schematic({x=pos.x-15,y=pos.y,z=pos.z-15}, minetest.get_modpath("aliveai_aliens").."/schematics/ufo.mts", "random", {}, true)
+	end,
+})
 
 aliveai.register_rndcheck_on_generated({
 	node="air",
