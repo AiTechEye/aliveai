@@ -19,19 +19,15 @@ aliveai_aliens.gen_color=function(self,retry)
        		c=c .. string.sub(t,n,n)
 	end
 	if type(c)~="string" then
-		if retry then return end
+		if retry then
+			self.save__acolor="ffffff55"
+			aliveai_aliens.set_color(self)
+			return
+		end
 		aliveai_aliens.gen_color(self,1)
 	end
 	self.save__acolor=c .. "55"
 	aliveai_aliens.set_color(self)
-
-	local p=self.object:get_pos()
-	p={x=p.x,y=p.y+math.random(15,30),z=p.z}
-	local fn = minetest.registered_nodes[minetest.get_node(p).name]
-	if fn and fn.buildable_to and minetest.is_protected(p,"")==false then
-		minetest.set_node(p,{name="aliveai_aliens:asteroid"})
-	end
-
 end
 
 aliveai.create_bot({
