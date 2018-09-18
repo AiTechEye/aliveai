@@ -28,7 +28,7 @@ minetest.register_on_item_eat=function(hp_change, replace_with_item, itemstack, 
 	if not aliveai.food[a] and hp_change>0 and minetest.get_item_group(a,"aliveai_eatable")==0 then
 		aliveai.food[a]=hp_change
 		aliveai.save("food",aliveai.food)
-		minetest.override_item(a, {groups={aliveai_eatable=hp_change}})
+		minetest.override_item(a, {groups={aliveai_eatable=hp_change,dig_immediate=3}})
 	end
 	
 end
@@ -39,7 +39,7 @@ minetest.after(0, function()
 		aliveai.food=f
 		for i, v in pairs(aliveai.food) do
 			if minetest.registered_nodes[i] then
-				minetest.override_item(i, {groups={aliveai_eatable=v}})
+				minetest.override_item(i, {groups={aliveai_eatable=v,dig_immediate=3}})
 			end
 		end
 	else
