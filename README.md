@@ -15,14 +15,14 @@ Vote here!
 - [x] spawn / gen buildnings by mapgen
 - [ ] replace the old converting/storage system, its very limeted
 - [x] ai book
-- [ ] generate villages
 #### Done
 spawn all buildnings from same tool/gui
 #### wish to do:
-- [ ] ai chat learing
-- [ ] use cotton/wheat
-- [ ] use furnaces
-- [ ] new "need" system (let bots know what they need to dig) the corrently system only alows bots to collect and build 1 house/thing at time
+generate villages<br>
+ai chat learing<br>
+use cotton/wheat<br>
+use furnaces<br>
+new "need" system (let bots know what they need to dig) the corrently system only alows bots to collect and build 1 house/thing at time
 </details>
 
 
