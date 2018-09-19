@@ -1,6 +1,7 @@
 aliveai_storm={time=tonumber(minetest.settings:get("item_entity_ttl")),hails=0,max_hails=20}
 
 aliveai.create_bot({
+		description="Using its whirlwind based power to throw everything up in the sky",
 		drop_dead_body=0,
 		attack_players=1,
 		name="storm",
@@ -60,6 +61,7 @@ aliveai.create_bot({
 
 
 aliveai.create_bot({
+		description="Creates hails",
 		drop_dead_body=0,
 		attack_players=1,
 		name="hail1",
@@ -80,6 +82,7 @@ aliveai.create_bot({
 })
 
 aliveai.create_bot({
+		description="Creates destroying hails",
 		drop_dead_body=0,
 		attack_players=1,
 		name="hail2",
