@@ -16,6 +16,7 @@ aliveai_pyramid={
 }
 
 aliveai.create_bot({
+		description="Old immortal mummy",
 		attack_players=1,
 		name="mummy",
 		team="pyramid",
@@ -32,10 +33,9 @@ aliveai.create_bot({
 		arm=2,
 		smartfight=0,
 		damage_by_blocks=0,
+		mindamage=100,
 		spawn_on={"aliveai_pyramid:stone2"},
-	on_punched=function(self,puncher)
-		self.hp=self.hp_max
-	end,
+		spawn_chance=100,
 	on_load=function(self)
 		self.move.speed=0.2
 	end,
