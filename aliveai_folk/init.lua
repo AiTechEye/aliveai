@@ -1,6 +1,9 @@
-aliveai.create_bot()	-- standard bot
+aliveai.create_bot({	-- standard bot
+		description="The default npc"
+})
 
 aliveai.create_bot({
+		description="Alone survival npc",
 		attack_players=1,
 		name="jezy",
 		team="jezy",
@@ -10,24 +13,29 @@ aliveai.create_bot({
 })
 
 aliveai.create_bot({
+		description="Low range npc",
 		name="folk1",
 		texture="aliveai_folk1.png",
 		arm=3,
 })
 aliveai.create_bot({
+		description="Regular npc",
 		name="folk2",
 		texture="aliveai_folk2.png",
 })
 aliveai.create_bot({
+		description="Regular npc",
 		name="folk3",
 		texture="aliveai_folk3.png",
 })
 aliveai.create_bot({
+		description="Is sometimes helping other npc",
 		name="folk4",
 		texture="aliveai_folk4.png",
 		work_helper=1,
 })
 aliveai.create_bot({
+		description="Arcane guy",
 		name="folk5",
 		texture="aliveai_folk5.png",
 		light=-1,
@@ -39,18 +47,22 @@ aliveai.create_bot({
 		lowest_light=9,
 })
 aliveai.create_bot({
+		description="Regular npc",
 		name="folk6",
 		texture="aliveai_folk6.png",
 })
 aliveai.create_bot({
+		description="Regular npc",
 		name="folk7",
 		texture="aliveai_folk7.png",
 })
 aliveai.create_bot({
+		description="Regular npc",
 		name="folk8",
 		texture="aliveai_folk8.png",
 })
 aliveai.create_bot({
+		description="Criminal guy",
 		name="folk9",
 		texture="aliveai_folk9.png",
 		hp=30,
@@ -60,23 +72,28 @@ aliveai.create_bot({
 		lowest_light=5,
 })
 aliveai.create_bot({
+		description="Regular npc",
 		name="folk10",
 		texture="aliveai_folk10.png",
 })
 aliveai.create_bot({
+		description="Regular npc",
 		name="folk11",
 		texture="aliveai_folk11.png",
 })
 aliveai.create_bot({
+		description="Regular npc",
 		name="folk12",
 		texture="aliveai_folk12.png",
 })
 aliveai.create_bot({
+		description="Regular npc",
 		name="folk13",
 		texture="aliveai_folk13.png",
 		hp=30,
 })
 aliveai.create_bot({
+		description="A strong and sometimes helpful npc",
 		name="folk14",
 		texture="aliveai_folk14.png",
 		hp=50,
@@ -84,12 +101,14 @@ aliveai.create_bot({
 		work_helper=1,
 })
 aliveai.create_bot({
+		description="Old and litle weaker npc",
 		name="folk15",
 		texture="aliveai_folk15.png",
 		hp=15,
 })
 
 aliveai.create_bot({
+		description="Juggler",
 		name="folk17",
 		texture="aliveai_folk17.png",
 		hp=21,
@@ -135,6 +154,7 @@ aliveai.create_bot({
 })
 
 aliveai.create_bot({
+		description="Commander",
 		name="folk18",
 		texture="aliveai_folk18.png",
 		hp=50,
@@ -151,6 +171,7 @@ aliveai.create_bot({
 })
 
 aliveai.create_bot({
+		description="Little girl",
 		name="folk19",
 		texture="aliveai_folk19.png",
 		hp=10,
@@ -159,6 +180,7 @@ aliveai.create_bot({
 		collisionbox={-0.3,-0.8,-0.3,0.3,0.65,0.3},
 })
 aliveai.create_bot({
+		description="Litle boy",
 		name="folk20",
 		texture="aliveai_folk20.png",
 		hp=10,
@@ -169,6 +191,7 @@ aliveai.create_bot({
 
 
 aliveai.create_bot({
+		description="Npc admin, high damage, and can ban people",
 		name="folk21",
 		texture="character.png^aliveai_folk_admin.png",
 		floating=1,
@@ -190,6 +213,7 @@ aliveai.create_bot({
 		end,
 })
 aliveai.create_bot({
+		description="Alone survival npc",
 		attack_players=1,
 		name="dum",
 		team="jezy",
@@ -199,6 +223,7 @@ aliveai.create_bot({
 })
 
 aliveai.create_bot({
+		description="Odd colored npc",
 		attack_players=1,
 		name="color",
 		team="color",
@@ -238,8 +263,3 @@ aliveai.create_bot({
 			self.object:set_properties({nametag=self.botname,nametag_color="#" .. self.namecolor})
 		end,
 })
-
-
-
-
-
