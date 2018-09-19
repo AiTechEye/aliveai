@@ -1,3 +1,10 @@
+minetest.register_entity("aliveai_massdestruction:bomb2",{
+	on_activate=function(self, staticdata)
+		self.object:remove()
+		return self
+	end,
+})
+
 aliveai_massdestruction={}
 minetest.register_craft({
 	output = "aliveai_massdestruction:walking_bomb 3",
@@ -13,35 +20,6 @@ minetest.register_craft({
 		{"default:steel_ingot","default:mese_crystal","default:steel_ingot"},
 		{"","",""},
 	}
-})
-
-
-if aliveai.spawning then
-minetest.register_abm({
-	nodenames = {"group:sand","default:snow"},
-	interval = 30,
-	chance = 1000,
-	action = function(pos)
-		local pos1={x=pos.x,y=pos.y+1,z=pos.z}
-		local pos2={x=pos.x,y=pos.y+2,z=pos.z}
-		if aliveai.random(1,1000)==1 and minetest.get_node(pos1).name=="air" and minetest.get_node(pos2).name=="air" then
-			minetest.add_entity(pos1, "aliveai_massdestruction:bomb2")
-		end
-	end,
-})
-end
-
-minetest.register_craftitem("aliveai_massdestruction:walking_bomb", {
-	description = "Walking bomb",
-	inventory_image = "aliveai_massdestruction_bomb.png",
-	on_use=function(itemstack, user, pointed_thing)
-		local dir = user:get_look_dir()
-		local pos=user:get_pos()
-		local pos2={x=pos.x+(dir.x*2),y=pos.y+1.5+(dir.y*2),z=pos.z+dir.z*2}
-		minetest.add_entity(pos2, "aliveai_massdestruction:bomb2"):set_velocity({x=dir.x*10,y=dir.y*10,z=dir.z*10})
-		itemstack:take_item()
-		return itemstack
-	end,
 })
 
 if aliveai_electric then
@@ -316,65 +294,33 @@ minetest.register_entity("aliveai_massdestruction:bomb",{
 	aliveaibomb=1
 })
 
-minetest.register_entity("aliveai_massdestruction:bomb2",{
-	hp_max = 10,
-	physical =true,
-	weight = 1,
-	collisionbox = {-0.2,-0.2,-0.2,0.2,0.2,0.2},
-	visual = "sprite",
-	visual_size = {x=0.5,y=0.5},
-	textures ={"aliveai_massdestruction_bomb.png"},
-	colors = {},
-	spritediv = {x=1, y=1},
-	initial_sprite_basepos = {x=0, y=0},
-	is_visible = true,
-	makes_footstep_sound = true,
-	automatic_rotate = false,
-	namecolor="",
-	expl=function(self,pos)
-		minetest.add_particlespawner({
-			amount = 20,
-			time =0.2,
-			minpos = {x=pos.x-1, y=pos.y, z=pos.z-1},
-			maxpos = {x=pos.x+1, y=pos.y, z=pos.z+1},
-			minvel = {x=-5, y=0, z=-5},
-			maxvel = {x=5, y=5, z=5},
-			minacc = {x=0, y=2, z=0},
-			maxacc = {x=0, y=0, z=0},
-			minexptime = 1,
-			maxexptime = 2,
-			minsize = 5,
-			maxsize = 10,
-			texture = "default_item_smoke.png",
-			collisiondetection = true,
-		})
-		self.exp=1
-		aliveai_nitroglycerine.explode(pos,{radius=2,set="air",place={"air","air"}})
-		self.object:set_velocity({x=math.random(-5,5),y=math.random(5,10),z=math.random(-5,5)})
-		self.object:remove()
-	end,
-	on_punch=function(self, puncher, time_from_last_punch, tool_capabilities, dir)
-		local en=puncher:get_luaentity()
-		if not self.exp and tool_capabilities and tool_capabilities.damage_groups and tool_capabilities.damage_groups.fleshy then
-			self.hp=self.hp-tool_capabilities.damage_groups.fleshy
-			self.object:set_hp(self.hp)
-			if dir~=nil then
-				local v={x = dir.x*5,y = self.object:get_velocity().y,z = dir.z*5}
-				self.object:set_velocity(v)
-			end
-		end
-		if self.hp<1 and not self.exp then
-			self.expl(self,self.object:get_pos())
-		end
 
+aliveai.create_bot({
+		description="The walking and jumping bomb is constantly looking for targets to blast",
+		drop_dead_body=0,
+		name="walking_bomb",
+		team="bomb",
+		collisionbox = {-0.2,-0.2,-0.2,0.2,0.2,0.2},
+		visual = "sprite",
+		visual_size = {x=0.5,y=0.5},
+		texture ="aliveai_massdestruction_bomb.png",
+		light=0,
+		type="monster",
+		dmg=0,
+		hp=10,
+		name_color="",
+		spawn_on={"group:sand","default:snow"},
+	spawn=function(self)
+		self.obtimeer=0
+		self.aliveaibomb=1
 	end,
-	on_activate=function(self, staticdata)
-		self.object:set_acceleration({x =0, y =-10, z =0})
-		self.hp=self.object:get_hp()
-		return self
+	on_load=function(self)
+		self.obtimeer=0
+		self.aliveaibomb=1
 	end,
 	on_step=function(self, dtime)
-		self.time=self.time+dtime
+		self.obtimeer=self.obtimeer+0.1
+		self.time=0.1
 		if self.object:get_velocity().y==0 then
 			if self.fight then
 				local pos=self.object:get_pos()
@@ -388,8 +334,8 @@ minetest.register_entity("aliveai_massdestruction:bomb2",{
 			local y=self.object:get_velocity().y
 			if y==0 or y==-0 then self.object:set_velocity({x=0,y=math.random(5,10),z=0}) end
 		end
-		if self.time<1 then return self end
-		self.time=0
+		if self.obtimeer<1 then return self end
+		self.obtimeer=0
 		local pos=self.object:get_pos()
 		local ob1
 		for _, ob in ipairs(minetest.get_objects_inside_radius(pos, 15)) do
@@ -406,19 +352,36 @@ minetest.register_entity("aliveai_massdestruction:bomb2",{
 			vis=aliveai.visiable(pos,pos2)
 		end
 		if aliveai.distance(pos,pos2)<3 and vis then
-			self.expl(self,pos)
+			self.on_blow(self)
 		else
 			self.fight=ob1
 		end
 		return self
 	end,
-	time=0,
-	type="monster",
-	aliveaibomb=1,
-	team="bomb"
+	on_blow=function(self)
+		aliveai.kill(self)
+		self.death(self)
+	end,
+	death=function(self)
+		if self.exp then return end
+		self.exp=1
+		aliveai_nitroglycerine.explode(self.object:get_pos(),{radius=2,set="air",place={"air","air"}})
+		return self
+	end,
 })
 
-
+minetest.register_craftitem("aliveai_massdestruction:walking_bomb", {
+	description = "Walking bomb",
+	inventory_image = "aliveai_massdestruction_bomb.png",
+	on_use=function(itemstack, user, pointed_thing)
+		local dir = user:get_look_dir()
+		local pos=user:get_pos()
+		local pos2={x=pos.x+(dir.x*2),y=pos.y+1.5+(dir.y*2),z=pos.z+dir.z*2}
+		minetest.add_entity(pos2, "aliveai_massdestruction:walking_bomb"):set_velocity({x=dir.x*10,y=dir.y*10,z=dir.z*10})
+		itemstack:take_item()
+		return itemstack
+	end,
+})
 
 minetest.register_node("aliveai_massdestruction:source", {
 	description = "Uranium source",
@@ -740,8 +703,6 @@ minetest.register_node("aliveai_massdestruction:timed_nuke", {
 		minetest.registered_nodes["aliveai_massdestruction:timed_nuke"].on_rightclick(pos)
 	end,
 })
-
-aliveai.loaded("aliveai_massdestruction:walking_bomb")
 
 aliveai.create_bot({
 		description="Blasts it self for any simple reason and creates a black hole",
