@@ -47,6 +47,7 @@ end
 
 
 aliveai.create_bot({
+		description="Trades with players",
 		name="trader",
 		texture="aliveai_trader.png",
 		building=0,
@@ -361,6 +362,7 @@ aliveai_trader.form2=function(self,player)
 end
 
 aliveai.create_bot({
+		description="Works for players",
 		name="worker",
 		texture="aliveai_worker.png",
 		building=0,
