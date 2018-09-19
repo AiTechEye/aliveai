@@ -97,6 +97,7 @@ minetest.register_tool("aliveai_massdestruction:core", {
 
 
 aliveai.create_bot({
+		description="Uranium monster, the most powerful AI/n It minds everything that's in its way and blasting it with its core",
 		drop_dead_body=0,
 		attack_players=1,
 		name="uranium",
@@ -201,6 +202,7 @@ aliveai.create_bot({
 end
 
 aliveai.create_bot({
+		description="The nuker is provoking everyone, in order to get the opportunity to trigger its explosive ability.\nThis thing will speard 50 bombs in the air to destroy its whole environment.",
 		drop_dead_body=0,
 		attack_players=1,
 		name="nuker",
@@ -742,6 +744,7 @@ minetest.register_node("aliveai_massdestruction:timed_nuke", {
 aliveai.loaded("aliveai_massdestruction:walking_bomb")
 
 aliveai.create_bot({
+		description="Blasts it self for any simple reason and creates a black hole",
 		drop_dead_body=0,
 		attack_players=1,
 		name="blackholebot",
@@ -1004,6 +1007,7 @@ minetest.register_node("aliveai_massdestruction:toxicwater", {
 
 
 aliveai.create_bot({
+		description="Pollution monster,blasts it self for any simple reason and pollute its environment",
 		drop_dead_body=0,
 		attack_players=1,
 		name="pollution",
@@ -1052,6 +1056,7 @@ aliveai.create_bot({
 })
 
 aliveai.create_bot({
+		description="The ice bomb, blasts it self for any simple reason and freezing its environment",
 		drop_dead_body=0,
 		attack_players=1,
 		name="icebomb",
@@ -1151,5 +1156,3 @@ aliveai_massdestruction.iceblow=function(pos)
 		})
 	end
 end
-
-
