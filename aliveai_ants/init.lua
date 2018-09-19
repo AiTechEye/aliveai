@@ -67,6 +67,7 @@ aliveai_ants.gen_hill=function(self)
 end
 
 aliveai.create_bot({
+		description="Little hill building ant\nEven its small its still a warrior, and will fight for possible matrelas and carry away everything even its still alive",
 		drop_dead_body=0,
 		attack_players=1,
 		name="ant",
