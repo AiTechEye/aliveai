@@ -68,6 +68,7 @@ minetest.register_craft({
 
 
 aliveai.create_bot({
+		description="Superfast eleltric Terminator",
 		drop_dead_body=0,
 		attack_players=1,
 		name="eletric_terminator3",
@@ -86,6 +87,7 @@ aliveai.create_bot({
 		name_color="",
 		attack_chance=3,
 		damage_by_blocks=0,
+		mindamage=5,
 	on_step=function(self,dtime)
 		if self.fight and aliveai.visiable(self,self.fight) then
 			local p=self.object:get_pos()
@@ -101,11 +103,9 @@ aliveai.create_bot({
 		end
 	end,
 	on_load=function(self)
-		self.hp2=self.object:get_hp()
 		self.move.speed=4
 	end,
 	spawn=function(self)
-		self.hp2=self.object:get_hp()
 		self.move.speed=4
 	end,
 	on_blow=function(self)
@@ -137,12 +137,7 @@ aliveai.create_bot({
 		end
 	end,
 	on_punched=function(self,puncher)
-		if self.hp2-self.hp<5 then
-			self.object:set_hp(self.hp2)
-			self.hp=self.hp2
-			if aliveai.team(puncher)~="nuke" then aliveai_electric.hit(puncher) end
-			return self
-		end
+		if aliveai.team(puncher)~="nuke" then aliveai_electric.hit(puncher) end
 		local pos=self.object:get_pos()
 		minetest.add_particlespawner({
 			amount = 20,
@@ -163,6 +158,7 @@ aliveai.create_bot({
 })
 
 aliveai.create_bot({
+		description="Lightning Terminator",
 		drop_dead_body=0,
 		attack_players=1,
 		name="eletric_terminator",
@@ -180,6 +176,7 @@ aliveai.create_bot({
 		name_color="",
 		attack_chance=3,
 		damage_by_blocks=0,
+		mindamage=5,
 	on_step=function(self,dtime)
 		if self.fight and math.random(1,3)==1 and aliveai.visiable(self,self.fight) and aliveai.viewfield(self,self.fight) then
 			local pos=self.object:get_pos()
@@ -187,12 +184,6 @@ aliveai.create_bot({
 			aliveai.lookat(self,ta)
 			aliveai.use(self)
 		end
-	end,
-	on_load=function(self)
-		self.hp2=self.object:get_hp()
-	end,
-	spawn=function(self)
-		self.hp2=self.object:get_hp()
 	end,
 	on_blow=function(self)
 		aliveai.kill(self)
@@ -229,12 +220,7 @@ aliveai.create_bot({
 		end
 	end,
 	on_punched=function(self,puncher)
-		if self.hp2-self.hp<5 then
-			self.object:set_hp(self.hp2)
-			self.hp=self.hp2
-			if aliveai.team(puncher)~="nuke" then aliveai_electric.hit(puncher) end
-			return self
-		end
+		if aliveai.team(puncher)~="nuke" then aliveai_electric.hit(puncher) end
 		local pos=self.object:get_pos()
 		minetest.add_particlespawner({
 			amount = 20,
@@ -255,6 +241,7 @@ aliveai.create_bot({
 })
 
 aliveai.create_bot({
+		description="Flying lightning Terminator",
 		drop_dead_body=0,
 		attack_players=1,
 		name="eletric_terminator2",
@@ -273,6 +260,7 @@ aliveai.create_bot({
 		attack_chance=3,
 		floating=1,
 		damage_by_blocks=0,
+		mindamage=5,
 	on_step=function(self,dtime)
 		if self.fight and math.random(1,3)==1 and aliveai.visiable(self,self.fight) and aliveai.viewfield(self,self.fight) then
 			local pos=self.object:get_pos()
@@ -280,12 +268,6 @@ aliveai.create_bot({
 			aliveai.lookat(self,ta)
 			aliveai.use(self)
 		end
-	end,
-	on_load=function(self)
-		self.hp2=self.object:get_hp()
-	end,
-	spawn=function(self)
-		self.hp2=self.object:get_hp()
 	end,
 	on_blow=function(self)
 		aliveai.kill(self)
@@ -319,15 +301,10 @@ aliveai.create_bot({
 		aliveai_electric.hit(target,10)
 	end,
 	on_punched=function(self,puncher)
-		if self.hp2-self.hp<5 then
-			self.object:set_hp(self.hp2)
-			self.hp=self.hp2
-			if aliveai.team(puncher)~="nuke" then
-				if aliveai.is_bot(puncher) then aliveai.dying(puncher:get_luaentity(),1) end
-				aliveai.punchdmg(puncher,15)
-				aliveai_electric.hit(puncher)
-			end
-			return self
+		if aliveai.team(puncher)~="nuke" then
+			if aliveai.is_bot(puncher) then aliveai.dying(puncher:get_luaentity(),1) end
+			aliveai.punchdmg(puncher,15)
+			aliveai_electric.hit(puncher)
 		end
 		local pos=self.object:get_pos()
 		minetest.add_particlespawner({
