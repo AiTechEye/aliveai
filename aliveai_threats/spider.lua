@@ -142,6 +142,7 @@ minetest.register_entity("aliveai_threats:fallingtrap",{
 
 
 aliveai.create_bot({
+		description="Aggressive terminator spider",
 		attack_players=1,
 		name="spider_terminator",
 		team="nuke",

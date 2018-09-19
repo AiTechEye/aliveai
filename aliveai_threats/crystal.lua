@@ -29,6 +29,7 @@ if not aliveai_electric then
 end
 
 aliveai.create_bot({
+		description="Growing electric crystals on everyone or everything in its way",
 		attack_players=1,
 		name="crystal",
 		team="crystal",

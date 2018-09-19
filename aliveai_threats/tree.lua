@@ -122,6 +122,7 @@ end
 
 
 aliveai.create_bot({
+		description="Living tree",
 		attack_players=1,
 		name="trees",
 		team="tree",
@@ -144,7 +145,7 @@ aliveai.create_bot({
 		visual_size={x=0.5,y=0.5},
 		smartfight=0,
 		check_spawn_space=0,
-		spawn_chance=500,
+		spawn_chance=300,
 	spawn=function(self)
 		if aliveai_threats.spawn_tree(self)==false then
 			self.object:remove()
