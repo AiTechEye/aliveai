@@ -31,6 +31,7 @@ aliveai_aliens.gen_color=function(self,retry)
 end
 
 aliveai.create_bot({
+		description="The big and strong alien",
 		dmg=15,
 		smartfight=0,
 		visual_size={x=2,y=1.5},
@@ -50,6 +51,7 @@ aliveai.create_bot({
 		attack_players=1,
 		start_with_items={["aliveai_aliens:alien_enginelazer"]=1,["aliveai_aliens:alien_food"]=20},
 		spawn_on={"group:sand","group:spreading_dirt_type","default:gravel","default:stone"},
+		mindamage=2,
 	spawn=function(self)
 		aliveai_aliens.gen_color(self)
 	end,
@@ -82,6 +84,7 @@ aliveai.create_bot({
 
 
 aliveai.create_bot({
+		description="Alien with powerful short range weapon",
 		name="alien1",
 		texture="aliveai_alien1.png",
 		hp=50,
@@ -106,6 +109,7 @@ aliveai.create_bot({
 	end,
 })
 aliveai.create_bot({
+		description="Long range alien",
 		name="alien2",
 		texture="aliveai_alien2.png",
 		hp=50,
@@ -130,6 +134,7 @@ aliveai.create_bot({
 	end,
 })
 aliveai.create_bot({
+		description="Long shooting alien with homing projects",
 		name="alien3",
 		texture="aliveai_alien3.png",
 		hp=50,
@@ -154,6 +159,7 @@ aliveai.create_bot({
 	end,
 })
 aliveai.create_bot({
+		description="Litle alien with sword",
 		name="alien4",
 		texture="aliveai_alien4.png",
 		hp=25,
@@ -183,6 +189,7 @@ aliveai.create_bot({
 })
 
 aliveai.create_bot({
+		description="Long range alien",
 		name="alien5",
 		texture="aliveai_alien5.png",
 		hp=50,
@@ -208,6 +215,7 @@ aliveai.create_bot({
 	end,
 })
 aliveai.create_bot({
+		description="Long shooting alien with homing projects",
 		name="alien6",
 		texture="aliveai_alien6.png",
 		hp=50,
@@ -234,6 +242,7 @@ aliveai.create_bot({
 
 
 aliveai.create_bot({
+		description="Shrinker alien, shrinks its enemies until they disappear",
 		name="alien9",
 		texture="aliveai_alien9.png",
 		hp=50,
@@ -262,6 +271,7 @@ aliveai.create_bot({
 
 
 aliveai.create_bot({
+		description="A floating and long shooting alien, that freezing its enemies",
 		name="alien7",
 		texture="aliveai_alien7.png",
 		floating=1,
