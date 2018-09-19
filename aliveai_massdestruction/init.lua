@@ -97,7 +97,7 @@ minetest.register_tool("aliveai_massdestruction:core", {
 
 
 aliveai.create_bot({
-		description="Uranium monster, the most powerful AI/n It minds everything that's in its way and blasting it with its core",
+		description="Uranium monster, the most powerful AI/n It minds everything that's in its way\n and blasting it with its core",
 		drop_dead_body=0,
 		attack_players=1,
 		name="uranium",
