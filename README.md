@@ -15,8 +15,6 @@ Vote here!
 - [x] spawn / gen buildnings by mapgen
 - [ ] replace the old converting/storage system, its very limeted
 - [x] ai book
-#### Done
-spawn all buildnings from same tool/gui
 #### wish to do:
 generate villages<br>
 ai chat learing<br>
