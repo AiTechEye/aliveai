@@ -1,4 +1,5 @@
 aliveai.create_bot({
+		description="Flowers and plants comes from nowhere and starts wars with everyone in their empire",
 		attack_players=1,
 		name="flower",
 		team="flowers",
@@ -18,7 +19,6 @@ aliveai.create_bot({
 		spawn_on={"group:flora"},
 		attack_chance=1,
 		spawn_chance=50,
-		--spawn_interval=5,
 		spawn_y=-1,
 		smartfight=0,
 		basey=-1,
