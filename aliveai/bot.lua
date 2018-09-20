@@ -695,6 +695,7 @@ minetest.register_craftitem("aliveai:teampawner", {
 minetest.register_craftitem("aliveai:ai_fake_item_spawner", {
 	description = "Fake spawner (bugfix item)",
 	inventory_image = "aliveai_rnd.png",
+	groups={not_in_creative_inventory=1},
 	on_place = function(itemstack, user, pointed_thing)
 		return itemstack
 	end
