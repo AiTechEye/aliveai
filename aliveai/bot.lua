@@ -158,7 +158,7 @@ aliveai.create_bot=function(def)
 		mindamage=def.mindamage or 0,
 	}
 
-if not def.visual or def.visual=="mesh" then
+if not def.no_spawnitem and (not def.visual or def.visual=="mesh") then
 	if def.texture~=nil and type(def.texture)=="string" then def.texture={def.texture} end
 	minetest.register_node(def.mod_name ..":" .. def.name .."_spawner", {
 		description = def.name .." spawner",
@@ -178,7 +178,7 @@ if not def.visual or def.visual=="mesh" then
 			return itemstack
 		end,
 	})
-else
+elseif not def.no_spawnitem then
 	minetest.register_craftitem(def.mod_name ..":" .. def.name .."_spawner", {
 		description = def.name .." spawner",
 		inventory_image = itemtexture or "character.png",
@@ -192,7 +192,15 @@ else
 			return itemstack
 		end,
 	})
+elseif def.no_spawnitem then
+	if not minetest.registered_items[def.no_spawnitem] then
+		def.no_spawnitem="aliveai:ai_fake_item_spawner"
+	end
+	aliveai.registered_bots[def.mod_name ..":" .. def.name].item=def.no_spawnitem
 end
+
+
+if not def.no_entity then
 
 def.drop_dead_body=def.drop_dead_body or 1
 if def.texture~=nil and type(def.texture)=="string" then def.texture={def.texture} end
@@ -586,9 +594,9 @@ on_step=aliveai.main,
 		end
 	end,
 })
+end
 
-
-if not aliveai.spawning then
+if not aliveai.spawning or def.no_spawning then
 	aliveai.loaded(def.mod_name ..":" .. def.name)
 	return
 end
@@ -616,7 +624,7 @@ minetest.register_abm({
 		and (def.light==0 
 		or (def.light>0 and l>=def.lowest_light) 
 		or (def.light<0 and l<=def.lowest_light)) then
-			if aliveai.check_spawn_space==false or def.check_spawn_space==0 or (minetest.get_node(pos1).name==def.spawn_in and minetest.get_node(pos2).name==def.spawn_in) then
+			if aliveai.check_spawn_space==false or def.check_spawn_space==0 or ((minetest.get_node(pos1).name==def.spawn_in and minetest.get_node(pos2).name==def.spawn_in) or minetest.get_item_group(minetest.get_node(pos1).name,def.spawn_in)>0) then
 				aliveai.newbot=true
 				pos1.y=pos1.y+def.spawn_y
 				minetest.add_entity(pos1, def.mod_name ..":" .. def.name):set_yaw(math.random(0,6.28))
@@ -684,3 +692,10 @@ minetest.register_craftitem("aliveai:teampawner", {
 		end,
 	})
 
+minetest.register_craftitem("aliveai:ai_fake_item_spawner", {
+	description = "Fake spawner (bugfix item)",
+	inventory_image = "aliveai_rnd.png",
+	on_place = function(itemstack, user, pointed_thing)
+		return itemstack
+	end
+})
