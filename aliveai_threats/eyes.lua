@@ -13,11 +13,11 @@ minetest.register_abm({
 end
 aliveai_threats_eyes.checkspace=function(pos)
 	for i=1,4,1 do
-		local p1=minetest.get_node({x=pos.x+i,y=pos.y,z=pos.z}).name=="air"
-		local p2=minetest.get_node({x=pos.x-i,y=pos.y,z=pos.z}).name=="air"
-		local p3=minetest.get_node({x=pos.x,y=pos.y,z=pos.z+i}).name=="air"
-		local p4=minetest.get_node({x=pos.x,y=pos.y,z=pos.z-i}).name=="air"
-		if not (p1 and p2 and p3 and p4) then
+		local p1=minetest.get_node({x=pos.x+i,y=pos.y,z=pos.z}).name~="air"
+		local p2=minetest.get_node({x=pos.x-i,y=pos.y,z=pos.z}).name~="air"
+		local p3=minetest.get_node({x=pos.x,y=pos.y,z=pos.z+i}).name~="air"
+		local p4=minetest.get_node({x=pos.x,y=pos.y,z=pos.z-i}).name~="air"
+		if p1 and p2 and p3 and p4 then
 			return false
 		end
 	end
@@ -100,6 +100,25 @@ minetest.register_craftitem("aliveai_threats:tree_eyes", {
 		return itemstack
 	end
 })
+
+aliveai.create_bot({
+	no_entity=1,
+	no_spawning=1,
+	no_spawnitem="aliveai_threats:tree_eyes",
+	description="This trees is annoyed by everything that are blocking its view",
+	name="eyes",
+	team="tree",
+	texture="aliveai_threats_eyes.png",
+	light=0,
+	type="",
+	hp=10,
+	name_color="",
+	spawn_on={"group:tree"},
+	spawn=function(self)
+		aliveai_threats_eyes.spawn(self.object:get_pos())
+	end,
+})
+
 
 minetest.register_entity("aliveai_threats:eyes",{
 	hp_max = 10,
@@ -250,5 +269,3 @@ minetest.register_entity("aliveai_threats:eyes",{
 	aliveai_eyes=1,
 })
 aliveai.loaded("aliveai_threats:eyes")
-
-
