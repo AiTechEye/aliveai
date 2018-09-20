@@ -267,5 +267,7 @@ minetest.register_entity("aliveai_threats:eyes",{
 	type="",
 	team="tree",
 	aliveai_eyes=1,
+	aliveai=true,
+	botname=math.random(1,90000)
 })
 aliveai.loaded("aliveai_threats:eyes")
