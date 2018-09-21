@@ -13,7 +13,7 @@ Vote here!
   
 #### in progress
 - [x] spawn / gen buildnings by mapgen
-- [ ] replace the old converting/storage system, its very limeted
+- [x] replace the old converting/storage system, its very limeted
 - [x] ai book
 #### wish to do:
 generate villages<br>
