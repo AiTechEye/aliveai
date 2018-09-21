@@ -380,7 +380,7 @@ minetest.register_entity("aliveai_chemistry:item1",{
 	textures ={"aliveai_chemistry:tube"},
 	is_visible = true,
 	on_activate=function(self, staticdata)
-		local r=aliveai.convertdata(staticdata)
+		local r=minetest.deserialize(staticdata)
 		if r and r~="" then
 			self.chemistry={}
 			for c, p in pairs(r) do
@@ -399,7 +399,7 @@ minetest.register_entity("aliveai_chemistry:item1",{
 		return self
 	end,
 	get_staticdata = function(self)
-		return aliveai.convertdata(self.chemistry)
+		return minetest.serialize(self.chemistry)
 	end,
 	on_step=function(self, dtime)
 		self.time=self.time+dtime
