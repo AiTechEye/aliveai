@@ -48,6 +48,7 @@ aliveai_threats.tox=function(ob)
 	end,ob)
 end
 aliveai.create_bot({
+		description="The toxic gassman is constantly hunting someone to envenom and destroy civilizations",
 		attack_players=1,
 		name="toxic_gassman",
 		team="nuke",
@@ -170,6 +171,7 @@ minetest.register_craftitem("aliveai_threats:c4_controler", {
 
 
 aliveai.create_bot({
+		description="The nitrogen is provoking you to fight him, but only leads to your own damage",
 		drop_dead_body=0,
 		attack_players=1,
 		name="nitrogen",
@@ -227,6 +229,7 @@ aliveai.create_bot({
 })
 
 aliveai.create_bot({
+		description="The gassman is provoking everyone, in order to get the opportunity to trigger its powerful explosion",
 		drop_dead_body=0,
 		attack_players=1,
 		name="gassman",
@@ -291,6 +294,7 @@ aliveai.create_bot({
 
 
 aliveai.create_bot({
+		description="In contrast to the nitrogen monster it provokes you to get a chance to explode and freeze you",
 		drop_dead_body=0,
 		attack_players=1,
 		name="nitrogenblow",
@@ -372,6 +376,7 @@ aliveai.create_bot({
 })
 
 aliveai.create_bot({
+		description="Its provokes you to get a chance to explode it self and creats heavy gass.\nBlast a part of the gas to remove it",
 		drop_dead_body=0,
 		attack_players=1,
 		name="heavygassman",
@@ -451,6 +456,7 @@ minetest.register_node("aliveai_threats:gass", {
 if minetest.get_modpath("fire")~=nil then
 
 aliveai.create_bot({
+		description="Powerfull lavamonster, yourself away from it!",
 		drop_dead_body=0,
 		attack_players=1,
 		name="lava",
@@ -523,6 +529,7 @@ aliveai.create_bot({
 
 
 aliveai.create_bot({
+		description="Born in fire, add more fire and rages around",
 		drop_dead_body=0,
 		attack_players=1,
 		name="fire",
@@ -542,6 +549,7 @@ aliveai.create_bot({
 		dmg=5,
 		escape=0,
 		mindamage=5,
+		spawn_chance=100,
 	on_step=function(self,dtime)
 		if (self.fight and math.random(1,3)==1) or math.random(1,10)==1 then
 			local pos=self.object:get_pos()
@@ -597,6 +605,7 @@ end
 end
 
 aliveai.create_bot({
+		description="Terminator the murder machine is constantly hunting to destroy civilizations",
 		attack_players=1,
 		name="terminator",
 		team="nuke",
@@ -685,6 +694,7 @@ aliveai.create_bot({
 
 
 aliveai.create_bot({
+		description="The pull monsters pulls down all its enemies in the ground, it even hides itself in the underground",
 		attack_players=1,
 		name="pull_monster",
 		team="pull",
@@ -1024,6 +1034,7 @@ minetest.register_tool("aliveai_threats:mind_manipulator", {
 
 
 aliveai.create_bot({
+		description="The cloning bug, cloning itself and becomes a group, is very hard to eliminate.\nKeep youself away from them!",
 		drop_dead_body=0,
 		attack_players=1,
 		name="cockroach",
@@ -1120,6 +1131,7 @@ aliveai.create_bot({
 
 
 aliveai.create_bot({
+		description="Black ninjas always keeping its sword ready and makes it self invisible",
 		attack_players=1,
 		name="ninja",
 		team="bug",
@@ -1227,6 +1239,7 @@ minetest.register_tool("aliveai_threats:quantumcore", {
 })
 
 aliveai.create_bot({
+		description="Teleporting monster that is hard to fight with",
 		attack_players=1,
 		name="quantum_monster",
 		team="bug",
@@ -1338,6 +1351,7 @@ end)
 
 
 aliveai.create_bot({
+		description="Camouflage monster, nodes become wherever it is",
 		attack_players=1,
 		name="natural_monster",
 		team="natural",
@@ -1452,6 +1466,7 @@ aliveai.create_bot({
 })
 
 aliveai.create_bot({
+		description="This monster is stubborn more than the limit, it can be killed but survive many times",
 		type="monster",
 		name="stubborn_monster",
 		texture="aliveai_threats_stubborn_monster.png",
@@ -1571,6 +1586,7 @@ aliveai.create_bot({
 
 
 aliveai.create_bot({
+		description="Slim monsters is killing eveything and thrive in them, spreads quickly",
 		drop_dead_body=0,
 		attack_players=1,
 		name="slime",
@@ -1647,6 +1663,7 @@ minetest.register_node("aliveai_threats:slime", {
 })
 
 aliveai.create_bot({
+		description="A block who is catching everything reachable",
 		name="killerplant",
 		type="node",
 		team="killerplants",
@@ -1710,6 +1727,7 @@ minetest.register_node("aliveai_threats:killerplant", {
 
 
 aliveai.create_bot({
+		description="Aggressive bee",
 		attack_players=1,
 		name="bee",
 		team="bug",
@@ -1871,6 +1889,7 @@ aliveai_threats.quaking=function(pos,i2,i1)
 end
 
 aliveai.create_bot({
+		description="Creates deep cracks in the ground, everything that falls down will be destroyed",
 		attack_players=1,
 		name="quake",
 		team="quak",
@@ -1895,6 +1914,7 @@ aliveai.create_bot({
 
 
 aliveai.create_bot({
+		description="Everyone's nightmare, worse than the pull monster, pulls down everything in its way, and spreads pull monsters around its enemies",
 		attack_players=1,
 		name="pull_master_monster",
 		team="pull",
@@ -2019,6 +2039,7 @@ aliveai.create_bot({
 
 
 aliveai.create_bot({
+		description="A very narrow monster",
 		attack_players=1,
 		name="stick_man",
 		team="bug",
@@ -2061,6 +2082,7 @@ aliveai.create_bot({
 })
 
 aliveai.create_bot({
+		description="Flying terminator grabs its enemies and drags them up to the sky and drops them",
 		attack_players=1,
 		name="bronze_terminator",
 		team="nuke",
@@ -2137,19 +2159,8 @@ aliveai.create_bot({
 
 })
 
-if aliveai.spawning then
-minetest.register_abm({
-	nodenames = {"group:tree"},
-	interval = 30,
-	chance = 300,
-	action = function(pos)
-		aliveai_threats_eyes.spawn(pos)
-	end,
-})
-end
-
-
 aliveai.create_bot({
+		description="camouflage monsters are hidden among nodes, but constantly jumping",
 		attack_players=1,
 		name="jumper",
 		team="natural",
@@ -2319,6 +2330,7 @@ minetest.register_tool("aliveai_threats:acid", {
 
 
 aliveai.create_bot({
+		description="The gassman loves play with acid, everyone else becomes its toys",
 		attack_players=1,
 		name="acidman",
 		team="nuke",
@@ -2381,6 +2393,7 @@ aliveai.create_bot({
 
 
 aliveai.create_bot({
+		description="The massive dirt is living and eats everything",
 		attack_players=1,
 		name="fangs",
 		team="fangs",
@@ -2568,6 +2581,7 @@ minetest.register_node("aliveai_threats:fangs_attack", {
 })
 
 aliveai.create_bot({
+		description="The stonelike stalker, wakes to life in the darkness and slowly sneaking to its victims while noone are looking at it",
 		name="statue",
 		type="node",
 		team="statue",
@@ -2786,6 +2800,7 @@ minetest.register_node("aliveai_threats:snowman", {
 
 
 aliveai.create_bot({
+		description="Snowballs warrior, keeping away everything from its empire",
 		attack_players=1,
 		name="snowman",
 		team="snow",
@@ -2955,6 +2970,7 @@ minetest.register_craft({
 })
 
 aliveai.create_bot({
+		description="Stonewarrior, keeping away everything from its empire",
 		attack_players=1,
 		name="stoneman",
 		team="stone",
@@ -3017,6 +3033,7 @@ aliveai.create_bot({
 
 if minetest.get_modpath("aliveai_folk") then
 aliveai.create_bot({
+		description="The toxic npc is toxic people, turns everyone until their own members, can easily eliminate civilizations",
 		attack_players=1,
 		name="toxic_npc",
 		team="toxic_npc",
