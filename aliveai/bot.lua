@@ -330,6 +330,10 @@ on_activate=function(self, staticdata)
 
 		if staticdata~="" then
 			local r=aliveai.convertdata(staticdata)
+			if not r.old then
+				 r=minetest.deserialize(staticdata)
+			end
+
 			self.inv={}
 			self.ignore_item={}
 			self.ignore_nodes={}
@@ -355,14 +359,14 @@ on_activate=function(self, staticdata)
 			if r.resources then self.resources=r.resources end
 
 			for i, v in pairs(r) do
-local name=i
+--local name=i
 
-				if string.find(name,"storge")==1 then
-name=string.gsub(name,"storge", "save__")
-end
+--				if string.find(name,"storge")==1 then
+--name=string.gsub(name,"storge", "save__")
+--end
 
-				if string.find(name,"save__")==1 then
-					self[name]=v
+				if string.find(i,"save__")==1 then
+					self[i]=v
 				end
 			end
 
@@ -475,7 +479,7 @@ get_staticdata = function(self)
 			end
 		end
 
-		return aliveai.convertdata(r)
+		return minetest.serialize(r)
 	end,
 on_step=aliveai.main,
 	botname=def.botname or "",
@@ -700,3 +704,68 @@ minetest.register_craftitem("aliveai:ai_fake_item_spawner", {
 		return itemstack
 	end
 })
+
+
+
+
+aliveai.convertdata=function(str,spl)
+	if type(str)=="string" then
+		local s1=str.split(str,"?")
+		local r={}
+		for _, s in ipairs(s1) do
+			local s2=s.split(s,"=")
+			if s2[2]~=nil and string.find(s2[2],"*")~=nil then	-- tables
+				local d1=s2[2].split(s2[2],"*")
+				local inner={}
+				for nn, ss in pairs(d1) do
+					local d2=ss.split(ss," ")
+					if d2 and d2[1] then
+						if tonumber(d2[1])~=nil then d2[1]=tonumber(d2[1]) end -- table name n to n
+
+						if tonumber(d2[2])~=nil then
+							inner[d2[1]]=tonumber(d2[2])
+						else
+							inner[d2[1]]=d2[2]
+						end
+					end
+				end
+				r[s2[1]]=inner
+			elseif s2[2]~=nil and string.find(s2[2],",")~=nil then	-- pos
+				r[s2[1]]=aliveai.strpos(s2[2],true)
+			else						-- else	
+				local tnr=tonumber(s2[2])
+				if tnr~=nil then s2[2]=tnr end
+				r[s2[1]]=s2[2]
+			end
+		end
+		return r
+	elseif type(str)=="table" then
+
+		print("WARNING: the function convertdata will be replaced, use minetest.deserialize and minetest.serialize instead")
+
+
+		if 1 then return "" end
+
+		local r=""
+		for n, s in pairs(str) do
+		r=r .. n .."="
+			if s and type(s)=="table" and s.x and s.y and s.z then		-- pos
+				r=r .. aliveai.strpos(s,false)
+			elseif s and type(s)=="table" then				-- table
+				for n1, s1 in pairs(s) do
+					if n1==nil or type(n1)=="table" or type(s1)=="table" then
+						n1=""
+						s1=""
+						print("Converting variable failure: tables in tables not allowed")
+					end
+					r=r .. n1 .. " " .. s1 .."*"
+				end
+			else							-- else
+				r=r .. s
+			end
+			r=r .. "?"
+		end
+		return r
+	end
+	return ""
+end

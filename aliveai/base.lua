@@ -253,13 +253,13 @@ aliveai.save=function(name,data)
 	local r=io.open(minetest.get_worldpath() .. "/aliveai", "r")
 	local d
 	if r then
-		d=aliveai.convertdata(r:read("*a"))
+		d=minetest.serialize(r:read("*a"))
 		r:close()
 	else
 		d={}
 	end
 	d[name]=data
-	d=aliveai.convertdata(d)
+	d=minetest.serialize(d)
 	local w=io.open(minetest.get_worldpath() .. "/aliveai", "w")
 	w:write(d)
 	w:close()
@@ -269,7 +269,7 @@ aliveai.load=function(name)
 	if type(name)~="string" then return end
 	local r=io.open(minetest.get_worldpath() .. "/aliveai", "r")
 	if not r then return nil end
-	local d=aliveai.convertdata(r:read("*a"))
+	local d=minetest.deserialize(r:read("*a"))
 	r:close()
 	if not d or d=="" then return {} end
 	return d[name]
@@ -1742,62 +1742,6 @@ aliveai.strpos=function(str,spl)
 			return nil
 		end
 	end
-end
-
-aliveai.convertdata=function(str,spl)
-	if type(str)=="string" then
-		local s1=str.split(str,"?")
-		local r={}
-		for _, s in ipairs(s1) do
-			local s2=s.split(s,"=")
-			if s2[2]~=nil and string.find(s2[2],"*")~=nil then	-- tables
-				local d1=s2[2].split(s2[2],"*")
-				local inner={}
-				for nn, ss in pairs(d1) do
-					local d2=ss.split(ss," ")
-					if d2 and d2[1] then
-						if tonumber(d2[1])~=nil then d2[1]=tonumber(d2[1]) end -- table name n to n
-
-						if tonumber(d2[2])~=nil then
-							inner[d2[1]]=tonumber(d2[2])
-						else
-							inner[d2[1]]=d2[2]
-						end
-					end
-				end
-				r[s2[1]]=inner
-			elseif s2[2]~=nil and string.find(s2[2],",")~=nil then	-- pos
-				r[s2[1]]=aliveai.strpos(s2[2],true)
-			else						-- else	
-				local tnr=tonumber(s2[2])
-				if tnr~=nil then s2[2]=tnr end
-				r[s2[1]]=s2[2]
-			end
-		end
-		return r
-	elseif type(str)=="table" then
-		local r=""
-		for n, s in pairs(str) do
-		r=r .. n .."="
-			if s and type(s)=="table" and s.x and s.y and s.z then		-- pos
-				r=r .. aliveai.strpos(s,false)
-			elseif s and type(s)=="table" then				-- table
-				for n1, s1 in pairs(s) do
-					if n1==nil or type(n1)=="table" or type(s1)=="table" then
-						n1=""
-						s1=""
-						print("Converting variable failure: tables in tables not allowed")
-					end
-					r=r .. n1 .. " " .. s1 .."*"
-				end
-			else							-- else
-				r=r .. s
-			end
-			r=r .. "?"
-		end
-		return r
-	end
-	return ""
 end
 
 aliveai.genname=function(self)
