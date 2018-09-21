@@ -1,5 +1,5 @@
 aliveai={
-	version=25.1,
+	version=25.5,
 --========================options==============================
 	loaded_objects=0,
 	spawning=true,					--spawning by self
