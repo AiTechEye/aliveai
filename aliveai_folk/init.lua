@@ -263,3 +263,27 @@ aliveai.create_bot({
 			self.object:set_properties({nametag=self.botname,nametag_color="#" .. self.namecolor})
 		end,
 })
+
+aliveai.register_rndcheck_on_generated({
+	node="spreading_dirt_type",
+	run=function(pos)
+		if math.random(1,2)==1 then
+			pos.y=pos.y+1
+			aliveai.generate_house(pos)
+			local ii=1
+			local list={}
+			for i, v in pairs(aliveai.registered_bots) do
+				if v.type=="npc" then
+					list[ii]={y=v.spawn_y,name=v.name}
+					ii=ii+1
+				end
+			end
+			local bot=list[aliveai.random(1,ii)]
+			if not bot then return end
+			pos.y=pos.y+bot.y+1
+			local b=minetest.add_entity(pos, aliveai.registered_bots[bot.name].bot)
+			b:set_yaw(math.random(0,6.28))
+			b:get_luaentity().home=pos
+		end
+	end
+})
