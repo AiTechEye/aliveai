@@ -142,11 +142,11 @@ minetest.register_entity("aliveai_threats:eyes",{
 		end
 	end,
 	get_staticdata = function(self)
-		return aliveai.convertdata({side=self.side,opos=self.opos,stat=self.stat})
+		return minetest.serialize({side=self.side,opos=self.opos,stat=self.stat})
 	end,
 	on_activate=function(self, staticdata)
 		self.hp=self.object:get_hp()
-		local r=aliveai.convertdata(staticdata)
+		local r=minetest.deserialize(staticdata)
 		if r and r~="" then
 			self.side=r.side
 			self.opos=r.opos
