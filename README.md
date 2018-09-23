@@ -1,29 +1,3 @@
-<a href="https://forum.minetest.net/viewtopic.php?f=11&t=16083">
-The "AI Book"  <img src="https://raw.githubusercontent.com/AiTechEye/aliveai/master/aliveai/textures/aliveai_book.png"> is just added, use it on or near AI/bots/blocks to add them (add a page about them) to the book.
-But to fill the book you have to travel around in the world to find them, but what happens when you collected all?
-  
-Vote here!
-</a>
-
-
-
-<br><br>
-<details>
-<summary>To do list:</summary>
-  
-#### in progress
-- [x] spawn / gen buildnings by mapgen
-- [x] replace the old converting/storage system, its very limeted
-- [x] ai book
-#### wish to do:
-generate villages<br>
-ai chat learing<br>
-use cotton/wheat<br>
-use furnaces<br>
-new "need" system (let bots know what they need to dig) the corrently system only alows bots to collect and build 1 house/thing at time
-</details>
-
-
 # Advanced survuver AI mobs Mod for minetest
 
 ## compatible with minetest 0.4.16 and newer
