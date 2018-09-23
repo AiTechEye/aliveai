@@ -1,7 +1,7 @@
 aliveai={
-	version=25.5,
+	version=26,
 --========================options==============================
-	loaded_objects=0,
+	grant_invisiable=true,
 	spawning=true,					--spawning by self
 	character_model="aliveai_character.b3d",		--character model
 	character_preview_model="aliveai_preview_character.obj",	--character model
@@ -21,6 +21,7 @@ aliveai={
 	lifetimer=60,				--remove unbehavior none nps's
 	max_new_bots=10,
 --========================not options==============================
+	loaded_objects=0,
 	delaytime=os.clock(),
 	buildings_spawners={},
 	terminal_users={},

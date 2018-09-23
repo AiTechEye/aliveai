@@ -564,7 +564,7 @@ aliveai.searchhelp=function(self)
 			obs=minetest.get_objects_inside_radius(pos, self.distance)
 		end
 		for _, ob in ipairs(obs) do
-			if ob and aliveai.team(ob)==self.team and not aliveai.same_bot(self,ob) and (aliveai.is_bot(ob) or ob:is_player()) and (self.leader==1 or aliveai.visiable(self,ob:get_pos())) then
+			if ob and aliveai.team(ob)==self.team and not aliveai.same_bot(self,ob) and (aliveai.is_bot(ob) or ob:is_player()) and (self.leader==1 or aliveai.visiable(self,ob:get_pos())) and not aliveai.is_invisiable(ob) then
 				local known=aliveai.getknown(self,ob)
 				if known~="fight" and known~="fly" then
 					if ob:is_player() then
@@ -606,7 +606,7 @@ aliveai.searchobjects=function(self)
 					end
 				end
 				local en=ob:get_luaentity()
-				if aliveai.gethp(ob)>0 and aliveai.visiable(self,ob:get_pos()) and (aliveai.viewfield(self,ob) or aliveai.distance(self,ob:get_pos())<self.arm) and ((aliveai.team(ob)~=self.team and not aliveai.is_bot(ob)) or (en and en.itemstring==nil and en.type and en.type~="" and en.team~=self.team and en.botname~=self.botname)) then
+				if aliveai.gethp(ob)>0 and aliveai.visiable(self,ob:get_pos()) and (aliveai.viewfield(self,ob) or aliveai.distance(self,ob:get_pos())<self.arm) and ((aliveai.team(ob)~=self.team and not aliveai.is_bot(ob)) or (en and en.itemstring==nil and en.type and en.type~="" and en.team~=self.team and en.botname~=self.botname)) and not aliveai.is_invisiable(ob) then
 					local known=aliveai.getknown(self,ob)
 					local enemy
 					if (en and en.type=="monster" or aliveai.is_bot(ob)) or ob:is_player() then
@@ -970,6 +970,11 @@ aliveai.fight=function(self)
 		self.on_detecting_enemy(self)
 			if see and self.seen or aliveai.viewfield(self,self.fight) then
 				self.seen=true
+				if aliveai.is_invisiable(self.fight) then
+					self.fight=nil
+					return
+				end
+
 -- attack
 				aliveai.rndwalk(self,false)
 				if d>self.arm and vy>-2 then

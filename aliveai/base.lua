@@ -1,3 +1,10 @@
+aliveai.is_invisiable=function(ob)
+	if ob:is_player() and minetest.check_player_privs(ob:get_player_name(), {aliveai_invisibility=true}) and ob:get_player_control().sneak then
+		return true
+	end
+	return false
+end
+
 aliveai.newpos=function(pos,a)
 	if not pos then
 		return

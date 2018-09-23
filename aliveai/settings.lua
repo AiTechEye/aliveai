@@ -1,6 +1,8 @@
 -- add / change settings in here too
 
 aliveai.team_fight=true			--attacking members from other teams
+aliveai.grant_invisiable=true			-- grant invisible to people that have collected all book pages
+
 
 aliveai.set_bones=true			--set bones on death
 

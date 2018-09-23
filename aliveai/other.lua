@@ -22,6 +22,11 @@ minetest.register_privilege("aliveai", {
 	give_to_singleplayer= false,
 })
 
+minetest.register_privilege("aliveai_invisibility", {
+	description = "Have collected all book pages",
+	give_to_singleplayer= false,
+})
+
 minetest.register_tool("aliveai:terminal", {
 	description = "Terminal",
 	range=15,

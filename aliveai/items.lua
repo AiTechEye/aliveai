@@ -47,9 +47,19 @@ minetest.register_tool("aliveai:book", {
 				end
 				meta.bots=sbots
 				item.meta={description="Ai Book by ".. name}
+				minetest.chat_send_player(name, "Book: New content added")
+
+				if aliveai.grant_invisiable==true and not meta.finished and meta.pages>=aliveai.loaded_objects then
+					local p=minetest.get_player_privs(name)
+					p.aliveai_invisibility=true
+					minetest.set_player_privs(name, p)
+					meta.finished=1
+					minetest.chat_send_player(name, "Book: You have been granted aliveai_invisibility")
+					minetest.chat_send_player(name, "Book: Ai's will not detect you when you are sneaking")
+				end
+
 				item.metadata=minetest.serialize(meta)
 				itemstack:replace(item)
-				minetest.chat_send_player(user:get_player_name(), "Book: New content added")
 			end
 		end
 		aliveai.view_book(user,meta)
