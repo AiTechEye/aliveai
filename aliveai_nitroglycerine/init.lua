@@ -349,7 +349,7 @@ aliveai_nitroglycerine.spawn_dust=function(pos)
 		local n=minetest.registered_nodes[minetest.get_node(pos).name]
 		if not (n and n.walkable) or drop=="" or type(drop)~="string" then return end
 		local t=n.tiles
-		if not t[1] then return end
+		if not (t and t[1]) then return end
 		local tx={}
 		local tt={}
 		tt.t1=t[1]
