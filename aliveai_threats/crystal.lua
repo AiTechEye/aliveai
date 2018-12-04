@@ -186,7 +186,7 @@ minetest.register_node("aliveai_threats:crystal_big", {
 	end,
 	on_use = function(itemstack, user, pointed_thing)
 		if pointed_thing.type=="node" or pointed_thing.type=="nothing" then return itemstack end
-		local pvp=minetest.settings:getbool("enable_pvp")
+		local pvp=minetest.settings:get_bool("enable_pvp")
 		local ob=pointed_thing.ref
 		if ob:is_player() and pvp==false then return itemstack end
 		aliveai_electric.hit(puncher,30)
@@ -226,7 +226,7 @@ minetest.register_node("aliveai_threats:crystal_medium", {
 	end,
 	on_use = function(itemstack, user, pointed_thing)
 		if pointed_thing.type=="node" or pointed_thing.type=="nothing" then return itemstack end
-		local pvp=minetest.settings:getbool("enable_pvp")
+		local pvp=minetest.settings:get_bool("enable_pvp")
 		local ob=pointed_thing.ref
 		if ob:is_player() and pvp==false then return itemstack end
 		aliveai_electric.hit(pointed_thing.ref,15)
@@ -270,7 +270,7 @@ minetest.register_node("aliveai_threats:crystal_small", {
 	end,
 	on_use = function(itemstack, user, pointed_thing)
 		if pointed_thing.type=="node" or pointed_thing.type=="nothing" then return itemstack end
-		local pvp=minetest.settings:getbool("enable_pvp")
+		local pvp=minetest.settings:get_bool("enable_pvp")
 		local ob=pointed_thing.ref
 		if ob:is_player() and pvp==false then return itemstack end
 		aliveai_electric.hit(pointed_thing.ref,5)
