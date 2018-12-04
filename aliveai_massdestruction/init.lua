@@ -305,6 +305,7 @@ aliveai.create_bot({
 		visual_size = {x=0.5,y=0.5},
 		texture ="aliveai_massdestruction_bomb.png",
 		light=0,
+		talking=0,
 		type="monster",
 		dmg=0,
 		hp=10,
