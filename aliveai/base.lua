@@ -1631,8 +1631,8 @@ aliveai.visiable=function(self,pos2)
 	v.y = (v.y  / amount)*-1
 	v.z = (v.z  / amount)*-1
 	for i=1,d,1 do
-		local node=minetest.get_node({x=pos1.x+(v.x*i),y=pos1.y+(v.y*i),z=pos1.z+(v.z*i)})
-		if node and node.name and minetest.registered_nodes[node.name] and minetest.registered_nodes[node.name].walkable then
+		local node=minetest.registered_nodes[minetest.get_node({x=pos1.x+(v.x*i),y=pos1.y+(v.y*i),z=pos1.z+(v.z*i)}).name]
+		if node and node.walkable then
 			return false
 		end
 	end
