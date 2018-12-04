@@ -220,7 +220,6 @@ minetest.register_entity(def.mod_name ..":" .. def.name,{
 	is_visible = true,
 	makes_footstep_sound = true,
 	automatic_rotate = false,
-	visual=def.visual or "mesh",
 on_rightclick=function(self, clicker,name)
 		self.click(self,clicker)
 	end,
