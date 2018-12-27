@@ -255,33 +255,6 @@ aliveai.team=function(ob,change_team)
 	return
 end
 
-aliveai.save=function(name,data)
-	if type(name)~="string" or type(data)~="table" then return end
-	local r=io.open(minetest.get_worldpath() .. "/aliveai", "r")
-	local d
-	if r then
-		d=minetest.serialize(r:read("*a"))
-		r:close()
-	else
-		d={}
-	end
-	d[name]=data
-	d=minetest.serialize(d)
-	local w=io.open(minetest.get_worldpath() .. "/aliveai", "w")
-	w:write(d)
-	w:close()
-end
-
-aliveai.load=function(name)
-	if type(name)~="string" then return end
-	local r=io.open(minetest.get_worldpath() .. "/aliveai", "r")
-	if not r then return nil end
-	local d=minetest.deserialize(r:read("*a"))
-	r:close()
-	if not d or d=="" then return {} end
-	return d[name]
-end
-
 aliveai.add_mine=function(self,nodes,num,need)
 	num=num or 1
 	if not self.mine then

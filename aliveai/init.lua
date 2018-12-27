@@ -1,5 +1,5 @@
 aliveai={
-	version=26,
+	version=26.1,
 --========================options==============================
 	grant_invisiable=true,
 	spawning=true,					--spawning by self
@@ -40,9 +40,15 @@ aliveai={
 	mesecons=minetest.get_modpath("mesecons")~=nil,
 	loaddata={},			--functions
 	savedata={},			--functions
-
 	team_player={},
 	farming={},
+	storage=minetest.get_mod_storage(),
+	save=function(key,newdata)
+		aliveai.storage:set_string(key,minetest.serialize(newdata))
+	end,
+	load=function(key)
+		return minetest.deserialize(aliveai.storage:get_string(key)) or {}
+	end,
 --========================options==============================
 	 -- new food databas, checks what players eats, then save it
 	food=			{["default:apple"]=2,["farming:bread"]=5,["mobs:meat"]=8,["mobs:meat_raw"]=3,["mobs:chicken_raw"]=2,["mobs:chicken_cooked"]=6,["mobs:chicken_egg_fried"]=2,["mobs:chicken_raw"]=2},
