@@ -28,14 +28,15 @@ aliveai.newpos=function(pos,a)
 	}
 end
 
-
-
 minetest.register_on_item_eat=function(hp_change, replace_with_item, itemstack, user, pointed_thing)
 	local a=itemstack:get_name()
 	if not aliveai.food[a] and hp_change>0 and minetest.get_item_group(a,"aliveai_eatable")==0 then
 		aliveai.food[a]=hp_change
 		aliveai.save("food",aliveai.food)
-		minetest.override_item(a, {groups={aliveai_eatable=hp_change,dig_immediate=3}})
+		local def=minetest.registered_items[a]
+		def.groups=def.groups or {}
+		def.groups.aliveai_eatable=hp_change
+		minetest.override_item(a, def)
 	end
 	
 end
@@ -45,8 +46,11 @@ minetest.after(0, function()
 	if f then
 		aliveai.food=f
 		for i, v in pairs(aliveai.food) do
-			if minetest.registered_nodes[i] then
-				minetest.override_item(i, {groups={aliveai_eatable=v,dig_immediate=3}})
+			local def=minetest.registered_items[i]
+			if def then
+				def.groups=def.groups or {}
+				def.groups.aliveai_eatable=v
+				minetest.override_item(i, def)
 			end
 		end
 	else
