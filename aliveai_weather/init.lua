@@ -1,4 +1,25 @@
-aliveai_weather={mintimeout=200,maxtimeout=1000,players={},timecheck=0,time2=0,time=0,chance=100,size=500,strength=800,currweather={}}
+aliveai_weather={
+	mintimeout=200,
+	maxtimeout=1000,
+	players={},
+	timecheck=0,
+	time2=0,
+	time=0,
+	chance=100,
+	size=500,
+	strength=800,
+	currweather={},
+	perlin={
+		offset=50,
+		scale=50,
+		spread={x=1000,y=1000,z=1000},
+		seed=5349,
+		octaves=3,
+		persist=0.5,
+		lacunarity=2,
+		flags="default"
+	},
+}
 
 
 minetest.register_chatcommand("weather", {
@@ -98,18 +119,25 @@ minetest.register_on_leaveplayer(function(player)
 	end
 end)
 
+aliveai_weather.get_temp=function(pos)
+	if pos.y<-50 then return 0 end
+	local p={x=math.floor(pos.x),y=0,z=math.floor(pos.z)}
+	return minetest.get_perlin(aliveai_weather.perlin):get2d({x=p.x,y=p.z}) - 40
+end
+
+
 
 aliveai_weather.get_bio=function(pos)
 	local green,dry,cold=0,0,0
-	for i, n in pairs(aliveai.get_nodes(pos,3,2)) do
-		local w=minetest.get_node(n).name
-		if w=="default:dirt_with_dry_grass" or w=="default:desert_sand" or w=="default:silver_sand" then
-			dry=dry+1
-		elseif w=="default:dirt_with_snow" or w=="default:snowblock" or w=="default:snow" or w=="default:ice" then
-			cold=cold+1
-		elseif minetest.get_item_group(w,"leaves")==0 then
-			green=green+1
-		end
+
+	local tmp=aliveai_weather.get_temp(pos)
+
+	if tmp>25 then
+		dry=dry+1
+	elseif tmp<=0 then
+		cold=cold+1
+	else
+		green=green+1
 	end
 
 	local m=math.max(unpack({green,dry,cold}))
