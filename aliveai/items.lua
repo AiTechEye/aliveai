@@ -1082,8 +1082,10 @@ aliveai.use=function(self)
 
 	minetest.log("aliveai:" .. self.botname .." uses " .. tool)
 
-	stack=minetest.registered_tools[tool].on_use(stack,user,pointed_thing)
-	if self.tool_reuse==1 then
+	local error
+	error,stack=pcall(minetest.registered_tools[tool].on_use,unpack{stack,user,pointed_thing})
+
+	if error==true and self.tool_reuse==1 then
 		tool=stack:get_name()
 		minetest.after(0.1, function(self,tool,inv,stack,user,pointed_thing)
 			minetest.registered_tools[tool].on_use(stack,user,pointed_thing)
