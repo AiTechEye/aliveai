@@ -20,6 +20,7 @@ aliveai={
 	max_delay=100,				-- max run / bot delay
 	lifetimer=60,				--remove unbehavior none nps's
 	max_new_bots=10,
+	max_chat_distance=200,
 --========================not options==============================
 	loaded_objects=0,
 	delaytime=os.clock(),
@@ -89,7 +90,6 @@ end)
 
 aliveai.max_path_timer=0
 aliveai.max_path_delay=0
-
 
 aliveai.ticks_pers=os.clock()
 aliveai.game_paused=true

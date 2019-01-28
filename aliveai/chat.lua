@@ -458,9 +458,14 @@ end
 
 aliveai.say=function(self,text)
 	if self.talking==0 then return self end
-	minetest.chat_send_all("<" .. self.botname .."> " .. text)
+	local pos1=self.object:get_pos()
 	aliveai.last_spoken_to=text
-	aliveai.on_chat(self.object:get_pos(),self.botname,text)
+	aliveai.on_chat(pos1,self.botname,text)
+	for _,player in ipairs(minetest.get_connected_players()) do
+		if aliveai.distance(pos1,player:get_pos())<aliveai.max_chat_distance then
+			 minetest.chat_send_player(player:get_player_name(), "<" .. self.botname .."> " .. text)
+		end
+	end
 end
 
 aliveai.rndkey=function(a)
