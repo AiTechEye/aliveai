@@ -29,6 +29,9 @@ aliveai.newpos=function(pos,a)
 end
 
 minetest.register_on_item_eat=function(hp_change, replace_with_item, itemstack, user, pointed_thing)
+	if not itemstack then
+		return
+	end
 	local a=itemstack:get_name()
 	if not aliveai.food[a] and hp_change>0 and minetest.get_item_group(a,"aliveai_eatable")==0 then
 		aliveai.food[a]=hp_change
