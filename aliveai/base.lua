@@ -133,11 +133,8 @@ aliveai.unprotect=function(pos,a)
 	end
 end
 
-aliveai.nan=function(n)
-	if not tonumber(n) or n==math.huge or n==-math.huge or n~=n then
-		return 0 
-	end
-	return n
+aliveai.nan=function(a)
+	return (a == math.huge or a == -math.huge or a ~= a) == false and a or 0
 end
 
 aliveai.group=function(pos,g)
@@ -334,7 +331,6 @@ aliveai.get_bot_by_name=function(name)
 	return nil
 end
 
-
 aliveai.lookaround=function(self)
 	if not self.isrnd then return end
 	if self.attention_path then
@@ -403,8 +399,6 @@ aliveai.lookaround=function(self)
 		end
 	end
 end
-
-
 
 aliveai.get_nodes=function(self,radio,dencity,filter)
 	if not self then return end
@@ -501,17 +495,14 @@ aliveai.random_pos=function(self,Min,Max)
 	return rnd_pos,rnd_d
 end
 
-aliveai.gethp=function(ob,even_dead)		-- because some mods are remaking mobs health system, like mobs redo
-	if not ob then return 0 end
-	local h=ob:get_hp()
-	if ob:get_luaentity() then
-		if not even_dead and ob:get_luaentity().dead then return 0 end
-		if ob:get_luaentity().health then h=ob:get_luaentity().health end
-		if ob:get_luaentity().hp then h=ob:get_luaentity().hp end
-	elseif not ob:is_player() then
-		h=0
+aliveai.gethp=function(ob,even_dead)
+	if not (ob and ob:get_pos()) then
+		return 0
+	elseif ob:is_player() then
+		return ob:get_hp()
 	end
-	return h
+	local en = ob:get_luaentity()
+	return en and ((even_dead and en.examob and en.dead and en.hp) or (en.examob and en.dead and 0) or en.hp or en.health) or ob:get_hp() or 0
 end
 
 aliveai.showtext=function(self,text,color)
@@ -1317,7 +1308,7 @@ aliveai.falling=function(self)
 			if nnode.walkable then break end
 		end
 
-		if self.fight and aliveai.distance(self,self.fight:get_pos())<=self.arm*1.5 then
+		if self.fight and aliveai.distance(self,self.fight)<=self.arm*1.5 then
 			j[self.avoidy+2]=nil
 			dmg=nil
 		end
@@ -1558,60 +1549,48 @@ end
 aliveai.viewfield=function(self,ob)
 	if not (self and self.object and ob) then return false end
 	local pos1=self.object:get_pos()
-	local pos2
-	if ob.x and ob.y and ob.z then
-		pos2=ob
-	else
-		pos2=ob:get_pos()
-	end
+	local pos2 = type(ob) == "userdata" and ob:get_pos() or ob
 	return aliveai.distance(pos1,pos2)>aliveai.distance(aliveai.pointat(self,0.1),pos2)
 end
 
 aliveai.pointat=function(self,d)
 	local pos=self.object:get_pos()
-	local yaw=self.object:get_yaw()
-	if yaw ~= yaw or type(yaw)~="number" then
-		yaw=0
-	end
+	local yaw=aliveai.nan(self.object:get_yaw())
 	d=d or 1
 	local x =math.sin(yaw) * -d
 	local z =math.cos(yaw) * d
 	return {x=pos.x+x,y=pos.y,z=pos.z+z}
 end
 
-aliveai.distance=function(self,pos2)
-	if pos2 and pos2.x and self then
-		local pos1
-		if not self.object and self.x and self.y and self.z then
-			pos1=self
-		else
-			pos1=self.object:get_pos()
-		end
-		return math.sqrt((pos1.x-pos2.x)*(pos1.x-pos2.x) + (pos1.y-pos2.y)*(pos1.y-pos2.y)+(pos1.z-pos2.z)*(pos1.z-pos2.z))
+aliveai.distance=function(pos1,pos2)
+	if not (pos1 and pos2) then
+		return 0
 	end
-	return 99
+	pos1 = type(pos1) == "userdata" and pos1:get_pos() or pos1.object and pos1.object:get_pos() or pos1
+	pos2 = type(pos2) == "userdata" and pos2:get_pos() or pos2.object and pos2.object:get_pos() or pos2
+	if type(pos2) ~= "table" then
+		return 0
+	end
+	return vector.distance(pos1,pos2)
 end
 
-aliveai.visiable=function(self,pos2)
-	if pos2 and not (pos2.x and pos2.y and pos2.z) then
-		pos2=pos2:get_pos()
+aliveai.visiable=function(pos1,pos2)
+	pos1 = type(pos1) == "userdata" and pos1:get_pos() or pos1.object and pos1.object:get_pos() or pos1
+	pos2 = type(pos2) == "userdata" and pos2:get_pos() or pos2	
+
+	if not (pos1 and pos2) then
+		return false
 	end
-	if not (pos2 and pos2.x) then return nil end
-	local pos1
-	if self.x and self.y and self.z then
-		pos1=self
-	else
-		pos1=self.object:get_pos()
-	end
+
 	local v = {x = pos1.x - pos2.x, y = pos1.y - pos2.y-1, z = pos1.z - pos2.z}
 	v.y=v.y-1
 	local amount = (v.x ^ 2 + v.y ^ 2 + v.z ^ 2) ^ 0.5
-	local d=math.sqrt((pos1.x-pos2.x)*(pos1.x-pos2.x) + (pos1.y-pos2.y)*(pos1.y-pos2.y)+(pos1.z-pos2.z)*(pos1.z-pos2.z))
+	local d=vector.distance(pos1,pos2)
 	v.x = (v.x  / amount)*-1
 	v.y = (v.y  / amount)*-1
 	v.z = (v.z  / amount)*-1
 	for i=1,d,1 do
-		local node=minetest.registered_nodes[minetest.get_node({x=pos1.x+(v.x*i),y=pos1.y+(v.y*i),z=pos1.z+(v.z*i)}).name]
+		local node = minetest.registered_nodes[minetest.get_node({x=pos1.x+(v.x*i),y=pos1.y+(v.y*i),z=pos1.z+(v.z*i)}).name]
 		if node and node.walkable then
 			return false
 		end
