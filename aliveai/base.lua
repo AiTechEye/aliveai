@@ -1600,7 +1600,10 @@ end
 
 aliveai.walk=function(self,sp)
 	local pos=self.object:get_pos()
-	local yaw=aliveai.nan(self.object:get_yaw())
+	local yaw=self.object:get_yaw()
+	if yaw ~= yaw or type(yaw)~="number" then
+		return nil
+	end
 	sp=sp or 1
 	local x =math.sin(yaw) * -1
 	local z =math.cos(yaw) * 1
@@ -1648,7 +1651,8 @@ aliveai.lookat=function(self,pos2,advanced,walk)
 	if type(pos2)=="table" then
 		local pos1=self.object:get_pos()
 		local vec = {x=pos1.x-pos2.x, y=pos1.y-pos2.y, z=pos1.z-pos2.z}
-		local yaw = aliveai.nan(math.atan(vec.z/vec.x)-math.pi/2)
+		local yaw = math.atan(vec.z/vec.x)-math.pi/2
+		if yaw ~= yaw then minetest.debug("TRUE") yaw=0 end
 		if pos1.x >= pos2.x then yaw = yaw+math.pi end
 		if not advanced then self.object:set_yaw(yaw) end
 		self.tmp_yw=yaw
