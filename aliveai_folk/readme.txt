@@ -1,1 +1,0 @@
-﻿npc for aliveai
