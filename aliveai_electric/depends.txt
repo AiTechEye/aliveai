@@ -1,3 +1,0 @@
-default
-aliveai
-aliveai_nitroglycerine?
