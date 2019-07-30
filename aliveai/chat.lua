@@ -445,6 +445,8 @@ aliveai.sayrnd=function(self,t,t2,nmood)
 		a={"Hej, hey im flying!","whoo!?","weeeee","look at me, im flying!","cool","help!","plz let me down!","aaaa"}
 	elseif t=="its flying!" then
 		a={"Hej, its flying!","i want to fly!","this guy is flying!","look","cool","plz let me down!","aaaa"}
+	elseif t=="LAAAAAAAAG!" then
+		a={"lag and goodbye","borring server, bye","nothing to mine","can't find a place to mine here i'm leaving!","this is too laggy for me! bye"}
 	end
 	if not a then
 		aliveai.say(self,t)

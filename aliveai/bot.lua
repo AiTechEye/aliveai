@@ -22,10 +22,8 @@ aliveai.bot=function(self, dtime)
 	self.timer=self.timer+dtime
 	self.timerfalling=self.timerfalling+dtime
 	if self.timerfalling>0.2 then aliveai.falling(self) end
-	if self.turnlook and aliveai.turnlook(self,dtime) then return self end
 	if self.timer<=self.time then return self end
 	self.timer=0
-
 
 --betweens
 

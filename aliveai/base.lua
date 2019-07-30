@@ -502,7 +502,7 @@ aliveai.gethp=function(ob,even_dead)
 		return ob:get_hp()
 	end
 	local en = ob:get_luaentity()
-	return en and ((even_dead and en.examob and en.dead and en.hp) or (en.examob and en.dead and 0) or en.hp or en.health) or ob:get_hp() or 0
+	return en and ((even_dead and en.aliveai and en.dead and en.hp) or (en.aliveai and en.dead and 0) or en.hp or en.health) or ob:get_hp() or 0
 end
 
 aliveai.showtext=function(self,text,color)
@@ -548,23 +548,6 @@ aliveai.get_dir=function(self,pos2)
 	return {x=(pos1.x-pos2.x)/-d,y=(pos1.y-pos2.y)/-d,z=(pos1.z-pos2.z)/-d}
 end
 
-aliveai.turnlook=function(self,dtime)
-	self.turnlook.timer=self.turnlook.timer+dtime
-	if self.turnlook.timer<0.05 then return self end
-	self.turnlook.timer=0
-	self.turnlook.times=self.turnlook.times-1
-	self.turnlook.cur=self.turnlook.cur+self.turnlook.add
-	local cur=self.turnlook.cur<self.turnlook.yaw
-	if self.turnlook.times<1 or (self.turnlook.turn==true and cur==true) or (self.turnlook.turn==false and cur==false) then
-		self.object:set_yaw(self.turnlook.yaw)
-		if self.turnlook.walk then aliveai.walk(self) end
-		self.turnlook=nil
-		return
-	end
-	self.object:set_yaw(self.turnlook.cur)
-	return self
-end
-
 aliveai.timer=function(self)
 	if self.type=="npc" then return end
 	if not self.lifetimer or self.fly or self.come or self.fight then self.lifetimer=aliveai.lifetimer end
@@ -586,7 +569,7 @@ end
 
 aliveai.creatpath=function(self,pos1,pos2,d,notadvanced)
 
-if aliveai.botdelay(self,1) then return nil end
+	if aliveai.botdelay(self,1) then return nil end
 
 
 	if aliveai.max_path_delay>aliveai.max_path_delay_time then
@@ -976,15 +959,14 @@ aliveai.rndwalk=function(self,toogle)
 		if not self.falllook.ignore then
 			local r=aliveai.random(1, self.falllook.n)
 			if rnd<2 then
-				local yaw=self.falllook[r]
-				if type(yaw)~="number" then yaw=0 end
-				self.object:set_yaw(yaw)
+				self.object:set_yaw(aliveai.nan(self.falllook[r]))
 				aliveai.stand(self)
 			elseif rnd==2 then
 				local pos=self.object:get_pos()
 				local rndpos
 				for _, ob in ipairs(minetest.get_objects_inside_radius(pos, self.distance)) do
-					if ob and ob:get_pos() then
+					local en = ob:get_luaentity()
+					if not (en and en.botname == self.botname) then
 						rndpos=ob:get_pos()
 						if math.random(1,3)==1 then break end
 					end
@@ -994,9 +976,7 @@ aliveai.rndwalk=function(self,toogle)
 					aliveai.stand(self)
 				end
 			else
-				local yaw=self.falllook[r]
-				if type(yaw)~="number" then yaw=0 end
-				self.object:set_yaw(yaw)
+				self.object:set_yaw(aliveai.nan(self.falllook[r]))
 				aliveai.walk(self)
 			end
 			if self.falllook.times<=0 then
@@ -1640,38 +1620,16 @@ aliveai.stand=function(self)
 	return self
 end
 
-aliveai.lookat=function(self,pos2,advanced,walk)
-	if pos2==nil or (type(pos2)~="number" and pos2.x==nil) then
-		return nil
-	end
-	local yaw=0
+aliveai.lookat=function(self,pos2)
 	if type(pos2)=="table" then
 		local pos1=self.object:get_pos()
 		local vec = {x=pos1.x-pos2.x, y=pos1.y-pos2.y, z=pos1.z-pos2.z}
 		local yaw = aliveai.nan(math.atan(vec.z/vec.x)-math.pi/2)
 		if pos1.x >= pos2.x then yaw = yaw+math.pi end
-		if not advanced then self.object:set_yaw(yaw) end
-		self.tmp_yw=yaw
+		self.object:set_yaw(yaw)
 		self.lookat=pos2
-	else
-		yaw=pos2
-		if not advanced then self.object:set_yaw(pos2) end
-	end
-	yaw=self.tmp_yw
-	if not advanced or self.turnlook or type(yaw)~="number" then return end
-	
-	self.tmp_yw=nil
-	local cy=self.object:get_yaw()
-	local turn=cy>yaw
-	local add=0.314
-	if turn==true then add=-0.314 end
-	self.turnlook={turn=turn,cur=cy,yaw=yaw,add=add,walk=walk,timer=0,times=10}
-	if cy-yaw>5 or cy-yaw<-5 then
-		local i=6.28
-		if cy-yaw<-5 then i=-6.28 end
-		self.turnlook.turn=cy-yaw>6
-		self.turnlook.yaw=i+yaw
-		self.turnlook.add=self.turnlook.add*-1
+	elseif type(pos2)=="number" then
+		self.object:set_yaw(pos2)
 	end
 	return self
 end
@@ -1748,6 +1706,9 @@ aliveai.max=function(self,update)
 			print("aliveai: removed","delay: " ..self.delay_average.time,"active bots: " ..aliveai.active_num)
 		end
 		aliveai.bots_delay2= aliveai.bots_delay2*0.99
+
+		aliveai.sayrnd(self,"LAAAAAAAAG!")
+
 		self.object:remove()
 		return self
 	end
@@ -1778,7 +1739,6 @@ aliveai.botdelay=function(self,a)
 		self.delaytimer=os.clock()
 		return
 	else
-
 		if not self.delay_steps_to then self.delay_steps_to=0 end
 		self.delay_steps_to=self.delay_steps_to+1
 		if self.delay_steps_to<10 then return end
@@ -1804,7 +1764,6 @@ aliveai.botdelay=function(self,a)
 				self.terminal_user=nil
 			end
 		end
-
 		if self.delay_average.time>1 then
 			self.delaytimeout=os.clock()+(p-1)
 			if self.type~="npc" or (self.type=="npc" and self.delay_average.time>1.5) then
