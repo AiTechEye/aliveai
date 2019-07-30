@@ -4,6 +4,8 @@
 
 # License: code: LGPL-2.1, media: CC BY-SA-4.0
 
+# Version 26.2
+
 # [Wiki](https://github.com/AiTechEye/aliveai/wiki)
 
 # NPC
