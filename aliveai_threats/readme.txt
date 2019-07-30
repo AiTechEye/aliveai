@@ -1,1 +1,0 @@
-﻿threates / evil npc for aliveai
