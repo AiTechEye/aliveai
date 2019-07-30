@@ -1,4 +1,0 @@
-default
-aliveai
-aliveai_electric
-nitroglycerine?
