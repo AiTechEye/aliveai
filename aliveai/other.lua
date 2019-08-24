@@ -436,6 +436,7 @@ aliveai.generate_house=function(self,v)
 	else
 		aliveai.showstatus(self,"generate house")
 	end
+		
 
 --materials
 		local build_able=aliveai.random(1,aliveai.get_everything_to_build_chance)==1
@@ -453,6 +454,8 @@ aliveai.generate_house=function(self,v)
 			pos=self
 			self.distance=15
 		end
+		pos.y=pos.y-1
+
 		local np=minetest.find_node_near(pos, self.distance,aliveai.basics)
 		if np then
 			local name=minetest.get_node(np).name
