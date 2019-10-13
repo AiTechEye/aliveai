@@ -921,7 +921,15 @@ minetest.register_node("aliveai_massdestruction:gass", {
 	drawtype = "glasslike",
 	damage_per_second = 1,
 	paramtype = "light",
-	groups = {crumbly = 1,not_in_creative_inventory=1}
+	groups = {crumbly = 1,not_in_creative_inventory=1},
+	on_blast=function(pos)
+		minetest.after(0, function(pos)
+			local np=minetest.find_node_near(pos, 3,"aliveai_massdestruction:gass")
+			if np then
+				aliveai_nitroglycerine.cons({pos=pos,max=5000,replace={["aliveai_massdestruction:gass"]="air"}})
+			end
+		end,pos)
+	end,
 })
 
 
