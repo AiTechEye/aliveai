@@ -1,5 +1,19 @@
 aliveai_ants={max=20}
 
+minetest.register_craft( {
+	output = "default:dirt",
+	recipe = {
+		{"aliveai_ants:anthill"},
+	}
+})
+
+minetest.register_craft( {
+	output = "default:gold_lump 3",
+	recipe = {
+		{"aliveai_ants:antbase"},
+	}
+})
+
 aliveai_ants.set_color=function(self)
 	local c=minetest.get_meta(self.home):get_string("color")
 	if c=="" then
