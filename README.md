@@ -2,7 +2,7 @@
 
 ## compatible with minetest 0.4.16 and newer
 
-# License: code: LGPL-2.1, media: CC BY-SA-4.0
+# License: code: LGPL-2.1, media: CC0
 
 # Version 26.3
 
