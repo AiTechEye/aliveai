@@ -172,6 +172,7 @@ if not def.no_spawnitem and (not def.visual or def.visual=="mesh") then
 				pos.y=pos.y+0.5 + def.spawn_y
 				minetest.add_entity(pos, def.mod_name ..":" .. def.name):set_yaw(math.random(0,6.28))
 				itemstack:take_item()
+				minetest.check_for_falling(pos)
 			end
 			return itemstack
 		end,
