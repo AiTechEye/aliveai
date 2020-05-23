@@ -254,7 +254,7 @@ aliveai.use_smartshop=function(self)
 	if math.random(1,50)~=1 or self.smartshop then return end
 	local np1=minetest.find_node_near(self.object:get_pos(), self.distance,{"smartshop:shop"})
 	if np1 then
-		local goto
+		local walkto
 		local offer=smartshop.get_offer(np1)
 		for i, v in pairs(offer) do
 			if self.need then
@@ -263,23 +263,23 @@ aliveai.use_smartshop=function(self)
 				or (vv.search~="" and vv.search==v.give)
 				or math.random(1,20)==1)
 					and self.inv[v.pay] and self.inv[v.pay]>=v.pay_count then
-					goto={pos=np1,i=i,pay=v.pay,count=v.pay_count}
+					walkto={pos=np1,i=i,pay=v.pay,count=v.pay_count}
 					break
 				end
 				end
 			elseif math.random(1,3)==1 and v.pay~="" and self.inv[v.pay] and self.inv[v.pay]>=v.pay_count then
-				goto={pos=np1,i=i,pay=v.pay,count=v.pay_count}
+				walkto={pos=np1,i=i,pay=v.pay,count=v.pay_count}
 				break
 			end
 		end	
-		if goto then
+		if walkto then
 			aliveai.showstatus(self,"go to smartshop")
 			local np2=aliveai.neartarget(self,np1,0)
 			if np2 then
 				local path=aliveai.creatpath(self,self.object:get_pos(),np2)
 				if path then
 					self.path=path
-					self.smartshop=goto
+					self.smartshop=walkto
 					return self
 				end
 			end
