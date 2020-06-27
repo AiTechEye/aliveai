@@ -333,7 +333,7 @@ aliveai_nitroglycerine.freeze=function(ob)
 	ob:get_luaentity().destroy=1
 
 	ob:punch(ob,1,{full_punch_interval=1,damage_groups={fleshy=hp}})
-	if ob:get_luaentity().aliveai then
+	if ob:get_luaentity() and ob:get_luaentity().aliveai then
 		for _, ob in ipairs(minetest.get_objects_inside_radius(pos, 1)) do
 			if ob:get_luaentity() and ob:get_luaentity().type and ob:get_luaentity().type=="" then
 			ob:remove()
