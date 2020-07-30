@@ -133,7 +133,6 @@ minetest.register_entity("aliveai_threats:eyes",{
 	initial_sprite_basepos = {x=0, y=0},
 	is_visible = true,
 	makes_footstep_sound = false,
-	automatic_rotate = false,
 	on_punch=function(self, puncher, time_from_last_punch, tool_capabilities, dir)
 		local en=puncher:get_luaentity()
 		if not self.exp and tool_capabilities and tool_capabilities.damage_groups and tool_capabilities.damage_groups.fleshy then

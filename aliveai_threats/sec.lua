@@ -126,7 +126,6 @@ minetest.register_entity("aliveai_threats:bullet1",{
 	initial_sprite_basepos = {x=0, y=0},
 	is_visible = true,
 	makes_footstep_sound = false,
-	automatic_rotate = false,
 on_step=function(self, dtime)
 		local pos=self.object:get_pos()
 		for i, ob in pairs(minetest.get_objects_inside_radius(pos, 2)) do
