@@ -1,10 +1,10 @@
 # Advanced survuver AI mobs Mod for minetest
 
-## compatible with minetest 0.4.16 and newer
+## compatible with minetest 0.4.16 and newer (tested in 5.4-dev)
 
 # License: code: LGPL-2.1, media: CC0
 
-# Version 26.3
+# Version 26.31
 
 # [Wiki](https://github.com/AiTechEye/aliveai/wiki)
 
