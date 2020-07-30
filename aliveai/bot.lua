@@ -109,6 +109,14 @@ aliveai.create_bot=function(def)
 	if type(def.texture)=="table" and type(def.texture[1])=="string" then itemtexture=def.texture[1] end
 
 	if aliveai.armor_3d and not def.visual and not def.texture[2] then
+
+
+		def.basey =  def.basey or -0.3
+
+		def.collisionbox = def.collisionbox or {-0.35,0,-0.35,0.35,1.8,0.35}
+
+
+
 		if def.type and def.type~="npc" then
 			def.usearmor=0
 		else
@@ -218,7 +226,6 @@ minetest.register_entity(def.mod_name ..":" .. def.name,{
 	initial_sprite_basepos = {x=0, y=0},
 	is_visible = true,
 	makes_footstep_sound = true,
-	automatic_rotate = false,
 on_rightclick=function(self, clicker,name)
 		self.click(self,clicker)
 	end,
