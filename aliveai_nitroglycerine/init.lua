@@ -271,7 +271,9 @@ if node.velocity==1 then
 		elseif ob:is_player() then
 			aliveai_nitroglycerine.new_player=ob
 			local m = minetest.add_entity({x=pos2.x,y=pos2.y+1,z=pos2.z}, "aliveai_nitroglycerine:playerp")
-			m:set_velocity({x=(pos2.x-pos.x)*dmg, y=(pos2.y-pos.y)*dmg, z=(pos2.z-pos.z)*dmg})
+			if m then
+				m:set_velocity({x=(pos2.x-pos.x)*dmg, y=(pos2.y-pos.y)*dmg, z=(pos2.z-pos.z)*dmg})
+			end
 			aliveai_nitroglycerine.new_player=nil
 		end
 	end
