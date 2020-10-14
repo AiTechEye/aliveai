@@ -105,7 +105,8 @@ aliveai_electric.hit=function(ob,level,dmg1)
 				end
 				aliveai.punchdmg(ob,dmg)
 				if en==1 and ob then
-					ob:set_velocity({x=math.random(-1,1)*0.1, y=ob:get_velocity().y, z=math.random(-1,1)*0.1})
+					local v = ob:get_velocity()
+					ob:set_velocity({x=math.random(-1,1)*0.1, y=v and v.y or 0, z=math.random(-1,1)*0.1})
 				end
 			elseif aliveai_nitroglycerine and dmg>4 and math.random(1,5)==1 then
 				aliveai_nitroglycerine.explode(ob:get_pos(),{radius=2,blow_nodes=0})
