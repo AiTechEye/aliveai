@@ -1351,6 +1351,10 @@ end
 
 aliveai.jumping=function(self)
 	local pos=self.object:get_pos()
+	if not pos then
+		return
+	end
+
 	pos.y=pos.y-self.basey
 	if minetest.get_node(pos)==nil then return end
 	local test=minetest.registered_nodes[minetest.get_node(pos).name]
