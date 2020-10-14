@@ -1682,14 +1682,16 @@ aliveai.create_bot({
 		spawn_y=0,
 	spawn=function(self)
 		local pos=self.object:get_pos()
-		local opos=pos
-		for i=0,10,1 do
-			if aliveai.def({x=pos.x,y=pos.y-i,z=pos.z,},"walkable") and not minetest.is_protected(opos,"") then
-				minetest.set_node(opos,{name="aliveai_threats:killerplant"})
-				aliveai.kill(self)
-				return
+		if pos then
+			local opos=pos
+			for i=0,10,1 do
+				if aliveai.def({x=pos.x,y=pos.y-i,z=pos.z,},"walkable") and not minetest.is_protected(opos,"") then
+					minetest.set_node(opos,{name="aliveai_threats:killerplant"})
+					aliveai.kill(self)
+					return
+				end
+				opos={x=pos.x,y=pos.y-i,z=pos.z,}
 			end
-			opos={x=pos.x,y=pos.y-i,z=pos.z,}
 		end
 		aliveai.kill(self)
 	end,	
