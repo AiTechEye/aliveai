@@ -413,6 +413,10 @@ on_activate=function(self, staticdata)
 		aliveai.max(self)
 
 		if self.old~=1 then
+			if not self.object:get_pos() then
+				self.object:remove()
+				return
+			end
 			self.spawn(self)
 			aliveai.showstatus(self,"new bot spawned")
 			if self.type=="npc" and math.random(1, aliveai.get_random_stuff_chance)==1 then
