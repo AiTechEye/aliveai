@@ -636,7 +636,10 @@ minetest.register_abm({
 			if aliveai.check_spawn_space==false or def.check_spawn_space==0 or ((minetest.get_node(pos1).name==def.spawn_in and minetest.get_node(pos2).name==def.spawn_in) or minetest.get_item_group(minetest.get_node(pos1).name,def.spawn_in)>0) then
 				aliveai.newbot=true
 				pos1.y=pos1.y+def.spawn_y
-				minetest.add_entity(pos1, def.mod_name ..":" .. def.name):set_yaw(math.random(0,6.28))
+				local m = minetest.add_entity(pos1, def.mod_name ..":" .. def.name)
+				if m then
+					m:set_yaw(math.random(0,6.28))
+				end
 			end
 		end
 	end,
