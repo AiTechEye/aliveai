@@ -627,7 +627,7 @@ minetest.register_abm({
 		end
 		local pos1={x=pos.x,y=pos.y+1,z=pos.z}
 		local pos2={x=pos.x,y=pos.y+2,z=pos.z}
-		local l=minetest.get_node_light(pos1)
+		local l = minetest.get_node_light(pos1) or 0
 		if l==nil then return true end
 		if aliveai.random(1,def.spawn_chance)==1
 		and (def.light==0 
