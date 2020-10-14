@@ -838,7 +838,10 @@ minetest.register_entity("aliveai_massdestruction:blackhole",{
 				else
 					if ob:is_player() and not ob:get_attach() then
 						aliveai_nitroglycerine.new_player=ob
-						minetest.add_entity({x=opos.x,y=opos.y+1,z=opos.z}, "aliveai_nitroglycerine:playerp"):set_velocity({x=(pos.x-opos.x)/0.1, y=((pos.y-opos.y)*1)/0.1, z=(pos.z-opos.z)/0.1})
+						local m = minetest.add_entity({x=opos.x,y=opos.y+1,z=opos.z}, "aliveai_nitroglycerine:playerp")
+						if m then
+							m:set_velocity({x=(pos.x-opos.x)/0.1, y=((pos.y-opos.y)*1)/0.1, z=(pos.z-opos.z)/0.1})
+						end
 						aliveai_nitroglycerine.new_player=nil
 					else
 						ob:set_velocity({x=(pos.x-opos.x)/0.9, y=(pos.y-opos.y)/0.9, z=(pos.z-opos.z)/0.9})
