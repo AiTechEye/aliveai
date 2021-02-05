@@ -1547,7 +1547,7 @@ aliveai.pointat=function(self,d)
 end
 
 aliveai.distance=function(pos1,pos2)
-	if not (pos1 and pos2) then
+	if not (pos1 and pos1.x and pos2 and pos2.x) then
 		return 0
 	end
 	pos1 = type(pos1) == "userdata" and pos1:get_pos() or pos1.object and pos1.object:get_pos() or pos1
@@ -1562,7 +1562,7 @@ aliveai.visiable=function(pos1,pos2)
 	pos1 = type(pos1) == "userdata" and pos1:get_pos() or pos1.object and pos1.object:get_pos() or pos1
 	pos2 = type(pos2) == "userdata" and pos2:get_pos() or pos2	
 
-	if not (pos1 and pos2) then
+	if not (pos1 and pos1.x and pos2 and pos2.x) then
 		return false
 	end
 
