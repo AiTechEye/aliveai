@@ -13,10 +13,8 @@ minetest.register_lbm({
 	nodenames = {"aliveai_aliens:asteroid","aliveai_aliens:ufo_spawner"},
 	action = function(pos, node)
 		minetest.set_node(pos, {name = "air"})
-	end,
+	end
 })
-
-
 
 minetest.register_craftitem("aliveai_aliens:shrinker_battery", {
 	description = "Shrinker battery",
@@ -82,7 +80,6 @@ minetest.register_craft({
 })
 
 aliveai_aliens.weapon_use_reload=function(itemstack,amo,user,count,count_to_take)
-
 	local w=65535/count
 	if itemstack:get_wear()+w>=65535 and user:is_player() then
 		local inv=user:get_inventory()
@@ -155,7 +152,6 @@ minetest.register_craftitem("aliveai_aliens:alien_food", {
 	on_use =minetest.item_eat(8)
 })
 
-
 minetest.register_tool("aliveai_aliens:alien_enginelazer", {
 	description = "Alien enginelazer",
 	range = 1,
@@ -189,8 +185,6 @@ minetest.register_tool("aliveai_aliens:alien_enginelazer", {
 		return itemstack
 	end,
 })
-
-
 
 minetest.register_tool("aliveai_aliens:ozer_sword", {
 	description = "Ozer Sword",
@@ -394,8 +388,8 @@ minetest.register_entity("aliveai_aliens:bullet2",{
 	timer = 0,
 	timer2 = 0,
 	pointable=false,
-	get_staticdata = function(self)
-		if self.sound~=nil and self.timer2>0.01 then
+	on_deactivate=function(self, removal)
+		if self.sound ~= nil then
 			minetest.sound_stop(self.sound)
 		end
 	end,
@@ -404,39 +398,44 @@ minetest.register_entity("aliveai_aliens:bullet2",{
 	end,
 	on_activate=function(self, staticdata)
 		if not aliveai_aliens.target then
-			aliveai.kill(self)
+			self.object:remove()
 			return self
 		end
-		self.target=aliveai_aliens.target
-		aliveai_aliens.target=nil
-		self.sound=minetest.sound_play("aliveai_aliens_homing", {object=self.object,loop=true,gain=3.0, max_hear_distance=10})
-		self.user=aliveai_aliens.user
-		aliveai_aliens.user=nil
+		self.target = aliveai_aliens.target
+		aliveai_aliens.target = nil
+		self.sound= minetest.sound_play("aliveai_aliens_homing", {object=self.object,loop=true,gain=3.0, max_hear_distance=10})
+		self.user = aliveai_aliens.user
+		aliveai_aliens.user = nil
 		if self.user:get_luaentity() then
-			self.user=self.user:get_luaentity()
+			self.user = self.user:get_luaentity()
 		end
 	end,
 	on_step = function(self, dtime)
-		self.timer=self.timer+dtime
-		if self.timer<0.01 then return self end
-		self.timer2=self.timer2+self.timer
-		self.timer=0
-		local pos=self.object:get_pos()
-		local pos1=self.target:get_pos()
-		local n=minetest.registered_nodes[minetest.get_node(pos).name]
-		if self.timer2>8 or (n and n.walkable) then
-			aliveai.kill(self)
+		self.timer = self.timer+dtime
+		if self.timer <0.01 then
+			return self
+		 end
+		self.timer2 = self.timer2+self.timer
+		self.timer = 0
+		local pos = self.object:get_pos()
+		local pos1 = self.target:get_pos()
+		local n = minetest.registered_nodes[minetest.get_node(pos).name]
+		if self.timer2> 8 or (n and n.walkable) then
+			self.object:remove()
 		end
 		if not ((pos and pos.x) or (self.target:get_luaentity() or self.target:is_player())) then
-			aliveai.kill(self)
+			self.object:remove()
 			return self
 		elseif not aliveai.visiable(pos,pos1) then
 			return self
 		end
 		local v={x=(pos.x-pos1.x)*-2,y=(pos.y-pos1.y)*-2,z=(pos.z-pos1.z)*-2}
 		self.object:set_velocity(v)
-		if aliveai.distance(self,pos1)<1.5 then
-			if not self.user then self.user=self.object end
+
+		if vector.distance(pos,pos1) < 1.5 then
+			if not self.user then
+				self.user = self.object
+			end
 			self.target:punch(self.user,1,{full_punch_interval=1,damage_groups={fleshy=4}})
 			aliveai.kill(self)
 			minetest.sound_play("aliveai_aliens_lazer", {pos=pos, gain=1.0, max_hear_distance=10})
