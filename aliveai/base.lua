@@ -172,8 +172,11 @@ aliveai.xz_to_param2yaw=function(x,z)
 end
 
 aliveai.def=function(pos,n)
-	if not (pos and pos.x and pos.y and pos.z and n and minetest.registered_nodes[minetest.get_node(pos).name]) then return nil end
-	return minetest.registered_nodes[minetest.get_node(pos).name][n]
+	if not (pos and pos.x) then
+		return
+	end
+	local def = minetest.registered_nodes[minetest.get_node(pos).name]
+	return def and def[n] or nil
 end
 
 aliveai.defnode=function(name,n)
@@ -1136,7 +1139,6 @@ aliveai.dmgbynode=function(self)
 	return self
 end
 
-
 aliveai.falling=function(self)
 	self.timerfalling=0
 
@@ -1559,6 +1561,10 @@ aliveai.distance=function(pos1,pos2)
 end
 
 aliveai.visiable=function(pos1,pos2)
+	if not (pos1 and pos2) then
+		return false
+	end
+
 	pos1 = type(pos1) == "userdata" and pos1:get_pos() or pos1.object and pos1.object:get_pos() or pos1
 	pos2 = type(pos2) == "userdata" and pos2:get_pos() or pos2	
 
@@ -1626,8 +1632,11 @@ end
 
 aliveai.lookat=function(self,pos2)
 	if type(pos2)=="table" then
-		local pos1=self.object:get_pos()
-		local vec = {x=pos1.x-pos2.x, y=pos1.y-pos2.y, z=pos1.z-pos2.z}
+		local pos1 = self.object:get_pos()
+		if not pos1 then
+			return
+		end
+		local vec = vector.new(pos1.x-pos2.x, pos1.y-pos2.y, pos1.z-pos2.z)
 		local yaw = aliveai.nan(math.atan(vec.z/vec.x)-math.pi/2)
 		if pos1.x >= pos2.x then yaw = yaw+math.pi end
 		self.object:set_yaw(yaw)

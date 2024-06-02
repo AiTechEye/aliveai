@@ -871,14 +871,16 @@ aliveai.getmaxstack=function(a)
 end
 
 aliveai.spawnpickup=function(pos,name,n,self)
-	if (name==nil or name=="") or
-	(minetest.registered_nodes[name]==nil
-	and minetest.registered_items[name]==nil
-	and minetest.registered_craftitems[name]==nil
-	and minetest.registered_tools[name]==nil) then return end
-	if n==nil or tonumber(n)==nil or n==0 then n=1 end
-	local ob=minetest.add_item(pos, name .." ".. n)
-	if self then ob:get_luaentity().dropped_by=self.botname end
+	if (name==nil or name=="") or (minetest.registered_nodes[name] == nil and minetest.registered_items[name] == nil) then
+		return
+	end
+	if n==nil or tonumber(n)==nil or n==0 then
+		n=1
+	end
+	local ob = minetest.add_item(pos,ItemStack(name .." ".. n))
+	if self then
+		ob:get_luaentity().dropped_by = self.botname
+	end
 	ob:set_velocity({x = math.random(-1, 1),y=5,z = math.random(-1, 1)})
 	minetest.after(3, function(ob)
 		if ob and ob:get_luaentity() then

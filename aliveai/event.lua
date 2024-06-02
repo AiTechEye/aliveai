@@ -120,10 +120,9 @@ aliveai.sleep=function(self,set)
 	end
 end
 
-
-
 aliveai.dying=function(self,set)
 	if set and set==1 then
+		print(self.object:get_pos(),"2===xXXXX====")
 		if self.drop_dead_body==0 or self.hp_max>100 then return end
 		aliveai.exitpath(self)
 		aliveai.anim(self,"lay")
@@ -131,6 +130,7 @@ aliveai.dying=function(self,set)
 		self.talking=0
 		self.object:set_acceleration({x=0,y=-10,z =0})
 		self.object:set_velocity({x=0,y=-3,z =0})
+
 		aliveai.invdropall(self)
 		if self.hp<=self.hp_max*-1 then
 			aliveai.dying(self,2)
@@ -142,15 +142,18 @@ aliveai.dying=function(self,set)
 		self.object:set_hp(self.hp)
 	elseif set and set==2 then
 		if self.drop_dead_body==0 then
-			if self.hp_max<101 then aliveai.punchdmg(self,self.hp_max) end
+			if self.hp_max<101 then
+				aliveai.punchdmg(self,self.hp_max)
+			end
 			return
 		end
-		minetest.after(0.1, function(self)
+
+		minetest.after(0.1, function()
 			if self.object:get_luaentity() then
 				aliveai.exitpath(self)
 				aliveai.anim(self,"lay")
 			end
-		end, self)
+		end)
 		self.namecolor=""
 		self.object:set_properties({nametag=""})
 		self.talking=0
@@ -165,7 +168,8 @@ aliveai.dying=function(self,set)
 	end
 
 	if self.dying then
-		self.object:set_velocity({x=0,y=self.object:get_velocity().y,z=0})
+		local vel = self.object:get_velocity()
+		self.object:set_velocity(vector.new(0,vel and vel.y or 0,0))
 		if self.hp<=self.hp_max*-1 then
 			aliveai.dying(self,2)
 			return self
@@ -192,7 +196,7 @@ aliveai.dying=function(self,set)
 	elseif self.dead then
 		self.dead=self.dead-1
 		if self.dead<0 then
-			local pos=self.object:get_pos()
+			local pos = self.object:get_pos()
 			pos.y=pos.y-1
 			if minetest.get_item_group(minetest.get_node(pos).name, "igniter")>0 then
 				minetest.add_particlespawner({

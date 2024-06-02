@@ -239,29 +239,42 @@ on_punch=function(self, puncher, time_from_last_punch, tool_capabilities, dir)
 		tool_capabilities.damage_groups.fleshy=tool_capabilities.damage_groups.fleshy or 1
 		local mindmg=tool_capabilities.damage_groups.fleshy>=self.mindamage
 		local dmg=0
-		
+
 		if tool_capabilities and tool_capabilities.damage_groups and tool_capabilities.damage_groups.fleshy then
-			if not self.hp then self.hp=0 end
+			if not self.hp then
+				self.hp = 0
+			end
 			if mindmg==true then
-				self.hp=self.hp-tool_capabilities.damage_groups.fleshy
-				self.object:set_hp(self.hp)
+				self.hp = self.hp-tool_capabilities.damage_groups.fleshy
 				dmg=tool_capabilities.damage_groups.fleshy
 				self.mood=self.mood-2
+
+				if self.hp <= self.hp_max*-2 then
+					self.object:remove()
+					return
+				elseif self.hp <= 0 then
+					self.object:set_hp(1)
+				else
+					self.object:set_hp(self.hp)
+				end
 			end
 		end
 
-
 		if dir~=nil and mindmg==true then
-			local v={x = dir.x*3,y = self.object:get_velocity().y,z = dir.z*3}
+			local vel = self.object:get_velocity()
+			local v=vector.new(dir.x*3,vel and vel.y or 0,dir.z*3)
 			self.object:set_velocity(v)
 			local r=math.random(1,99)
 			self.sleeping=nil
 			self.onpunch_r=r
-			minetest.after(1, function(self,v,r)
-					if self and self.object and self.hp>0 and self.onpunch_r==r and aliveai.samepos(aliveai.roundpos(self.object:get_velocity()),aliveai.roundpos(v)) then
-						self.object:set_velocity({x = 0,y = self.object:get_velocity().y,z = 0})
+			minetest.after(1, function()
+				if self and self.object then
+					local vel = self.object:get_velocity()
+					if vel and vel.y and self.hp>0 and self.onpunch_r == r and aliveai.samepos(aliveai.roundpos(vel),aliveai.roundpos(v)) then
+						self.object:set_velocity(vector.new(0,vel.y,0)) 
 					end
-			end, self,v,r)
+				end
+			end)
 		end
 
 		if mindmg==true then
@@ -270,15 +283,34 @@ on_punch=function(self, puncher, time_from_last_punch, tool_capabilities, dir)
 -- death
 
 		if self.dying then
-			if self.hp<=0 then
+			if self.hp <= 0 then
 				aliveai.dying(self,2)
 			else
 				return self
 			end
 		end
 
-		if self.object:get_hp()<=0 and not (self.dead or self.dying) then
-			local pos=self.object:get_pos()
+		if self.dead then
+			if self.hp <= 0 then
+				self.object:remove()
+				return
+			end
+
+			local r = math.random(1,9999)
+			self.rdead = r
+			for i=1,10 do
+				minetest.after(0.1*i, function()
+					local v = self.object:get_velocity()
+					if r == self.rdead and v and aliveai.def(vector.new(pos.x,pos.y-1.5,pos.z),"walkable") then
+						v = vector.multiply(v,1-(0.1*i))
+						self.object:set_velocity(v)--vector.new(0,0,0)
+					end
+				end)
+			end
+		end
+
+		if self.hp <= 0 and not (self.dead or self.dying) then
+			local pos = self.object:get_pos()
 			if self.drop_dead_body==1 then
 				aliveai.showstatus(self,"drop dead body")
 				aliveai.stand(self)
@@ -297,9 +329,9 @@ on_punch=function(self, puncher, time_from_last_punch, tool_capabilities, dir)
 		if self.path then
 			aliveai.exitpath(self)
 		end
-		minetest.after(2, function(self)
+		minetest.after(2, function()
 			aliveai.eat(self)
-		end,self)
+		end)
 		if not aliveai.same_bot(self,puncher) then
 			local known=aliveai.getknown(self,puncher)
 			if known=="member" then
@@ -325,7 +357,9 @@ on_punch=function(self, puncher, time_from_last_punch, tool_capabilities, dir)
 			return self
 		end
 
-		if math.random(1,3)==1 then aliveai.sayrnd(self,"ouch") end
+		if math.random(1,3)==1 then
+			aliveai.sayrnd(self,"ouch")
+		end
 		return self
 	end,
 on_activate=function(self, staticdata)
