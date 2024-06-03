@@ -1061,7 +1061,9 @@ aliveai.create_bot({
 			set="air",
 			place={"air"}
 		})
-		aliveai.kill(self)
+		minetest.after(0, function(self)
+			self.object:remove()
+		end,self)
 	end,
 	on_blow=function(self)
 		if self.ex then return end
