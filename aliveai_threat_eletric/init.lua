@@ -109,8 +109,8 @@ aliveai.create_bot({
 		self.move.speed=4
 	end,
 	on_blow=function(self)
-		aliveai.kill(self)
 		self.death(self,self.object,self.object:get_pos())
+		aliveai.kill(self)
 	end,
 	death=function(self,puncher,pos)
 		if not self.exx then
@@ -133,7 +133,6 @@ aliveai.create_bot({
 				collisiondetection = true,
 			})
 			aliveai_threat_eletric.explode(pos,2)
-			aliveai.die(self)
 		end
 	end,
 	on_punched=function(self,puncher)
@@ -186,8 +185,8 @@ aliveai.create_bot({
 		end
 	end,
 	on_blow=function(self)
-		aliveai.kill(self)
 		self.death(self,self.object,self.object:get_pos())
+		aliveai.kill(self)
 	end,
 	death=function(self,puncher,pos)
 		if not self.exx then
@@ -210,13 +209,12 @@ aliveai.create_bot({
 				collisiondetection = true,
 			})
 			aliveai_threat_eletric.explode(pos,10)
-			aliveai.die(self)
 		end
 	end,
 	on_punching=function(self,target)
 		local pos=target:get_pos()
 		if math.random(1,3)==1 and minetest.registered_nodes[minetest.get_node(pos).name] and minetest.registered_nodes[minetest.get_node(pos).name].buildable_to then
-			minetest.set_node(pos, {name="aliveai_threat_eletric:lightning"})
+			minetest.set_node(pos, {name="aliveai_electric:lightning"})
 		end
 	end,
 	on_punched=function(self,puncher)
@@ -270,8 +268,8 @@ aliveai.create_bot({
 		end
 	end,
 	on_blow=function(self)
-		aliveai.kill(self)
 		self.death(self,self.object,self.object:get_pos())
+		aliveai.kill(self)
 	end,
 	death=function(self,puncher,pos)
 		if not self.exx then
@@ -293,6 +291,7 @@ aliveai.create_bot({
 				texture = "default_steel_block.png",
 				collisiondetection = true,
 			})
+
 			aliveai_threat_eletric.explode(pos,10)
 			aliveai.die(self)
 		end
@@ -346,13 +345,7 @@ aliveai_threat_eletric.explode=function(pos,r)
 		local pos2=ob:get_pos()
 		local d=math.max(1,vector.distance(pos,pos2))
 		local dmg=(8/d)*r
-		if ob:get_luaentity() then
-			ob:set_velocity({x=(pos2.x-pos.x)*dmg, y=(pos2.y-pos.y)*dmg, z=(pos2.z-pos.z)*dmg})
-		elseif ob:is_player() then
-			aliveai_nitroglycerine.new_player=ob
-			minetest.add_entity(pos2, "aliveai_nitroglycerine:playerp"):set_velocity({x=(pos2.x-pos.x)*dmg, y=(pos2.y-pos.y)*dmg, z=(pos2.z-pos.z)*dmg})
-			aliveai_nitroglycerine.new_player=nil
-		end
+		ob:set_velocity({x=(pos2.x-pos.x)*dmg, y=(pos2.y-pos.y)*dmg, z=(pos2.z-pos.z)*dmg})
 	end
 	minetest.sound_play("aliveai_nitroglycerine_nuke", {pos=pos, gain = 0.5, max_hear_distance = r*4})
 end
