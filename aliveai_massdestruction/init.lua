@@ -360,8 +360,10 @@ aliveai.create_bot({
 		return self
 	end,
 	on_blow=function(self)
-		aliveai.kill(self)
 		self.death(self)
+		minetest.after(0, function(self)
+			self.object:remove()
+		end,self)
 	end,
 	death=function(self)
 		if self.exp then return end
