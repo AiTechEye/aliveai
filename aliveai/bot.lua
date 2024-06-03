@@ -30,6 +30,12 @@ aliveai.bot=function(self, dtime)
 	if aliveai.dying(self) then return self end
 	if not aliveai.dmgbynode(self) then return self end
 	if self.step(self,dtime) or self.controlled==1 then return self end
+
+
+	if self.removal then
+		return
+	end
+
 	if aliveai.sleep(self) then return self end
 	aliveai.jumping(self)-- if need to jump
 	if aliveai.fight(self) then return self end
@@ -226,6 +232,9 @@ minetest.register_entity(def.mod_name ..":" .. def.name,{
 	initial_sprite_basepos = {x=0, y=0},
 	is_visible = true,
 	makes_footstep_sound = true,
+	on_deactivate=function(self, removal)
+		self.removal = removal
+	end,
 on_rightclick=function(self, clicker,name)
 		self.click(self,clicker)
 	end,
