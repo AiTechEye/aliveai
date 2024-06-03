@@ -122,7 +122,6 @@ end
 
 aliveai.dying=function(self,set)
 	if set and set==1 then
-		print(self.object:get_pos(),"2===xXXXX====")
 		if self.drop_dead_body==0 or self.hp_max>100 then return end
 		aliveai.exitpath(self)
 		aliveai.anim(self,"lay")
@@ -596,10 +595,9 @@ aliveai.searchobjects=function(self)
 			return
 		end
 		local pos=self.object:get_pos()
-		local d=aliveai.distance(self,pos)
 		local rndob
-		local d=self.distance
 		aliveai.showstatus(self,"search objects")
+
 		for i=0,1,1 do
 			for iob, ob in ipairs(minetest.get_objects_inside_radius(pos, self.distance)) do
 				if i==1 then
@@ -650,11 +648,7 @@ aliveai.searchobjects=function(self)
 					end
 				end
 			end
-			d=1
 		end
-
-
-
 end
 
 aliveai.known=function(self,ob,typ)
@@ -941,7 +935,7 @@ aliveai.fight=function(self)
 		if self.fight:get_luaentity() then
 			vy=self.fight:get_velocity().y
 		else
-			vy=self.fight:get_player_velocity().y
+			vy=self.fight:get_velocity().y
 		end
 		pos.y=pos.y-1
 -- fly from
@@ -950,6 +944,7 @@ aliveai.fight=function(self)
 			aliveai.searchhelp(self)
 			return self
 		end
+
 -- path and see
 		if self.fight and self.path then
  -- makes the bot dont stuck into walls
@@ -970,8 +965,9 @@ aliveai.fight=function(self)
 		end
 		self.time=self.otime
 -- search
+
 		if d<self.distance and self.temper>0 then
-		self.on_detecting_enemy(self)
+			self.on_detecting_enemy(self)
 			if see and self.seen or aliveai.viewfield(self,self.fight) then
 				self.seen=true
 				if aliveai.is_invisiable(self.fight) then
