@@ -203,19 +203,6 @@ aliveai.create_bot({
 			spawn_chance=100,
 		})
 	end,
-	on_blow=function(self)
-		aliveai.kill(self)
-		self.death(self,self.object,self.object:get_pos())
-	end,
-	death=function(self,puncher,pos)
-			if aliveai_nitroglycerine and not self.ex then
-				self.ex=true
-				aliveai_nitroglycerine.explode(pos,{
-				radius=2,
-				set="air",
-				})
-			end
-			return self
-	end,
+
 })
 

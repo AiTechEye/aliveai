@@ -1687,14 +1687,13 @@ aliveai.create_bot({
 			for i=0,10,1 do
 				if aliveai.def({x=pos.x,y=pos.y-i,z=pos.z,},"walkable") and not minetest.is_protected(opos,"") then
 					minetest.set_node(opos,{name="aliveai_threats:killerplant"})
-					aliveai.kill(self)
-					return
+					break
 				end
 				opos={x=pos.x,y=pos.y-i,z=pos.z,}
 			end
 		end
 		aliveai.kill(self)
-	end,	
+	end
 })
 
 
@@ -2434,8 +2433,12 @@ aliveai.create_bot({
 	end,
 	on_step=function(self,dtime)
 		if self.eating then
+			local pos = self.eating:get_pos()
 			if not self.eating:get_attach() then
 				self.spawn(self,3,self.eating)
+				self.eating=nil
+				return
+			elseif not pos then
 				self.eating=nil
 				return
 			end
@@ -2458,7 +2461,7 @@ aliveai.create_bot({
 				if self.eating:get_luaentity() then
 					self.eating:remove()
 				else
-					local pos=aliveai.roundpos(self.eating:get_pos())
+					local pos=aliveai.roundpos(pos)
 					local n
 					for i=-2,-6,-1 do
 						if not aliveai.def({x=pos.x,y=pos.y+i,z=pos.z},"walkable") then
@@ -2480,7 +2483,8 @@ aliveai.create_bot({
 				self.fight=nil
 				return
 			end
-			if aliveai.distance(self,self.fight:get_pos())<2.5 then
+			local pos = self.object:get_pos()
+			if vector.distance(pos,self.fight:get_pos()) < 2.5 then
 				self.eating=self.fight
 				self.eating:set_attach(self.object, "",{x=0, y=-3 , z=0}, {x=0, y=0, z=0})
 				if self.eating:is_player() then
