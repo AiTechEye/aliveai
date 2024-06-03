@@ -80,9 +80,7 @@ aliveai={
 
 local aliveai_v1=string.gsub(minetest.get_version().string,"-","%")
 local aliveai_v2=aliveai_v1.split(aliveai_v1,".")
-aliveai.minetest_version={tonumber(aliveai_v2[1]),(tonumber(aliveai_v2[2])*0.1),(tonumber(aliveai_v2[3]))*0.01}
-
-
+aliveai.minetest_version={tonumber(aliveai_v2[1] or 0),(tonumber((aliveai_v2[2]) or 0) *0.1),(tonumber(aliveai_v2[3]) or 0)*0.01}
 
 minetest.after(5, function()
 	aliveai.team_load()
